@@ -1,0 +1,79 @@
+Proyectos:
+- Nro
+- Denominacion
+- Resumen
+- Inversión en I+D y Proyectos de investigación
+	- Campo de Aplicación
+	- Objetivo Socioeconomico
+	- Tipo de Actividad
+- Integrantes (funcion, dni, contacto)
+- Duración
+- Año Inicio
+- Año Finalización
+- Vencido / Vigente
+- Resolución
+- Presupuesto Estimado
+
+
+
+** La disciplina para invstigadores
+** Para que aparezcan la disciplina según el campo que elija: https://www.youtube.com/watch?v=ssymfBywqOY&list=PL6tf8fRbavl3jfL67gVOE9rF0jG5bNTMi&index=7
+
+** Leer mas sobre vigente/no vigente (opcion es si verde o no nomas)
+** https://filamentphp.com/docs/3.x/forms/fields/toggle
+
+
+- Ciencias exactas y naturales
+Biología	
+Física	
+Genética	
+Geografía	
+Geología	
+Matemática	
+Química	
+Otras
+
+-Ingeniería y tecnología
+Alimentos	
+Arquitectura	
+Bioingeniería	
+Informática	
+Ingeniería Civil	
+Ingeniería Electrónica	
+Ingeniería Mecánica	
+Ingeniería Química	
+Otras
+
+-Ciencias médicas
+Bioquímica	
+Biotecnología	
+Farmarcia	
+Medicina	
+Otras
+
+-Ciencias agrícolas y veterinarias
+Agronomía	
+Veterinaria	
+Ciencias ambientales	
+Otras
+
+-Ciencias sociales
+Abogacía	
+Administración de Empresas	
+Antropología	
+Economía	
+Ciencias de la Comunicación	
+Ciencias de la Educación	
+Ciencias Políticas	
+Psicología	
+Sociología	
+Otras
+
+-Humanidades y artes
+Arte	
+Diseño gráfico	
+Filosofía	
+Historia	
+Lingüistica	
+Literatura	
+Otras
