@@ -111,13 +111,16 @@ class ProyectoResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('estado')
                     ->boolean(),
-                /*Tables\Columns\TextColumn::make('resolucion')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('resolucion')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pdf_resolucion')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('presupuesto')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -125,7 +128,7 @@ class ProyectoResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),*/
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
