@@ -84,48 +84,52 @@ class ProyectoResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nro')
+                TextColumn::make('nro')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('nombre')
+                TextColumn::make('nombre')
                     ->searchable(),
-                /*Tables\Columns\TextColumn::make('resumen')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('campo_id')
+                /*TextColumn::make('resumen')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('campo_id')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('objetivo_id')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('actividad_id')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),*/
+                TextColumn::make('duracion')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('objetivo_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('actividad_id')
-                    ->numeric()
-                    ->sortable(),*/
-                Tables\Columns\TextColumn::make('duracion')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('inicio')
+                TextColumn::make('inicio')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('fin')
+                TextColumn::make('fin')
                     ->date()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('estado')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('resolucion')
+                TextColumn::make('resolucion')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('pdf_resolucion')
+                TextColumn::make('pdf_resolucion')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('presupuesto')
+                TextColumn::make('presupuesto')
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
