@@ -20,8 +20,8 @@ class CampoResource extends Resource
     protected static ?string $model = Campo::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
-    protected static ?string $navigationLabel = 'Campo de Aplicacione';
-    protected static ?string $modelLabel = 'Campo de Aplicacione';
+    protected static ?string $navigationLabel = 'Campo de Aplicación';
+    protected static ?string $modelLabel = 'Campo de Aplicación';
     protected static ?string $navigationGroup = 'Configuración';
     protected static ?string $slug = 'campo-de-aplicacion-pi';
     protected static ?int $navigationSort = 1;

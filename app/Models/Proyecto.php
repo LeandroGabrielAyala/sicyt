@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Proyecto extends Model
 {
-    protected $fillable = ['nro', 'nombre', 'resumen', 'duracion', 'inicio', 'fin', 'resolucion', 'pdf_resolucion', 'presupuesto', 'estado', 'campo_id', 'objetivo_id', 'actividad_id'];
+    protected $fillable = ['nro', 'nombre', 'resumen', 'duracion', 'inicio', 'fin', 'disposicion', 'pdf_disposicion', 'resolucion', 'pdf_resolucion', 'presupuesto', 'estado', 'campo_id', 'objetivo_id', 'actividad_id'];
 
     public function campo(): BelongsTo
     {

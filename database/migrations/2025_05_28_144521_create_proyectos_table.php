@@ -23,6 +23,8 @@ return new class extends Migration
             $table->date('inicio');
             $table->date('fin');
             $table->boolean('estado');
+            $table->string('disposicion');
+            $table->string('pdf_disposicion');
             $table->string('resolucion');
             $table->string('pdf_resolucion');
             $table->decimal('presupuesto', 8, 2);

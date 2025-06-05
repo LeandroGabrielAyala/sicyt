@@ -34,8 +34,9 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
                 'danger' => Color::Red,
                 'gray' => Color::Slate,
+                'customgray' => Color::CustomGray,
             ])
-            ->font('Poppins')
+            ->font('Montserrat')
             ->brandLogo(asset('images/logo-sicyt.png'))
             ->favicon(asset('images/logo-sicyt.png'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
