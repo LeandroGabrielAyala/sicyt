@@ -268,7 +268,7 @@ class ProyectoResource extends Resource
                                             ->label('Descargar la Disposición en .PDF')
                                             ->badge()
                                             ->color(fn (bool $state) => $state ? 'info' : 'info')
-                                            ->formatStateUsing(fn ($record) => 'Resolución N° ' . $record->disposicion)
+                                            ->formatStateUsing(fn ($record) => 'Disposición N° ' . $record->disposicion)
                                             ->url(fn ($record) => Storage::url($record->pdf_disposicion))
                                             ->openUrlInNewTab(),
                                         TextEntry::make('resolucion')->label('Nro. de Resolución')

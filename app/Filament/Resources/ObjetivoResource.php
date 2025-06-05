@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ObjetivoResource\RelationManagers\ProyectoRelationManager;
 use App\Filament\Resources\ObjetivoResource\Pages;
 use App\Filament\Resources\ObjetivoResource\RelationManagers;
 use App\Models\Objetivo;
@@ -69,7 +70,7 @@ class ObjetivoResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProyectoRelationManager::class
         ];
     }
 

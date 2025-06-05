@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActividadResource\Pages;
 use App\Filament\Resources\ActividadResource\RelationManagers;
+use App\Filament\Resources\ActividadResource\RelationManagers\ProyectoRelationManager;
 use App\Models\Actividad;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -69,7 +70,7 @@ class ActividadResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProyectoRelationManager::class
         ];
     }
 

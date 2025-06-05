@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\CampoResource\RelationManagers\ProyectoRelationManager;
 use App\Filament\Resources\CampoResource\Pages;
 use App\Filament\Resources\CampoResource\RelationManagers;
 use App\Models\Campo;
@@ -69,7 +70,7 @@ class CampoResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProyectoRelationManager::class
         ];
     }
 

@@ -25,13 +25,35 @@ class ListProyectos extends ListRecords
         return [
             'Todos' => Tab::make(),
             'Vigente' => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereDate('fin', '>=', today()))
-                ->badge(Proyecto::query()->whereDate('fin', '>=', today())->count()
+                ->modifyQueryUsing(fn (Builder $query) =>
+                    $query->where(function ($query) {
+                        $query->whereDate('fin', '>=', today())
+                            ->where('estado', 1);
+                    })
+                )
+                ->badge(
+                    Proyecto::query()
+                    ->where(function ($query) {
+                    $query->whereDate('fin', '>=', today())
+                        ->where('estado', 1);
+                })
+                ->count()
             ),
             'No Vigente' => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereDate('fin', '<', today()))
-                ->badge(Proyecto::query()->whereDate('fin', '<', today())->count()
-            )
+                ->modifyQueryUsing(fn (Builder $query) =>
+                    $query->where(function ($query) {
+                        $query->whereDate('fin', '<', today())
+                            ->orWhere('estado', 0);
+                    })
+                )
+                ->badge(
+                    Proyecto::query()
+                    ->where(function ($query) {
+                    $query->whereDate('fin', '<', today())
+                        ->orWhere('estado', 0);
+                })
+                ->count()
+            ),
         ];
     }
 }
