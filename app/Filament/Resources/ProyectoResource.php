@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Filament\Resources\ProyectoResource\Pages;
 use App\Filament\Resources\ProyectoResource\RelationManagers;
 use App\Models\Proyecto;
@@ -10,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section as FormSection;
 use Filament\Infolists\Components\Section as InfoSection;
@@ -43,36 +46,47 @@ class ProyectoResource extends Resource
                 ->description('Datos generales del Proyecto')
                 ->schema([
                     TextInput::make('nro')
-                        ->label('Nro. de Proyecto de Investigación')
+                        ->label('Nro. de P.I.')
                         ->required(),
-                        TextInput::make('duracion')
-                            ->required(),
+                    TextInput::make('duracion')
+                        ->required(),
+                    DatePicker::make('inicio')
+                        ->required(),
+                    DatePicker::make('fin')
+                        ->required(),
                     TextInput::make('nombre')
                         ->required()
                         ->maxLength(255)
                         ->columnSpanFull(),
                     RichEditor::make('resumen')
                         ->required()
-                        ->maxLength(255)
+                        ->maxLength(1000)
                         ->columnSpanFull(),
-                    DatePicker::make('inicio')
-                        ->required(),
-                    DatePicker::make('fin')
-                        ->required()
-                ])->columns(2),
+                ])->columns(4),
                 FormSection::make('Información Adicional')
                 ->description('Resolución y Estado del Proyecto')
                 ->schema([
                     TextInput::make('resolucion')
                         ->required()
                         ->maxLength(255),
-                    TextInput::make('pdf_resolucion')
+                    FileUpload::make('pdf_resolucion')
+                        ->label('Resolución en .PDF')
                         ->required()
-                        ->maxLength(255),
+                        ->disk('public')
+                        ->directory('resoluciones')
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->maxSize(1024)
+                        ->getUploadedFileNameForStorageUsing(function ($file): string {
+                            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                            $safeName = Str::slug($originalName); // elimina espacios, acentos, etc.
+                            $extension = $file->getClientOriginalExtension();
+                            return $safeName . '-' . Str::random(6) . '.' . $extension;
+                        }),
                     TextInput::make('presupuesto')
                         ->required(),
                     Toggle::make('estado')
-                        ->label('Vigente / Novigente')
+                        ->label('No Vigente / Vigente')
+                        ->inline(false)
                         ->required(),
                     ])->columns(2),
                 FormSection::make('Clasificación')
@@ -99,9 +113,18 @@ class ProyectoResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nro')
+                    ->label('Nro.')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('nombre')
+                    ->label('Nombre')
+                    ->searchable()
+                    ->limit(70),
+                IconColumn::make('estado')
+                    ->label('Estado')
+                    ->boolean(),
+                TextColumn::make('resolucion')
+                    ->label('# Resolución')
                     ->searchable(),
                 /*TextColumn::make('resumen')
                     ->searchable()
@@ -120,22 +143,27 @@ class ProyectoResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),*/
                 TextColumn::make('duracion')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('inicio')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('fin')
                     ->date()
-                    ->sortable(),
-                IconColumn::make('estado')
-                    ->boolean(),
-                TextColumn::make('resolucion')
-                    ->searchable()
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('pdf_resolucion')
+                    ->label('Descargar .PDF')
                     ->searchable()
+                    ->badge()
+                    ->color(fn (bool $state) => $state ? 'primary' : 'primary')
+                    ->formatStateUsing(fn ($record) => 'Descargar ' . $record->resolucion)
+                    ->url(fn ($record) => Storage::url($record->pdf_resolucion))
+                    ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('presupuesto')
+                    ->label('Presupuesto')
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -156,6 +184,7 @@ class ProyectoResource extends Resource
                     //->modalHeading('Detalles del Proyecto')
                     ->modalHeading(fn ($record) => 'Detalles del Proyecto N° ' . $record->nro)
                     ->modalSubmitAction(false)
+                    ->modalCancelAction(fn () => null)
                     ->modalCancelActionLabel('Cerrar')
                     ->infolist(fn (ViewAction $action): array => [
                         Tabs::make('Tabs')
@@ -165,7 +194,6 @@ class ProyectoResource extends Resource
                                 InfoSection::make('')
                                     ->description(fn ($record) => 'Proyecto de Investigación N° ' . $record->nro)
                                     ->schema([
-                                        // TextEntry::make('nro')->label('Nro. de Proyecto'),
                                         TextEntry::make('nombre')
                                             ->label('Denominación del Proyecto')
                                             ->columnSpanFull()
@@ -177,10 +205,15 @@ class ProyectoResource extends Resource
                                             ->label('Resumen del Proyecto')
                                             ->columnSpanFull()
                                             ->html(),
-                                        TextEntry::make('duracion')->label('Duración'),
+                                    ]),
+                                InfoSection::make('')
+                                    ->description('Duración del Proyecto')
+                                    ->schema([
+                                        TextEntry::make('duracion')->label('Duración en meses'),
                                         TextEntry::make('inicio')->label('Inicio de actividad'),
                                         TextEntry::make('fin')->label('Fin de actividad'),
                                     ])->columns(3),
+                                        
                                 ]),
                             Tab::make('Estado')
                                 ->schema([
@@ -192,9 +225,15 @@ class ProyectoResource extends Resource
                                             ->badge()
                                             ->color(fn (bool $state) => $state ? 'success' : 'danger')
                                             ->formatStateUsing(fn (bool $state) => $state ? 'Vigente' : 'No Vigente'),
-                                        TextEntry::make('resolucion')->label('Nro. de Resolución'),
-                                        TextEntry::make('pdf_resolucion')->label('Archivo .PDF'),
                                         TextEntry::make('presupuesto')->label('Presupuesto'),
+                                        TextEntry::make('resolucion')->label('Nro. de Resolución'),
+                                        TextEntry::make('pdf_resolucion')
+                                            ->label('Descargar la Resolución en .PDF')
+                                            ->badge()
+                                            ->color(fn (bool $state) => $state ? 'primary' : 'primary')
+                                            ->formatStateUsing(fn ($record) => 'Resolución N° ' . $record->resolucion)
+                                            ->url(fn ($record) => Storage::url($record->pdf_resolucion))
+                                            ->openUrlInNewTab(),
                                     ])->columns(2),
                                 ]),
                             Tab::make('Clasificación')
