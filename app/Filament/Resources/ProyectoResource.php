@@ -90,7 +90,8 @@ class ProyectoResource extends Resource
                         ->disk('public')
                         ->directory('resoluciones')
                         ->preserveFilenames()
-                        ->reorderable(),
+                        ->reorderable()
+                        ->openable(),
                         /*->storeFileNamesIn('pdf_resolucion'),
                         ->getUploadedFileNameForStorageUsing(function ($file): string {
                             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
@@ -100,11 +101,13 @@ class ProyectoResource extends Resource
                         }),*/
                     FileUpload::make('pdf_disposicion')
                         ->label('Disposición en .PDF')
+                        ->multiple()
                         ->required()
                         ->disk('public')
                         ->directory('disposiciones')
                         ->preserveFilenames()
                         ->reorderable()
+                        ->openable()
                         /*->storeFileNamesIn('pdf_resolucion'),
                         ->getUploadedFileNameForStorageUsing(function ($file): string {
                             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
@@ -275,44 +278,64 @@ class ProyectoResource extends Resource
                                             ->openUrlInNewTab(),*/
                                         TextEntry::make('pdf_disposicion')
                                             ->label('Disposiciones en PDF')
-                                            ->formatStateUsing(function ($state, $record) {
-                                                // $state es el array de nombres guardados en la BD
-                                                if (empty($state) || !is_array($state)) {
+                                            ->formatStateUsing(function ($state) {
+                                                if (empty($state)) {
                                                     return 'Sin archivo';
                                                 }
 
-                                                // Armamos un listado con links a cada archivo
-                                                $links = [];
-                                                foreach ($state as $fileName) {
-                                                    $url = Storage::url('disposiciones/' . $fileName);
-                                                    $links[] = '<a href="' . $url . '" target="_blank" rel="noopener noreferrer">' . $fileName . '</a>';
+                                                // Si ya es array, no intentes decodificar
+                                                if (is_array($state)) {
+                                                    $files = $state;
+                                                } else {
+                                                    try {
+                                                        $files = json_decode($state, true);
+                                                        if (!is_array($files)) {
+                                                            return 'Error al decodificar JSON';
+                                                        }
+                                                    } catch (\Throwable $e) {
+                                                        return 'Error al decodificar JSON';
+                                                    }
                                                 }
 
-                                                // Devolvemos los links separados por salto de línea
+                                                $links = array_map(function ($file) {
+                                                    $url = Storage::url($file);
+                                                    $name = basename($file);
+                                                    return "<a href='{$url}' target='_blank' class='underline text-primary-600'>{$name}</a>";
+                                                }, $files);
+
                                                 return implode('<br>', $links);
                                             })
-                                            ->html(), // IMPORTANTE: permitimos HTML para los links
+                                            ->html(),
                                         TextEntry::make('resolucion')->label('Nro. de Resolución')
                                             ->color('customgray'),
                                         TextEntry::make('pdf_resolucion')
-                                            ->label('Descargar la Resolución en .PDF')
-                                            ->formatStateUsing(function ($state, $record) {
+                                            ->label('Disposiciones en PDF')
+                                            ->formatStateUsing(function ($state) {
                                                 if (empty($state)) {
-                                                    return 'Sin archivos';
+                                                    return 'Sin archivo';
                                                 }
 
-                                                $files = is_array($state) ? $state : json_decode($state, true);
-
-                                                if (!$files || count($files) === 0) {
-                                                    return 'Sin archivos';
+                                                // Si ya es array, no intentes decodificar
+                                                if (is_array($state)) {
+                                                    $files = $state;
+                                                } else {
+                                                    try {
+                                                        $files = json_decode($state, true);
+                                                        if (!is_array($files)) {
+                                                            return 'Error al decodificar JSON';
+                                                        }
+                                                    } catch (\Throwable $e) {
+                                                        return 'Error al decodificar JSON';
+                                                    }
                                                 }
 
-                                                $links = collect($files)->map(function ($file, $index) use ($record) {
+                                                $links = array_map(function ($file) {
                                                     $url = Storage::url($file);
-                                                    return "<a href='{$url}' target='_blank' style='color:#2563eb; text-decoration:underline;'>📎 Disposición N° {$record->resolucion} - Archivo " . ($index + 1) . "</a>";
-                                                })->implode('<br>');
+                                                    $name = basename($file);
+                                                    return "<a href='{$url}' target='_blank' class='underline text-primary-600'>{$name}</a>";
+                                                }, $files);
 
-                                                return $links;
+                                                return implode('<br>', $links);
                                             })
                                             ->html(),
                                     ])->columns(2),
