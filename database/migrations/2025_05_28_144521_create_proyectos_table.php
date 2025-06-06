@@ -24,9 +24,9 @@ return new class extends Migration
             $table->date('fin');
             $table->boolean('estado');
             $table->string('disposicion');
-            $table->string('pdf_disposicion');
             $table->string('resolucion');
-            $table->string('pdf_resolucion');
+            $table->json('pdf_disposicion')->nullable();
+            $table->json('pdf_resolucion')->nullable();
             $table->decimal('presupuesto', 8, 2);
             $table->timestamps();
         });

@@ -3,16 +3,22 @@
 namespace App\Filament\Resources\ActividadResource\RelationManagers;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section as FormSection;
 use Filament\Infolists\Components\Section as InfoSection;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Infolists\Components\Tabs;
@@ -30,9 +36,86 @@ class ProyectoRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre')
-                    ->required()
-                    ->maxLength(255),
+                FormSection::make('Datos del Proyecto')
+                ->description('Datos generales del Proyecto')
+                ->schema([
+                    TextInput::make('nro')
+                        ->label('Nro. de P.I.')
+                        ->required(),
+                    TextInput::make('duracion')
+                        ->required(),
+                    DatePicker::make('inicio')
+                        ->required(),
+                    DatePicker::make('fin')
+                        ->required(),
+                    TextInput::make('nombre')
+                        ->required()
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    RichEditor::make('resumen')
+                        ->required()
+                        ->maxLength(1000)
+                        ->columnSpanFull(),
+                ])->columns(4),
+                FormSection::make('Información Adicional')
+                ->description('Resolución y Estado del Proyecto')
+                ->schema([
+                    TextInput::make('presupuesto')
+                        ->helperText('Si coloca decimales, que sea con un punto "."')
+                        ->required(),
+                    Toggle::make('estado')
+                        ->label('No Vigente / Vigente')
+                        ->inline(false)
+                        ->required(),
+                    TextInput::make('resolucion')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('disposicion')
+                        ->required()
+                        ->maxLength(255),
+                    FileUpload::make('pdf_resolucion')
+                        ->label('Resolución en .PDF')
+                        ->required()
+                        ->disk('public')
+                        ->directory('resoluciones')
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->maxSize(1024)
+                        ->getUploadedFileNameForStorageUsing(function ($file): string {
+                            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                            $safeName = Str::slug($originalName); // elimina espacios, acentos, etc.
+                            $extension = $file->getClientOriginalExtension();
+                            return $safeName . '-' . Str::random(6) . '.' . $extension;
+                        }),
+                    FileUpload::make('pdf_disposicion')
+                        ->label('Disposición en .PDF')
+                        ->required()
+                        ->disk('public')
+                        ->directory('disposiciones')
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->maxSize(1024)
+                        ->getUploadedFileNameForStorageUsing(function ($file): string {
+                            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                            $safeName = Str::slug($originalName); // elimina espacios, acentos, etc.
+                            $extension = $file->getClientOriginalExtension();
+                            return $safeName . '-' . Str::random(6) . '.' . $extension;
+                        }),
+                    ])->columns(2),
+                FormSection::make('Clasificación')
+                ->description('Datos relevante para el RACT')
+                ->schema([
+                    Select::make('campo_id')
+                        ->relationship('campo', 'nombre')
+                        ->required(),
+                    Select::make('objetivo_id')
+                        ->relationship('objetivo', 'nombre')
+                        ->required()
+                        ->searchable()
+                        ->preload(),
+                        //->multiple(),
+                    Select::make('actividad_id')
+                        ->relationship('actividad', 'nombre')
+                        ->required()
+                ])->columns(3),
             ]);
     }
 

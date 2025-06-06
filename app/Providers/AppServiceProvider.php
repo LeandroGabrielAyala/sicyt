@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Proyecto;
+use App\Observers\ProyectoObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

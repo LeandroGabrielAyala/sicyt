@@ -85,30 +85,33 @@ class ProyectoResource extends Resource
                         ->maxLength(255),
                     FileUpload::make('pdf_resolucion')
                         ->label('Resolución en .PDF')
+                        ->multiple()
                         ->required()
                         ->disk('public')
                         ->directory('resoluciones')
-                        ->acceptedFileTypes(['application/pdf'])
-                        ->maxSize(1024)
+                        ->preserveFilenames()
+                        ->reorderable(),
+                        /*->storeFileNamesIn('pdf_resolucion'),
                         ->getUploadedFileNameForStorageUsing(function ($file): string {
                             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                             $safeName = Str::slug($originalName); // elimina espacios, acentos, etc.
                             $extension = $file->getClientOriginalExtension();
                             return $safeName . '-' . Str::random(6) . '.' . $extension;
-                        }),
+                        }),*/
                     FileUpload::make('pdf_disposicion')
                         ->label('Disposición en .PDF')
                         ->required()
                         ->disk('public')
                         ->directory('disposiciones')
-                        ->acceptedFileTypes(['application/pdf'])
-                        ->maxSize(1024)
+                        ->preserveFilenames()
+                        ->reorderable()
+                        /*->storeFileNamesIn('pdf_resolucion'),
                         ->getUploadedFileNameForStorageUsing(function ($file): string {
                             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                             $safeName = Str::slug($originalName); // elimina espacios, acentos, etc.
                             $extension = $file->getClientOriginalExtension();
                             return $safeName . '-' . Str::random(6) . '.' . $extension;
-                        }),
+                        }),*/
                     ])->columns(2),
                 FormSection::make('Clasificación')
                 ->description('Datos relevante para el RACT')
@@ -119,7 +122,7 @@ class ProyectoResource extends Resource
                     Select::make('objetivo_id')
                         ->relationship('objetivo', 'nombre')
                         ->required()
-                        ->searchable()
+                        //->searchable()
                         ->preload(),
                         //->multiple(),
                     Select::make('actividad_id')
@@ -263,22 +266,55 @@ class ProyectoResource extends Resource
                                             ->color('customgray'),
                                         TextEntry::make('disposicion')->label('Nro. de Disposición')
                                             ->color('customgray'),
-                                        TextEntry::make('pdf_disposicion')
+                                        /*TextEntry::make('pdf_disposicion')
                                             ->label('Descargar la Disposición en .PDF')
                                             ->badge()
                                             ->color(fn (bool $state) => $state ? 'info' : 'info')
                                             ->formatStateUsing(fn ($record) => 'Disposición N° ' . $record->disposicion)
                                             ->url(fn ($record) => Storage::url($record->pdf_disposicion))
-                                            ->openUrlInNewTab(),
+                                            ->openUrlInNewTab(),*/
+                                        TextEntry::make('pdf_disposicion')
+                                            ->label('Disposiciones en PDF')
+                                            ->formatStateUsing(function ($state, $record) {
+                                                // $state es el array de nombres guardados en la BD
+                                                if (empty($state) || !is_array($state)) {
+                                                    return 'Sin archivo';
+                                                }
+
+                                                // Armamos un listado con links a cada archivo
+                                                $links = [];
+                                                foreach ($state as $fileName) {
+                                                    $url = Storage::url('disposiciones/' . $fileName);
+                                                    $links[] = '<a href="' . $url . '" target="_blank" rel="noopener noreferrer">' . $fileName . '</a>';
+                                                }
+
+                                                // Devolvemos los links separados por salto de línea
+                                                return implode('<br>', $links);
+                                            })
+                                            ->html(), // IMPORTANTE: permitimos HTML para los links
                                         TextEntry::make('resolucion')->label('Nro. de Resolución')
                                             ->color('customgray'),
                                         TextEntry::make('pdf_resolucion')
                                             ->label('Descargar la Resolución en .PDF')
-                                            ->badge()
-                                            ->color(fn (bool $state) => $state ? 'info' : 'info')
-                                            ->formatStateUsing(fn ($record) => 'Resolución N° ' . $record->resolucion)
-                                            ->url(fn ($record) => Storage::url($record->pdf_resolucion))
-                                            ->openUrlInNewTab(),
+                                            ->formatStateUsing(function ($state, $record) {
+                                                if (empty($state)) {
+                                                    return 'Sin archivos';
+                                                }
+
+                                                $files = is_array($state) ? $state : json_decode($state, true);
+
+                                                if (!$files || count($files) === 0) {
+                                                    return 'Sin archivos';
+                                                }
+
+                                                $links = collect($files)->map(function ($file, $index) use ($record) {
+                                                    $url = Storage::url($file);
+                                                    return "<a href='{$url}' target='_blank' style='color:#2563eb; text-decoration:underline;'>📎 Disposición N° {$record->resolucion} - Archivo " . ($index + 1) . "</a>";
+                                                })->implode('<br>');
+
+                                                return $links;
+                                            })
+                                            ->html(),
                                     ])->columns(2),
                                 ]),
                             Tab::make('Clasificación')
