@@ -23,7 +23,7 @@ class CampoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Campo de Aplicación';
     protected static ?string $modelLabel = 'Campo de Aplicación';
-    protected static ?string $navigationGroup = 'Configuración';
+    protected static ?string $navigationGroup = 'Configuración RACT';
     protected static ?string $slug = 'campo-de-aplicacion-pi';
     protected static ?int $navigationSort = 1;
 

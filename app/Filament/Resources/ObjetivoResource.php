@@ -23,7 +23,7 @@ class ObjetivoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Objetivos SocioEcon';
     protected static ?string $modelLabel = 'Objetivos Socioeconomicos';
-    protected static ?string $navigationGroup = 'Configuración';
+    protected static ?string $navigationGroup = 'Configuración RACT';
     protected static ?string $slug = 'objetivo-socioeconomico-pi';
     protected static ?int $navigationSort = 2;
 

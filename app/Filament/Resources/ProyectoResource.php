@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Filament\Resources\ProyectoResource\Pages;
+use Filament\Infolists\Components\Entry;
 use App\Filament\Resources\ProyectoResource\RelationManagers;
 use App\Models\Proyecto;
 use Filament\Forms;
@@ -35,12 +36,21 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ProyectoResource extends Resource
 {
     protected static ?string $model = Proyecto::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-folder';
+
+    protected static ?string $recordTitleAttribute = 'nombre';
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->nombre;
+    }
 
     public static function form(Form $form): Form
     {
@@ -269,75 +279,14 @@ class ProyectoResource extends Resource
                                             ->color('customgray'),
                                         TextEntry::make('disposicion')->label('Nro. de Disposición')
                                             ->color('customgray'),
-                                        /*TextEntry::make('pdf_disposicion')
-                                            ->label('Descargar la Disposición en .PDF')
-                                            ->badge()
-                                            ->color(fn (bool $state) => $state ? 'info' : 'info')
-                                            ->formatStateUsing(fn ($record) => 'Disposición N° ' . $record->disposicion)
-                                            ->url(fn ($record) => Storage::url($record->pdf_disposicion))
-                                            ->openUrlInNewTab(),*/
-                                        TextEntry::make('pdf_disposicion')
-                                            ->label('Disposiciones en PDF')
-                                            ->formatStateUsing(function ($state) {
-                                                if (empty($state)) {
-                                                    return 'Sin archivo';
-                                                }
-
-                                                // Si ya es array, no intentes decodificar
-                                                if (is_array($state)) {
-                                                    $files = $state;
-                                                } else {
-                                                    try {
-                                                        $files = json_decode($state, true);
-                                                        if (!is_array($files)) {
-                                                            return 'Error al decodificar JSON';
-                                                        }
-                                                    } catch (\Throwable $e) {
-                                                        return 'Error al decodificar JSON';
-                                                    }
-                                                }
-
-                                                $links = array_map(function ($file) {
-                                                    $url = Storage::url($file);
-                                                    $name = basename($file);
-                                                    return "<a href='{$url}' target='_blank' class='underline text-primary-600'>{$name}</a>";
-                                                }, $files);
-
-                                                return implode('<br>', $links);
-                                            })
-                                            ->html(),
                                         TextEntry::make('resolucion')->label('Nro. de Resolución')
                                             ->color('customgray'),
-                                        TextEntry::make('pdf_resolucion')
+                                        Entry::make('pdf_disposicion')
                                             ->label('Disposiciones en PDF')
-                                            ->formatStateUsing(function ($state) {
-                                                if (empty($state)) {
-                                                    return 'Sin archivo';
-                                                }
-
-                                                // Si ya es array, no intentes decodificar
-                                                if (is_array($state)) {
-                                                    $files = $state;
-                                                } else {
-                                                    try {
-                                                        $files = json_decode($state, true);
-                                                        if (!is_array($files)) {
-                                                            return 'Error al decodificar JSON';
-                                                        }
-                                                    } catch (\Throwable $e) {
-                                                        return 'Error al decodificar JSON';
-                                                    }
-                                                }
-
-                                                $links = array_map(function ($file) {
-                                                    $url = Storage::url($file);
-                                                    $name = basename($file);
-                                                    return "<a href='{$url}' target='_blank' class='underline text-primary-600'>{$name}</a>";
-                                                }, $files);
-
-                                                return implode('<br>', $links);
-                                            })
-                                            ->html(),
+                                            ->view('filament.infolists.custom-file-entry-dispo'),
+                                        Entry::make('pdf_resolucion')
+                                            ->label('Resoluciones en PDF')
+                                            ->view('filament.infolists.custom-file-entry-reso'),
                                     ])->columns(2),
                                 ]),
                             Tab::make('Clasificación')

@@ -23,7 +23,7 @@ class ActividadResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Tipo De Actividad';
     protected static ?string $modelLabel = 'Tipo de Actividad';
-    protected static ?string $navigationGroup = 'Configuración';
+    protected static ?string $navigationGroup = 'Configuración RACT';
     protected static ?string $slug = 'tipo-de-actividad-pi';
     protected static ?int $navigationSort = 3;
 

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\CampoResource\RelationManagers;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Entry;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Forms\Components\Section as FormSection;
 use Filament\Infolists\Components\Section as InfoSection;
@@ -140,22 +141,14 @@ class ProyectoRelationManager extends RelationManager
                                             ->color('customgray'),
                                         TextEntry::make('disposicion')->label('Nro. de Disposición')
                                             ->color('customgray'),
-                                        TextEntry::make('pdf_disposicion')
-                                            ->label('Descargar la Disposición en .PDF')
-                                            ->badge()
-                                            ->color(fn (bool $state) => $state ? 'info' : 'info')
-                                            ->formatStateUsing(fn ($record) => 'Disposición N° ' . $record->disposicion)
-                                            ->url(fn ($record) => Storage::url($record->pdf_disposicion))
-                                            ->openUrlInNewTab(),
                                         TextEntry::make('resolucion')->label('Nro. de Resolución')
                                             ->color('customgray'),
-                                        TextEntry::make('pdf_resolucion')
-                                            ->label('Descargar la Resolución en .PDF')
-                                            ->badge()
-                                            ->color(fn (bool $state) => $state ? 'info' : 'info')
-                                            ->formatStateUsing(fn ($record) => 'Resolución N° ' . $record->resolucion)
-                                            ->url(fn ($record) => Storage::url($record->pdf_resolucion))
-                                            ->openUrlInNewTab(),
+                                        Entry::make('pdf_disposicion')
+                                            ->label('Disposiciones en PDF')
+                                            ->view('filament.infolists.custom-file-entry-dispo'),
+                                        Entry::make('pdf_resolucion')
+                                            ->label('Resoluciones en PDF')
+                                            ->view('filament.infolists.custom-file-entry-reso'),
                                     ])->columns(2),
                                 ]),
                             Tab::make('Clasificación')
