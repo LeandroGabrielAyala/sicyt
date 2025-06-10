@@ -44,12 +44,46 @@ class ProyectoResource extends Resource
     protected static ?string $model = Proyecto::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-folder';
-
+    protected static ?string $navigationLabel = 'Lista de Proyectos';
+    protected static ?string $navigationGroup = 'Proyectos';
+    protected static ?string $modelLabel = 'Lista de Proyectos';
+    protected static ?string $slug = 'proyectos-de-investigacion';
+    protected static ?int $navigationSort = 3;
+    
     protected static ?string $recordTitleAttribute = 'nombre';
 
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->nombre;
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['nro', 'nombre', 'actividad.nombre'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Tipo de Actividad' => $record->actividad->nombre,
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['actividad']);
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary';
+
+        //return static::getModel()::count() > 5 ? 'primary' : 'warning';
     }
 
     public static function form(Form $form): Form

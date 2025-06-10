@@ -37,6 +37,13 @@ class AdminPanelProvider extends PanelProvider
                 'customgray' => Color::CustomGray,
             ])
             ->font('Montserrat')
+            ->navigationGroups([
+                'Proyectos',
+                'Becas',
+                'Reintegros',
+                'Compras',
+                'Configuración RACT'
+            ])
             ->brandLogo(asset('images/logo-sicyt.png'))
             ->favicon(asset('images/logo-sicyt.png'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
