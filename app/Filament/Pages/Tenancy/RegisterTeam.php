@@ -18,14 +18,17 @@ class RegisterTeam extends RegisterTenant
     {
         return $form
             ->schema([
-                TextInput::make('nombre'),
-                TextInput::make('slug'),
+                TextInput::make('nombre')->required(),
+                TextInput::make('slug')->required(),
             ]);
     }
 
     protected function handleRegistration(array $data): Team
     {
-        $team = Team::create($data);
+        $team = Team::create([
+            'nombre' => $data['nombre'],
+            'slug' => $data['slug'],
+        ]);
 
         $team->members()->attach(auth()->user());
 

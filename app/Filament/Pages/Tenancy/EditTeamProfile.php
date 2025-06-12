@@ -21,4 +21,10 @@ class EditTeamProfile extends EditTenantProfile
                 TextInput::make('slug'),
             ]);
     }
+
+    public static function canView($tenant = null): bool
+    {
+        // Lógica personalizada...
+        return true;
+    }
 }

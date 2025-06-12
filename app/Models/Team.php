@@ -22,4 +22,19 @@ class Team extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function getNameAttribute(): string
+    {
+        return $this->nombre;
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->nombre ?? 'Sin nombre';
+    }
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return $this->where('slug', $value)->firstOrFail();
+    }
 }
