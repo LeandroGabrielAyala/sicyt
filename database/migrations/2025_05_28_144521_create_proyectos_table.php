@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('nro');
             $table->string('nombre');
             $table->string('resumen');
+            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
             $table->foreignId('campo_id')->constrained()->cascadeOnDelete();
             $table->foreignId('objetivo_id')->constrained()->cascadeOnDelete();
             $table->foreignId('actividad_id')->constrained()->cascadeOnDelete();

@@ -338,7 +338,6 @@ class ProyectoResource extends Resource
                                 ])
                         ])
                 ]),
-                    /*Tables\Actions\ViewAction::make(),*/
                 Tables\Actions\EditAction::make()->label('Editar')
             ])
             ->bulkActions([

@@ -11,16 +11,16 @@ class CreateProyecto extends CreateRecord
 {
     protected static string $resource = ProyectoResource::class;
 
-    protected function getCreatedNotificationTitle(): ?string
-    {
-        return 'Proyecto Creado';
-    }
-
     protected function getCreatedNotification(): ?Notification
     {
         return Notification::make()
-                    ->success()
-                    ->title('Proyecto Creado')
-                    ->body('¡El Proyecto fue creado Exitosamente!');
+            ->success()
+            ->title('Proyecto Creado')
+            ->body('¡El proyecto fue creado exitosamente!');
     }
+
+    /*protected function getCreatedNotificationTitle(): ?string
+    {
+        return 'Proyecto Creado';
+    }*/
 }
