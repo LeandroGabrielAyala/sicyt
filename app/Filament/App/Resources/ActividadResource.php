@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\ActividadResource\Pages;
-use App\Filament\Resources\ActividadResource\RelationManagers;
-use App\Filament\Resources\ActividadResource\RelationManagers\ProyectoRelationManager;
+use App\Filament\App\Resources\ActividadResource\Pages;
+use App\Filament\App\Resources\ActividadResource\RelationManagers;
 use App\Models\Actividad;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -57,7 +56,7 @@ class ActividadResource extends Resource
                 //
             ])
             ->actions([
-               // Tables\Actions\ViewAction::make(),
+                // Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -70,7 +69,7 @@ class ActividadResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ProyectoRelationManager::class
+            //
         ];
     }
 

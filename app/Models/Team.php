@@ -18,6 +18,11 @@ class Team extends Model
         return $this->hasMany(Proyecto::class);
     }
 
+    public function actividads(): HasMany
+    {
+        return $this->hasMany(Proyecto::class);
+    }
+
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class);

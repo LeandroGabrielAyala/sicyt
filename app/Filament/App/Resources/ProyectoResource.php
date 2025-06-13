@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use App\Filament\Resources\ProyectoResource\Pages;
+use App\Filament\App\Resources\ProyectoResource\Pages;
+use App\Filament\App\Resources\ProyectoResource\RelationManagers;
+use App\Models\Proyecto;
+use Filament\Facades\Filament;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Section as InfoSection;
 use Filament\Infolists\Components\Tabs;
@@ -12,8 +14,6 @@ use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\IconEntry;
-use App\Filament\Resources\ProyectoResource\RelationManagers;
-use App\Models\Proyecto;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
@@ -31,60 +31,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\Indicator;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Htmlable;
 
 class ProyectoResource extends Resource
 {
     protected static ?string $model = Proyecto::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
-    protected static ?string $navigationLabel = 'Lista de Proyectos';
-    protected static ?string $navigationGroup = 'Proyectos';
-    protected static ?string $modelLabel = 'Lista de Proyectos';
-    protected static ?string $slug = 'proyectos-de-investigacion';
-    protected static ?int $navigationSort = 3;
-    
-    protected static ?string $recordTitleAttribute = 'nombre';
-
-    public static function getGlobalSearchResultTitle(Model $record): string
-    {
-        return $record->nombre;
-    }
-
-    public static function getGloballySearchableAttributes(): array
-    {
-        return ['nro', 'nombre', 'actividad.nombre'];
-    }
-
-    public static function getGlobalSearchResultDetails(Model $record): array
-    {
-        return [
-            'Tipo de Actividad' => $record->actividad->nombre,
-        ];
-    }
-
-    public static function getGlobalSearchEloquentQuery(): Builder
-    {
-        return parent::getGlobalSearchEloquentQuery()->with(['actividad']);
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
-
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return 'primary';
-
-        //return static::getModel()::count() > 5 ? 'primary' : 'warning';
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -173,7 +125,10 @@ class ProyectoResource extends Resource
                         ->preload(),
                         //->multiple(),
                     Select::make('actividad_id')
-                        ->relationship('actividad', 'nombre')
+                        ->relationship(
+                            name: 'actividad', 
+                            titleAttribute: 'nombre',
+                            modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()))
                         ->required()
                 ])->columns(3),
             ]);
@@ -236,31 +191,8 @@ class ProyectoResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('campo_id')
-                    ->label('Campo de Aplicación')
-                    ->relationship('campo', 'nombre'),
-                SelectFilter::make('objetivo_id')
-                    ->label('Objetivo Socioeconomico')
-                    ->relationship('objetivo', 'nombre'),
-                SelectFilter::make('actividad_id')
-                    ->label('Tipo de Actividad')
-                    ->relationship('actividad', 'nombre'),
-                Filter::make('rango_completo')
-                    ->label('Rango completo del proyecto')
-                    ->form([
-                        DatePicker::make('desde')->label('Desde'),
-                        DatePicker::make('hasta')->label('Hasta'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['desde'] && $data['hasta'],
-                                fn (Builder $query): Builder => $query
-                                    ->where('inicio', '>=', $data['desde'])
-                                    ->where('fin', '<=', $data['hasta']),
-                            );
-                    }),
-                ]) /*, layout: FiltersLayout::AboveContent)->filtersFormColumns(2)*/
+                //
+            ])
             ->actions([
                 ViewAction::make()->label('Ver')
                     //->modalHeading('Detalles del Proyecto')
@@ -359,7 +291,7 @@ class ProyectoResource extends Resource
         return [
             'index' => Pages\ListProyectos::route('/'),
             'create' => Pages\CreateProyecto::route('/create'),
-            /*'view' => Pages\ViewProyecto::route('/{record}'),*/
+            'view' => Pages\ViewProyecto::route('/{record}'),
             'edit' => Pages\EditProyecto::route('/{record}/edit'),
         ];
     }

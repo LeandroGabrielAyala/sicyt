@@ -2,13 +2,14 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Tenancy\EditTeamProfile;
-use App\Filament\Pages\Tenancy\RegisterTeam;
+use App\Filament\App\Pages\Tenancy\EditTeamProfile;
+use App\Filament\App\Pages\Tenancy\RegisterTeam;
 use App\Models\Team;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -21,13 +22,22 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class AdminPanelProvider extends PanelProvider
+class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('admin')
-            ->path('admin')
+            ->default()
+            ->id('app')
+            ->path('app')
+            ->login()
+            ->registration()
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Admin')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->url('/admin')
+            ])
             ->colors([
                 'primary' => Color::Indigo,
                 'success' => Color::Emerald,
@@ -38,21 +48,14 @@ class AdminPanelProvider extends PanelProvider
                 'customgray' => Color::CustomGray,
             ])
             ->font('Montserrat')
-            ->navigationGroups([
-                'Proyectos',
-                'Becas',
-                'Reintegros',
-                'Compras',
-                'Configuración RACT'
-            ])
             ->brandLogo(asset('images/logo-sicyt.png'))
             ->favicon(asset('images/logo-sicyt.png'))
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
+            ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -67,6 +70,12 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ]);
+            ])
+            ->authMiddleware([
+                Authenticate::class,
+            ])
+            ->tenant(Team::class, ownershipRelationship: 'team', slugAttribute: 'slug')
+            ->tenantRegistration(RegisterTeam::class)
+            ->tenantProfile(EditTeamProfile::class);
     }
 }
