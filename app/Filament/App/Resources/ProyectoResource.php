@@ -60,7 +60,7 @@ class ProyectoResource extends Resource
                         ->columnSpanFull(),
                     RichEditor::make('resumen')
                         ->required()
-                        ->maxLength(1000)
+                        ->maxLength(4000)
                         ->columnSpanFull(),
                 ])->columns(4),
                 FormSection::make('Información Adicional')
@@ -125,10 +125,8 @@ class ProyectoResource extends Resource
                         ->preload(),
                         //->multiple(),
                     Select::make('actividad_id')
-                        ->relationship(
-                            name: 'actividad', 
-                            titleAttribute: 'nombre',
-                            modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()))
+                        ->relationship('actividad', 'nombre')
+                            // modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()))
                         ->required()
                 ])->columns(3),
             ]);
@@ -291,7 +289,7 @@ class ProyectoResource extends Resource
         return [
             'index' => Pages\ListProyectos::route('/'),
             'create' => Pages\CreateProyecto::route('/create'),
-            'view' => Pages\ViewProyecto::route('/{record}'),
+            // 'view' => Pages\ViewProyecto::route('/{record}'),
             'edit' => Pages\EditProyecto::route('/{record}/edit'),
         ];
     }

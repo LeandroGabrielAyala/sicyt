@@ -108,7 +108,7 @@ class ProyectoResource extends Resource
                         ->columnSpanFull(),
                     RichEditor::make('resumen')
                         ->required()
-                        ->maxLength(1000)
+                        ->maxLength(4000)
                         ->columnSpanFull(),
                 ])->columns(4),
                 FormSection::make('Información Adicional')
