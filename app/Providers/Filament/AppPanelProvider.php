@@ -32,11 +32,13 @@ class AppPanelProvider extends PanelProvider
             ->path('app')
             ->login()
             ->registration()
+            ->profile()
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Admin')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url('/admin')
+                    ->visible(fn ():bool => auth()->user()->is_admin)
             ])
             ->colors([
                 'primary' => Color::Indigo,
@@ -73,9 +75,6 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->tenant(Team::class, ownershipRelationship: 'team', slugAttribute: 'slug')
-            ->tenantRegistration(RegisterTeam::class)
-            ->tenantProfile(EditTeamProfile::class);
+            ]);
     }
 }

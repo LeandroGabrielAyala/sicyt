@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Proyecto extends Model
 {
-    protected $fillable = ['nro', 'nombre', 'resumen', 'duracion', 'inicio', 'fin', 'disposicion', 'resolucion', 'pdf_resolucion', 'pdf_disposicion', 'presupuesto', 'estado', 'campo_id', 'objetivo_id', 'actividad_id'];
+
+    protected $fillable = ['nro', 'nombre', 'resumen', 'duracion', 'inicio', 'fin', 'disposicion', 'resolucion', 'pdf_resolucion', 'pdf_disposicion', 'presupuesto', 'estado', 'team_id', 'campo_id', 'objetivo_id', 'actividad_id'];
 
     protected $casts = [
         'pdf_disposicion' => 'array',
