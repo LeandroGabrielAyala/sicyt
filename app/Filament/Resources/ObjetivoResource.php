@@ -25,7 +25,7 @@ class ObjetivoResource extends Resource
     protected static ?string $modelLabel = 'Objetivos Socioeconomicos';
     protected static ?string $navigationGroup = 'Configuración RACT';
     protected static ?string $slug = 'objetivo-socioeconomico-pi';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

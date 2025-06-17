@@ -48,10 +48,7 @@ class AdminPanelProvider extends PanelProvider
             ->font('Montserrat')
             ->navigationGroups([
                 'Proyectos',
-                'Becas',
-                'Reintegros',
-                'Compras',
-                'Configuración RACT'
+                'Configuración Proyectos',
             ])
             ->brandLogo(asset('images/logo-sicyt.png'))
             ->favicon(asset('images/logo-sicyt.png'))

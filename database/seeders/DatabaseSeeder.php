@@ -17,6 +17,12 @@ class DatabaseSeeder extends Seeder
             ActividadSeeder::class,
             CampoSeeder::class,
             ObjetivoSeeder::class,
+            CargoSeeder::class,
+            DisciplinaSeeder::class,
+            FuncionSeeder::class,
+            IncentivoSeeder::class,
+            InternaSeeder::class,
+            NivelAcaSeeder::class,
         ]);
     }
 }

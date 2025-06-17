@@ -25,7 +25,7 @@ class CampoResource extends Resource
     protected static ?string $modelLabel = 'Campo de Aplicación';
     protected static ?string $navigationGroup = 'Configuración RACT';
     protected static ?string $slug = 'campo-de-aplicacion-pi';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

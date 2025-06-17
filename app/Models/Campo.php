@@ -15,6 +15,11 @@ class Campo extends Model
         return $this->hasMany(Proyecto::class);
     }
 
+    public function disciplina(): HasMany
+    {
+        return $this->hasMany(Disciplina::class);
+    }
+
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);

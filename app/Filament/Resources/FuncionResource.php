@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ActividadResource\Pages;
-use App\Filament\Resources\ActividadResource\RelationManagers;
-use App\Filament\Resources\ActividadResource\RelationManagers\ProyectoRelationManager;
-use App\Models\Actividad;
+use App\Filament\Resources\FuncionResource\Pages;
+use App\Filament\Resources\FuncionResource\RelationManagers;
+use App\Models\Funcion;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
@@ -16,16 +15,16 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ActividadResource extends Resource
+class FuncionResource extends Resource
 {
-    protected static ?string $model = Actividad::class;
+    protected static ?string $model = Funcion::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
-    protected static ?string $navigationLabel = 'Tipo De Actividad';
-    protected static ?string $modelLabel = 'Tipo de Actividad';
-    protected static ?string $navigationGroup = 'Configuración RACT';
-    protected static ?string $slug = 'tipo-de-actividad-pi';
-    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationLabel = 'Función en PI';
+    protected static ?string $modelLabel = 'Función en PI';
+    protected static ?string $navigationGroup = 'Configuración Proyecto';
+    protected static ?string $slug = 'funcion-pi';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -57,7 +56,6 @@ class ActividadResource extends Resource
                 //
             ])
             ->actions([
-               // Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -70,17 +68,16 @@ class ActividadResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ProyectoRelationManager::class
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActividads::route('/'),
-            'create' => Pages\CreateActividad::route('/create'),
-            'view' => Pages\ViewActividad::route('/{record}'),
-            'edit' => Pages\EditActividad::route('/{record}/edit'),
+            'index' => Pages\ListFuncions::route('/'),
+            'create' => Pages\CreateFuncion::route('/create'),
+            'edit' => Pages\EditFuncion::route('/{record}/edit'),
         ];
     }
 }

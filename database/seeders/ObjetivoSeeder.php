@@ -14,15 +14,45 @@ class ObjetivoSeeder extends Seeder
     public function run(): void
     {
         Objetivo::create([
-            'nombre' => 'Objetivos 1'
-        ]);
-
+            'nombre' => 'Exploración y explotación de la tierra'
+        ]);	
         Objetivo::create([
-            'nombre' => 'Objetivos 2'
-        ]);
-
+            'nombre' => 'Medio ambiente'
+        ]);	
         Objetivo::create([
-            'nombre' => 'Objetivos 3'
+            'nombre' => 'Exploración y explotación del espacio'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Transporte, telecomunicación y otras infraestructuras'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Energía'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Producción y tecnología industrial'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Salud'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Agricultura'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Educación'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Cultura, recreación, religión y medios de comunicación'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Estructura, procesos y sistemas políticos y sociales'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Producción general de conocimiento'
+        ]);	
+        Objetivo::create([
+            'nombre' => 'Defensa'
         ]);
     }
 }
+
+

@@ -17,6 +17,7 @@ use App\Models\Proyecto;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -24,7 +25,6 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section as FormSection;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -44,11 +44,11 @@ class ProyectoResource extends Resource
     protected static ?string $model = Proyecto::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-folder';
-    protected static ?string $navigationLabel = 'Lista de Proyectos';
+    protected static ?string $navigationLabel = 'Proyectos';
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $modelLabel = 'Lista de Proyectos';
     protected static ?string $slug = 'proyectos-de-investigacion';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
     
     protected static ?string $recordTitleAttribute = 'nombre';
 
@@ -136,13 +136,6 @@ class ProyectoResource extends Resource
                         ->preserveFilenames()
                         ->reorderable()
                         ->openable(),
-                        /*->storeFileNamesIn('pdf_resolucion'),
-                        ->getUploadedFileNameForStorageUsing(function ($file): string {
-                            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                            $safeName = Str::slug($originalName); // elimina espacios, acentos, etc.
-                            $extension = $file->getClientOriginalExtension();
-                            return $safeName . '-' . Str::random(6) . '.' . $extension;
-                        }),*/
                     FileUpload::make('pdf_disposicion')
                         ->label('Disposición en .PDF')
                         ->multiple()
@@ -152,13 +145,6 @@ class ProyectoResource extends Resource
                         ->preserveFilenames()
                         ->reorderable()
                         ->openable()
-                        /*->storeFileNamesIn('pdf_resolucion'),
-                        ->getUploadedFileNameForStorageUsing(function ($file): string {
-                            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                            $safeName = Str::slug($originalName); // elimina espacios, acentos, etc.
-                            $extension = $file->getClientOriginalExtension();
-                            return $safeName . '-' . Str::random(6) . '.' . $extension;
-                        }),*/
                     ])->columns(2),
                 FormSection::make('Clasificación')
                 ->description('Datos relevante para el RACT')
@@ -212,7 +198,7 @@ class ProyectoResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('pdf_resolucion')
+                /*TextColumn::make('pdf_resolucion')
                     ->label('Descargar .PDF')
                     ->searchable()
                     ->badge()
@@ -220,7 +206,7 @@ class ProyectoResource extends Resource
                     ->formatStateUsing(fn ($record) => 'Descargar ' . $record->resolucion)
                     ->url(fn ($record) => Storage::url($record->pdf_resolucion))
                     ->openUrlInNewTab()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true),*/
                 TextColumn::make('presupuesto')
                     ->label('Presupuesto')
                     ->formatStateUsing(fn ($state) => '$' . number_format($state, 2, ',', '.'))

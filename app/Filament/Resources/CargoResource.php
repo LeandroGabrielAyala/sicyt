@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ActividadResource\Pages;
-use App\Filament\Resources\ActividadResource\RelationManagers;
-use App\Filament\Resources\ActividadResource\RelationManagers\ProyectoRelationManager;
-use App\Models\Actividad;
+use App\Filament\Resources\CargoResource\Pages;
+use App\Filament\Resources\CargoResource\RelationManagers;
+use App\Models\Cargo;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
@@ -16,16 +15,16 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ActividadResource extends Resource
+class CargoResource extends Resource
 {
-    protected static ?string $model = Actividad::class;
+    protected static ?string $model = Cargo::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
-    protected static ?string $navigationLabel = 'Tipo De Actividad';
-    protected static ?string $modelLabel = 'Tipo de Actividad';
-    protected static ?string $navigationGroup = 'Configuración RACT';
-    protected static ?string $slug = 'tipo-de-actividad-pi';
-    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationLabel = 'Cargo Docente';
+    protected static ?string $modelLabel = 'Cargo Docente';
+    protected static ?string $navigationGroup = 'Configuración Proyecto';
+    protected static ?string $slug = 'cargo-docente-pi';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -57,7 +56,6 @@ class ActividadResource extends Resource
                 //
             ])
             ->actions([
-               // Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -70,17 +68,16 @@ class ActividadResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ProyectoRelationManager::class
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActividads::route('/'),
-            'create' => Pages\CreateActividad::route('/create'),
-            'view' => Pages\ViewActividad::route('/{record}'),
-            'edit' => Pages\EditActividad::route('/{record}/edit'),
+            'index' => Pages\ListCargos::route('/'),
+            'create' => Pages\CreateCargo::route('/create'),
+            'edit' => Pages\EditCargo::route('/{record}/edit'),
         ];
     }
 }

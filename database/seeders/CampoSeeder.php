@@ -14,15 +14,26 @@ class CampoSeeder extends Seeder
     public function run(): void
     {
         Campo::create([
-            'nombre' => 'Campo Socio 1'
+            'nombre' => 'Ciencias exactas y naturales'
         ]);
 
         Campo::create([
-            'nombre' => 'Campo Socio 2'
+            'nombre' => 'Ingeniería y tecnología'
         ]);
 
         Campo::create([
-            'nombre' => 'Campo Socio 3'
+            'nombre' => 'Ciencias médicas'
+        ]);
+        Campo::create([
+            'nombre' => 'Ciencias agrícolas y veterinarias'
+        ]);
+
+        Campo::create([
+            'nombre' => 'Ciencias sociales'
+        ]);
+
+        Campo::create([
+            'nombre' => 'Humanidades y artes'
         ]);
     }
 }

@@ -17,6 +17,11 @@ class Proyecto extends Model
         'pdf_resolucion' => 'array',
     ];
 
+    public function investigador(): BelongsTo
+    {
+        return $this->belongsTo(Investigador::class);
+    }
+
     public function campo(): BelongsTo
     {
         return $this->belongsTo(Campo::class);

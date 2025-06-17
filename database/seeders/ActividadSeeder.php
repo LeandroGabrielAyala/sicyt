@@ -14,11 +14,11 @@ class ActividadSeeder extends Seeder
     public function run(): void
     {
         Actividad::create([
-            'nombre' => 'Investigacion Basica'
+            'nombre' => 'Investigación Básica'
         ]);
 
         Actividad::create([
-            'nombre' => 'Investigacion Aplicada'
+            'nombre' => 'Investigación Aplicada'
         ]);
 
         Actividad::create([
