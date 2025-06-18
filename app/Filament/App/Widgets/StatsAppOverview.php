@@ -4,7 +4,6 @@ namespace App\Filament\App\Widgets;
 
 use App\Models\Actividad;
 use App\Models\Proyecto;
-use App\Models\Team;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;

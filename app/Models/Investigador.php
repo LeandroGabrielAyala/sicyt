@@ -5,11 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Investigador extends Model
 {
 
-    protected $fillable = ['nombre', 'apellido', 'dni', 'cuil', 'fecha_nac', 'domicilio', 'provincia', 'email', 'telefono', 'proyecto_id', 'inicio', 'fin', 'estado', 'disposicion', 'resolucion', 'pdf_disposicion', 'pdf_resolucion', 'funcion_id', 'nivel_academico_id', 'disciplina_id', 'campo_id', 'objetivo_id', 'titulo', 'titulo_posgrado', 'cargo_id', 'categoria_interna_id', 'incentivo_id'];
+    protected $fillable = ['nombre', 'apellido', 'dni', 'cuil', 'fecha_nac', 'domicilio', 'provincia', 'email', 'telefono', 'proyecto_id', 'disposicion', 'resolucion', 'pdf_disposicion', 'pdf_resolucion', 'funcion_id', 'nivel_academico_id', 'disciplina_id', 'campo_id', 'objetivo_id', 'titulo', 'titulo_posgrado', 'cargo_id', 'categoria_interna_id', 'incentivo_id'];
 
     protected $casts = [
         'pdf_disposicion' => 'array',
@@ -62,8 +63,8 @@ class Investigador extends Model
         return $this->belongsTo(NivelAcademico::class);
     }
 
-    public function proyecto(): BelongsTo
+    public function proyectos(): BelongsToMany
     {
-        return $this->belongsTo(Proyecto::class);
+        return $this->belongsToMany(Proyecto::class);
     }
 }

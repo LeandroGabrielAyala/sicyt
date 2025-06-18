@@ -22,10 +22,6 @@ return new class extends Migration
             $table->string('provincia');
             $table->string('email')->unique();
             $table->string('telefono', 20)->unique();
-            $table->foreignId('proyecto_id')->constrained()->cascadeOnDelete();
-            $table->date('inicio');
-            $table->date('fin');
-            $table->boolean('estado');
             $table->string('disposicion');
             $table->string('resolucion');
             $table->json('pdf_disposicion')->nullable();

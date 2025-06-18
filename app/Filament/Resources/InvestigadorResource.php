@@ -25,6 +25,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -42,6 +43,18 @@ class InvestigadorResource extends Resource
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $slug = 'investigadores-pi';
     protected static ?int $navigationSort = 2;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary';
+
+        //return static::getModel()::count() > 5 ? 'primary' : 'warning';
+    }
 
     public static function form(Form $form): Form
     {
@@ -85,20 +98,12 @@ class InvestigadorResource extends Resource
                 FormSection::make('Proyecto de Investigación')
                 ->description('Datos del proyecto donde se inserta.')
                 ->schema([
-                    Select::make('proyecto_id')
-                        ->label('Proyecto de Investigación')
-                        ->relationship('proyecto', 'nro')
-                        ->required(),
-                    Toggle::make('estado')
-                        ->label('No Activo / Activo')
-                        ->inline(false)
-                        ->required(),
-                    DatePicker::make('inicio')
-                        ->label('Inicio de actividad')
-                        ->required(),
-                    DatePicker::make('fin')
-                        ->label('Fin de actividad')
-                        ->required(),
+                    Select::make('proyectos')
+                        ->label('Proyectos de Investigación')
+                        ->multiple()
+                        ->relationship('proyectos', 'nro')
+                        ->required()
+                        ->preload(),
                     TextInput::make('disposicion')
                         ->label('Disposición')
                         ->required()
@@ -190,36 +195,16 @@ class InvestigadorResource extends Resource
                     ->label('Nombre'),
                 TextColumn::make('apellido')
                     ->label('Apellido'),
-                TextColumn::make('proyecto.nro')
-                    ->label('Nro. PI'),
-                IconColumn::make('estado')
-                    ->label('Estado')
-                    ->boolean(),
-                TextColumn::make('inicio')
-                    ->date()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('fin')
-                    ->date()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('dni')
+                    ->label('DNI'),
+                TextColumn::make('email')
+                    ->label('Email'),
+                TextColumn::make('telefono')
+                    ->label('Teléfono'),
                 TextColumn::make('disposicion')
                     ->label('Disposición')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('resolucion')
-                    ->label('Resolución')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                /*TextColumn::make('pdf_resolucion')
-                    ->label('Descargar .PDF')
-                    ->searchable()
-                    ->badge()
-                    ->color(fn (bool $state) => $state ? 'primary' : 'primary')
-                    ->formatStateUsing(fn ($record) => 'Descargar ' . $record->resolucion)
-                    ->url(fn ($record) => Storage::url($record->pdf_resolucion))
-                    ->openUrlInNewTab()
-                    ->toggleable(isToggledHiddenByDefault: true),*/
             ])
             ->filters([
                 //
@@ -244,14 +229,11 @@ class InvestigadorResource extends Resource
                                         TextEntry::make('apellido')
                                             ->label('Apellido(s)')
                                             ->color('customgray'),
-                                        TextEntry::make('proyecto.nro')
-                                            ->label('Proyecto de Investigación')
-                                            ->color('customgray'),
-                                        TextEntry::make('estado')
-                                            ->label('Estado')
-                                            ->badge()
-                                            ->color(fn (bool $state) => $state ? 'success' : 'danger')
-                                            ->formatStateUsing(fn (bool $state) => $state ? 'Activo' : 'No Activo'),
+                                        // TextEntry::make('estado')
+                                        //     ->label('Estado')
+                                        //     ->badge()
+                                        //     ->color(fn (bool $state) => $state ? 'success' : 'danger')
+                                        //     ->formatStateUsing(fn (bool $state) => $state ? 'Activo' : 'No Activo'),
                                         TextEntry::make('categoriaInterna.categoria')
                                             ->label('Categoría Interna UNCAUS')
                                             ->color('customgray'),
@@ -275,6 +257,21 @@ class InvestigadorResource extends Resource
                                             ->label('Resoluciones en PDF')
                                             ->view('filament.infolists.custom-file-entry-reso-inv'),
                                     ])->columns(2),
+                                ]),
+                            Tab::make('Proyectos asociados')
+                                ->schema([
+                                    RepeatableEntry::make('proyectos')
+                                        ->label('Proyectos')
+                                        ->schema([
+                                            TextEntry::make('nro')->label('N° de Proyecto'),
+                                            TextEntry::make('estado')->label('Estado')->badge()->color(fn (bool $state) => $state ? 'success' : 'danger')->formatStateUsing(fn (bool $state) => $state ? 'Activo' : 'No Activo'),
+                                            TextEntry::make('inicio')->label('Inicio de Actividad'),
+                                            TextEntry::make('fin')->label('Fin de Actividad'),
+                                            TextEntry::make('resolucion')->label('N° de Resolución'),
+                                            TextEntry::make('disposicion')->label('N° de Dispocisión'),
+                                            TextEntry::make('nombre')->label('Denominación')->columnSpanFull(),
+                                            TextEntry::make('resumen')->label('Resumen')->html()->columnSpanFull(),
+                                        ])->columns(2),
                                 ]),
                             Tab::make('Clasificación')
                                 ->schema([

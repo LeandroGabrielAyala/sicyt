@@ -17,11 +17,6 @@ class Proyecto extends Model
         'pdf_resolucion' => 'array',
     ];
 
-    public function investigador(): BelongsTo
-    {
-        return $this->belongsTo(Investigador::class);
-    }
-
     public function campo(): BelongsTo
     {
         return $this->belongsTo(Campo::class);
@@ -37,9 +32,9 @@ class Proyecto extends Model
         return $this->belongsTo(Actividad::class);
     }
 
-    public function team(): BelongsTo
+    public function investigadores(): BelongsToMany
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsToMany(Investigador::class);
     }
 
     protected static function booted()
