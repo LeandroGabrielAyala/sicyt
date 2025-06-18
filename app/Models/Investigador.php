@@ -19,22 +19,6 @@ class Investigador extends Model
         'categoria_interna_id', 'incentivo_id'
     ];
 
-    public function proyectos(): BelongsToMany
-    {
-        return $this->belongsToMany(Proyecto::class)
-            ->using(InvestigadorProyecto::class, 'investigador_proyecto')
-            ->withPivot([
-                'vigente', 'inicio', 'fin', 'funcion_id',
-                'disposicion', 'resolucion', 'pdf_disposicion', 'pdf_resolucion'
-            ])
-            ->withTimestamps();
-    }
-    
-    public function investigadorProyectos(): HasMany
-    {
-        return $this->hasMany(InvestigadorProyecto::class, 'investigador_id');
-    }
-
     // Accessor dinámico para calcular la edad
     public function getEdadAttribute()
     {
@@ -79,5 +63,15 @@ class Investigador extends Model
     public function nivelAcademico(): BelongsTo
     {
         return $this->belongsTo(NivelAcademico::class);
+    }
+
+    public function proyectos(): BelongsToMany
+    {
+        return $this->belongsToMany(Proyecto::class, 'investigador_proyecto')->withTimestamps();
+    }
+
+    public function getNombreCompletoAttribute()
+    {
+        return $this->apellido . ', ' . $this->nombre;
     }
 }

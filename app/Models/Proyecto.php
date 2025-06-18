@@ -23,21 +23,6 @@ class Proyecto extends Model
         'pdf_resolucion' => 'array',
     ];
 
-    public function investigadores(): belongsToMany
-    {
-        return $this->belongsToMany(Investigador::class)
-            ->using(InvestigadorProyecto::class, 'investigador_proyecto')
-            ->withPivot([ 'vigente', 'inicio', 'fin', 'funcion_id', 'disposicion', 'resolucion', 'pdf_disposicion', 'pdf_resolucion'
-            ])
-            ->withTimestamps();
-    }
-
-    
-    public function investigadoresProyectos(): HasMany
-    {
-        return $this->hasMany(InvestigadorProyecto::class, 'proyecto_id');
-    }
-
     public function campo(): BelongsTo
     {
         return $this->belongsTo(Campo::class);
@@ -51,6 +36,11 @@ class Proyecto extends Model
     public function actividad(): BelongsTo
     {
         return $this->belongsTo(Actividad::class);
+    }
+
+    public function investigador(): BelongsToMany
+    {
+        return $this->belongsToMany(Investigador::class, 'investigador_proyecto')->withTimestamps();
     }
 
     protected static function booted()

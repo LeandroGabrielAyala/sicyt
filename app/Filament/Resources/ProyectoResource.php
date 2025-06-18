@@ -13,7 +13,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\IconEntry;
 use App\Filament\Resources\ProyectoResource\RelationManagers;
-use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadoresRelationManager;
 use App\Models\Proyecto;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -40,6 +39,7 @@ use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadoresRelationManager;
 
 class ProyectoResource extends Resource
 {
@@ -378,7 +378,6 @@ class ProyectoResource extends Resource
             InvestigadoresRelationManager::class,
         ];
     }
-
 
     public static function getPages(): array
     {
