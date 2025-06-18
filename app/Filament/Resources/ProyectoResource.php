@@ -13,6 +13,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\IconEntry;
 use App\Filament\Resources\ProyectoResource\RelationManagers;
+use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadoresRelationManager;
 use App\Models\Proyecto;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -30,6 +31,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists\Components\RepeatableEntry;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Enums\FiltersLayout;
@@ -46,7 +48,7 @@ class ProyectoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-folder';
     protected static ?string $navigationLabel = 'Proyectos';
     protected static ?string $navigationGroup = 'Proyectos';
-    protected static ?string $modelLabel = 'Lista de Proyectos';
+    protected static ?string $modelLabel = 'Proyectos';
     protected static ?string $slug = 'proyectos-de-investigacion';
     protected static ?int $navigationSort = 1;
     
@@ -101,7 +103,27 @@ class ProyectoResource extends Resource
                     DatePicker::make('inicio')
                         ->required(),
                     DatePicker::make('fin')
-                        ->required(),
+                    ->required(),
+                    // Select::make('investigadores')
+                    //     ->label('Integrantes')
+                    //     ->multiple()
+                    //     ->columnSpanFull()
+                    //     ->relationship('investigadores', 'apellido') // La columna es irrelevante, se sobreescribe
+                    //     ->preload()
+                    //     ->searchable()
+                    //     ->getOptionLabelFromRecordUsing(fn ($record) => $record->apellido . ', ' . $record->nombre)
+                    //     ->getSearchResultsUsing(function (string $search) {
+                    //         return \App\Models\Investigador::query()
+                    //             ->whereRaw("CONCAT(apellido, ' ', nombre) LIKE ?", ["%{$search}%"])
+                    //             ->limit(50)
+                    //             ->get()
+                    //             ->mapWithKeys(fn ($inv) => [$inv->id => $inv->apellido . ', ' . $inv->nombre]); // 👈 ESTA PARTE CAMBIÓ
+                    //     })
+                    //     ->getOptionLabelsUsing(function ($values) {
+                    //         return \App\Models\Investigador::whereIn('id', $values)
+                    //             ->get()
+                    //             ->mapWithKeys(fn ($inv) => [$inv->id => $inv->apellido . ', ' . $inv->nombre]);
+                    //     }),
                     TextInput::make('nombre')
                         ->required()
                         ->maxLength(255)
@@ -271,6 +293,24 @@ class ProyectoResource extends Resource
                                             ->columnSpanFull()
                                             ->color('customgray')
                                             ->html(),
+                                        RepeatableEntry::make('investigadores')
+                                            ->label('Integrantes')
+                                            ->schema([
+                                                TextEntry::make('apellido')->label('Apellido(s)'),
+                                                TextEntry::make('nombre')->label('Nombre(s)'),
+                                                TextEntry::make('dni')->label('DNI'),
+                                                // TextEntry::make('estado')->label('Estado')->badge()->color(fn (bool $state) => $state ? 'success' : 'danger')->formatStateUsing(fn (bool $state) => $state ? 'Activo' : 'No Activo'),
+                                                // TextEntry::make('inicio')->label('Inicio de Actividad'),
+                                                // TextEntry::make('fin')->label('Fin de Actividad'),
+                                                // TextEntry::make('disposicion')->label('N° de Dispocisión'),
+                                                // TextEntry::make('resolucion')->label('N° de Resolución'),
+                                                // Entry::make('pdf_disposicion')
+                                                // ->label('Disposiciones en PDF')
+                                                // ->view('filament.infolists.custom-file-entry-dispo'),
+                                                // Entry::make('pdf_resolucion')
+                                                // ->label('Resoluciones en PDF')
+                                                // ->view('filament.infolists.custom-file-entry-reso'),
+                                            ])->columns(3),
                                     ]),
                                 InfoSection::make('')
                                     ->description('Duración del Proyecto')
@@ -282,7 +322,6 @@ class ProyectoResource extends Resource
                                         TextEntry::make('fin')->label('Fin de actividad')
                                             ->color('customgray'),
                                     ])->columns(3),
-                                        
                                 ]),
                             Tab::make('Estado')
                                 ->schema([
@@ -336,9 +375,10 @@ class ProyectoResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            InvestigadoresRelationManager::class,
         ];
     }
+
 
     public static function getPages(): array
     {

@@ -2,20 +2,41 @@
 
 namespace App\Models;
 
+use App\Models\InvestigadorProyecto;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Proyecto extends Model
 {
 
-    protected $fillable = ['nro', 'nombre', 'resumen', 'duracion', 'inicio', 'fin', 'disposicion', 'resolucion', 'pdf_resolucion', 'pdf_disposicion', 'presupuesto', 'estado', 'team_id', 'campo_id', 'objetivo_id', 'actividad_id'];
+    protected $fillable = [
+        'nro', 'nombre', 'resumen', 'duracion', 'inicio', 'fin', 'disposicion', 
+        'resolucion', 'pdf_resolucion', 'pdf_disposicion', 'presupuesto', 'estado',
+        'team_id', 'campo_id', 'objetivo_id', 'actividad_id'
+    ];
 
     protected $casts = [
         'pdf_disposicion' => 'array',
         'pdf_resolucion' => 'array',
     ];
+
+    public function investigadores(): belongsToMany
+    {
+        return $this->belongsToMany(Investigador::class)
+            ->using(InvestigadorProyecto::class, 'investigador_proyecto')
+            ->withPivot([ 'vigente', 'inicio', 'fin', 'funcion_id', 'disposicion', 'resolucion', 'pdf_disposicion', 'pdf_resolucion'
+            ])
+            ->withTimestamps();
+    }
+
+    
+    public function investigadoresProyectos(): HasMany
+    {
+        return $this->hasMany(InvestigadorProyecto::class, 'proyecto_id');
+    }
 
     public function campo(): BelongsTo
     {
@@ -30,11 +51,6 @@ class Proyecto extends Model
     public function actividad(): BelongsTo
     {
         return $this->belongsTo(Actividad::class);
-    }
-
-    public function investigadores(): BelongsToMany
-    {
-        return $this->belongsToMany(Investigador::class);
     }
 
     protected static function booted()

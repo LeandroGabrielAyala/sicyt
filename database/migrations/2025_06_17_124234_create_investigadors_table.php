@@ -22,11 +22,6 @@ return new class extends Migration
             $table->string('provincia');
             $table->string('email')->unique();
             $table->string('telefono', 20)->unique();
-            $table->string('disposicion');
-            $table->string('resolucion');
-            $table->json('pdf_disposicion')->nullable();
-            $table->json('pdf_resolucion')->nullable();
-            $table->foreignId('funcion_id')->constrained()->cascadeOnDelete();
             $table->foreignId('nivel_academico_id')->constrained()->cascadeOnDelete();
             $table->foreignId('disciplina_id')->constrained()->cascadeOnDelete();
             $table->foreignId('campo_id')->constrained()->cascadeOnDelete();

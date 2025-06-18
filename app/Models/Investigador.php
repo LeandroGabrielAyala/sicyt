@@ -2,20 +2,38 @@
 
 namespace App\Models;
 
+use App\Models\InvestigadorProyecto;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Investigador extends Model
 {
 
-    protected $fillable = ['nombre', 'apellido', 'dni', 'cuil', 'fecha_nac', 'domicilio', 'provincia', 'email', 'telefono', 'proyecto_id', 'disposicion', 'resolucion', 'pdf_disposicion', 'pdf_resolucion', 'funcion_id', 'nivel_academico_id', 'disciplina_id', 'campo_id', 'objetivo_id', 'titulo', 'titulo_posgrado', 'cargo_id', 'categoria_interna_id', 'incentivo_id'];
-
-    protected $casts = [
-        'pdf_disposicion' => 'array',
-        'pdf_resolucion' => 'array',
+    protected $fillable = [
+        'nombre', 'apellido', 'dni', 'cuil', 'fecha_nac', 'domicilio', 'provincia',
+        'email', 'telefono', 'proyecto_id', 'nivel_academico_id', 'disciplina_id',
+        'campo_id', 'objetivo_id', 'titulo', 'titulo_posgrado', 'cargo_id',
+        'categoria_interna_id', 'incentivo_id'
     ];
+
+    public function proyectos(): BelongsToMany
+    {
+        return $this->belongsToMany(Proyecto::class)
+            ->using(InvestigadorProyecto::class, 'investigador_proyecto')
+            ->withPivot([
+                'vigente', 'inicio', 'fin', 'funcion_id',
+                'disposicion', 'resolucion', 'pdf_disposicion', 'pdf_resolucion'
+            ])
+            ->withTimestamps();
+    }
+    
+    public function investigadorProyectos(): HasMany
+    {
+        return $this->hasMany(InvestigadorProyecto::class, 'investigador_id');
+    }
 
     // Accessor dinámico para calcular la edad
     public function getEdadAttribute()
@@ -61,10 +79,5 @@ class Investigador extends Model
     public function nivelAcademico(): BelongsTo
     {
         return $this->belongsTo(NivelAcademico::class);
-    }
-
-    public function proyectos(): BelongsToMany
-    {
-        return $this->belongsToMany(Proyecto::class);
     }
 }
