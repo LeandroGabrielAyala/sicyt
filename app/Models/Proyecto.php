@@ -17,6 +17,12 @@ class Proyecto extends Model
         'pdf_resolucion' => 'array',
     ];
 
+    public function investigador(): BelongsToMany
+    {
+        return $this->belongsToMany(Investigador::class)->withTimestamps();
+    }
+
+
     public function campo(): BelongsTo
     {
         return $this->belongsTo(Campo::class);
@@ -30,11 +36,6 @@ class Proyecto extends Model
     public function actividad(): BelongsTo
     {
         return $this->belongsTo(Actividad::class);
-    }
-
-    public function investigadores(): BelongsToMany
-    {
-        return $this->belongsToMany(Investigador::class);
     }
 
     protected static function booted()
