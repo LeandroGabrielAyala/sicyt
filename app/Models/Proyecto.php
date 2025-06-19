@@ -19,9 +19,13 @@ class Proyecto extends Model
 
     public function investigador(): BelongsToMany
     {
-        return $this->belongsToMany(Investigador::class)->withTimestamps();
+        return $this->belongsToMany(Investigador::class)
+            ->using(InvestigadorProyecto::class)
+            ->withPivot([
+                'funcion_id', 'inicio', 'fin', 'pdf_disposicion', 'pdf_resolucion', 'vigente',
+            ])
+            ->withTimestamps();
     }
-
 
     public function campo(): BelongsTo
     {

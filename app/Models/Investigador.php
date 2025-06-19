@@ -18,9 +18,19 @@ class Investigador extends Model
         return Carbon::parse($this->fecha_nac)->age;
     }
 
+    public function getNombreCompletoAttribute()
+    {
+        return "{$this->nombre} {$this->apellido}";
+    }
+
     public function proyectos(): BelongsToMany
     {
-        return $this->belongsToMany(Proyecto::class)->withTimestamps();
+        return $this->belongsToMany(Proyecto::class)
+            ->using(InvestigadorProyecto::class)
+            ->withPivot([
+                'funcion_id', 'inicio', 'fin', 'pdf_disposicion', 'pdf_resolucion', 'vigente',
+            ])
+            ->withTimestamps();
     }
 
     public function campo(): BelongsTo
@@ -46,11 +56,6 @@ class Investigador extends Model
     public function disciplina(): BelongsTo
     {
         return $this->belongsTo(Disciplina::class);
-    }
-
-    public function funcion(): BelongsTo
-    {
-        return $this->belongsTo(Funcion::class);
     }
 
     public function incentivo(): BelongsTo

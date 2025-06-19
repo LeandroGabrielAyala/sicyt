@@ -38,6 +38,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadorRelationManager;
+use Livewire\Livewire;
 
 class ProyectoResource extends Resource
 {
@@ -257,6 +258,14 @@ class ProyectoResource extends Resource
                     ->infolist(fn (ViewAction $action): array => [
                         Tabs::make('Tabs')
                         ->tabs([
+                            Tab::make('Investigadores')
+                                ->schema([
+                                    Entry::make('investigadores')
+                                        ->label('Investigadores Asociados')
+                                        ->view('livewire.proyecto-investigadores-list', [
+                                            'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
+                                        ]),
+                                ])->columns(2),
                             Tab::make('Datos Generales')
                                 ->schema([
                                 InfoSection::make('')

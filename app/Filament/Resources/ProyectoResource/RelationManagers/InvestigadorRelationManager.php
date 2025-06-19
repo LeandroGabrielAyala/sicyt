@@ -4,6 +4,10 @@ namespace App\Filament\Resources\ProyectoResource\RelationManagers;
 
 use App\Models\Investigador;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\AttachAction;
@@ -11,6 +15,7 @@ use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 
 class InvestigadorRelationManager extends RelationManager
@@ -23,14 +28,51 @@ class InvestigadorRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('apellido')->label('Apellido'),
-                TextColumn::make('nombre')->label('Nombre'),
-                TextColumn::make('dni')->label('DNI'),
-                TextColumn::make('email')->label('Email'),
+                TextColumn::make('nombre'),
+                TextColumn::make('apellido'),
+                TextColumn::make('pivot.funcion.nombre')->label('Función'),
+                TextColumn::make('pivot.inicio')->date()->label('Inicio'),
+                TextColumn::make('pivot.fin')->date()->label('Fin'),
+                IconColumn::make('pivot.vigente')->label('Vigente')->boolean(),
             ])
             ->headerActions([
-                AttachAction::make()->label('Asociar'), // permite asociar investigadores existentes
+                AttachAction::make()->label('Asociar')
+                    ->form([
+                        Select::make('recordId')
+                            ->label('Investigador')
+                            ->options(\App\Models\Investigador::all()->pluck('nombre_completo', 'id'))
+                            ->searchable()
+                            ->required(),
+                        Select::make('funcion_id')
+                            ->label('Función')
+                            ->options(\App\Models\Funcion::orderBy('nombre')->pluck('nombre', 'id'))
+                            ->searchable()
+                            ->required(),
+                        DatePicker::make('inicio')
+                            ->label('Inicio')
+                            ->required(),
+                        DatePicker::make('fin')
+                            ->label('Fin'),
+                        FileUpload::make('pdf_disposicion')
+                            ->label('PDF Disposición')
+                            ->disk('public')
+                            ->directory('disposiciones')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->multiple()
+                            ->maxFiles(1),
+                        FileUpload::make('pdf_resolucion')
+                            ->label('PDF Resolución')
+                            ->disk('public')
+                            ->directory('resoluciones')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->multiple()
+                            ->maxFiles(1),
+                        Toggle::make('vigente')
+                            ->label('Vigente')
+                            ->default(true),
+                    ]),
             ])
+
             ->actions([
                 DetachAction::make()->label('Quitar'), // permite desasociar
                 ViewAction::make()->label('Ver'),   // opcional: ver detalles
