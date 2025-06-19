@@ -6,17 +6,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('investigador_proyecto', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('investigador_id')->constrained()->cascadeOnDelete();
             $table->foreignId('proyecto_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('investigador_id')->constrained()->cascadeOnDelete();
             $table->foreignId('funcion_id')->constrained()->cascadeOnDelete();
             $table->boolean('vigente')->default(true);
             $table->date('inicio')->nullable();
@@ -25,15 +20,15 @@ return new class extends Migration
             $table->string('resolucion');
             $table->json('pdf_disposicion')->nullable();
             $table->json('pdf_resolucion')->nullable();
+
+
             $table->timestamps();
+
+            $table->unique(['proyecto_id', 'investigador_id']); // evita duplicados
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
+    public function down(): void {
         Schema::dropIfExists('investigador_proyecto');
     }
 };

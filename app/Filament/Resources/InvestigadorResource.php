@@ -95,16 +95,6 @@ class InvestigadorResource extends Resource
                         ->required()
                         ->maxLength(255)
                 ])->columns(3),
-                // FormSection::make('Proyecto de Investigación')
-                // ->description('Datos del proyecto donde se inserta.')
-                // ->schema([
-                //     Select::make('proyectos')
-                //         ->label('Proyectos de Investigación')
-                //         ->multiple()
-                //         ->relationship('proyectos', 'nro')
-                //         ->required()
-                //         ->preload(),
-                // ])->columns(2),
                 FormSection::make('Clasificación')
                 ->description('Datos relevante para el RACT')
                 ->schema([
@@ -212,27 +202,6 @@ class InvestigadorResource extends Resource
                                             ->label('Título de posgrado')
                                             ->color('customgray'),
                                     ])->columns(2),
-                                ]),
-                            Tab::make('Proyectos asociados')
-                                ->schema([
-                                    RepeatableEntry::make('proyectos')
-                                        ->label('Proyectos')
-                                        ->schema([
-                                            TextEntry::make('nro')->label('N° de Proyecto'),
-                                            TextEntry::make('estado')->label('Estado')->badge()->color(fn (bool $state) => $state ? 'success' : 'danger')->formatStateUsing(fn (bool $state) => $state ? 'Activo' : 'No Activo'),
-                                            TextEntry::make('nombre')->label('Denominación')->columnSpanFull(),
-                                            // TextEntry::make('resumen')->label('Resumen')->limit(100)->html()->columnSpanFull(),
-                                            TextEntry::make('inicio')->label('Inicio de Actividad'),
-                                            TextEntry::make('fin')->label('Fin de Actividad'),
-                                            TextEntry::make('disposicion')->label('N° de Dispocisión'),
-                                            TextEntry::make('resolucion')->label('N° de Resolución'),
-                                            Entry::make('pdf_disposicion')
-                                            ->label('Disposiciones en PDF')
-                                            ->view('filament.infolists.custom-file-entry-dispo'),
-                                            Entry::make('pdf_resolucion')
-                                            ->label('Resoluciones en PDF')
-                                            ->view('filament.infolists.custom-file-entry-reso'),
-                                        ])->columns(2),
                                 ]),
                             Tab::make('Clasificación')
                                 ->schema([
