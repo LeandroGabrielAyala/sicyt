@@ -226,6 +226,18 @@ class InvestigadorResource extends Resource
                                             ->color('customgray'),
                                     ])->columns(2),
                                 ]),
+                            InfoTab::make('Proyectos')
+                                ->schema([
+                                InfoSection::make('Detalle de de los PI. donde se inserta.')
+                                    ->description()
+                                    ->schema([
+                                        Entry::make('proyectos')
+                                            ->label('Proyectos Asociados')
+                                            ->view('livewire.proyectos-list', [
+                                                'investigador' => $action->getRecord(),
+                                            ]),
+                                ]),
+                            ]),
                             InfoTab::make('Clasificación')
                                 ->schema([
                                 InfoSection::make('Clasificación del Investigador según RACT')
@@ -290,6 +302,14 @@ class InvestigadorResource extends Resource
                 ]),
             ]);
     }
+
+    public static function getRelations(): array
+    {
+        return [
+            \App\Filament\Resources\InvestigadorResource\RelationManagers\ProyectoRelationManager::class,
+        ];
+    }
+
 
     public static function getPages(): array
     {

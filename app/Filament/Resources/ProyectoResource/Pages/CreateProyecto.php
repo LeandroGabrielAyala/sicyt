@@ -13,13 +13,13 @@ class CreateProyecto extends CreateRecord
 {
     protected static string $resource = ProyectoResource::class;
 
-    // protected function getCreatedNotification(): ?Notification
-    // {
-    //     return Notification::make()
-    //         ->success()
-    //         ->title('Proyecto Creado')
-    //         ->body('¡El proyecto fue creado exitosamente!');
-    // }
+    protected function getCreatedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Proyecto Creado')
+            ->body('¡El proyecto fue creado exitosamente!');
+    }
 
     public function getTitle(): string
     {
@@ -39,13 +39,6 @@ class CreateProyecto extends CreateRecord
                 ->submit('create')
                 ->successRedirectUrl(
                     ProyectoResource::getUrl('index')
-                ),
-
-            Action::make('guardar_y_crear_otro')
-                ->label('Guardar y crear otro')
-                ->submit('create')
-                ->successRedirectUrl(
-                    ProyectoResource::getUrl('create')
                 ),
 
             Action::make('cancelar')

@@ -30,9 +30,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\RepeatableEntry;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
@@ -186,10 +183,12 @@ class ProyectoResource extends Resource
                     ->boolean(),
                 TextColumn::make('inicio')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('fin')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('disposicion')
                     ->label('Disposición')
                     ->searchable()
@@ -265,10 +264,10 @@ class ProyectoResource extends Resource
                                 ->schema([
                                     Entry::make('investigadores')
                                         ->label('Investigadores Asociados')
-                                        ->view('livewire.proyecto-investigadores-list', [
+                                        ->view('livewire.investigadores-list', [
                                             'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
                                         ]),
-                                ])->columns(2),
+                                ])->columnSpanFull(),
                             InfoTab::make('Datos Generales')
                                 ->schema([
                                 InfoSection::make('')
@@ -283,24 +282,6 @@ class ProyectoResource extends Resource
                                             ->columnSpanFull()
                                             ->color('customgray')
                                             ->html(),
-                                        RepeatableEntry::make('investigadores')
-                                            ->label('Integrantes')
-                                            ->schema([
-                                                TextEntry::make('apellido')->label('Apellido(s)'),
-                                                TextEntry::make('nombre')->label('Nombre(s)'),
-                                                TextEntry::make('dni')->label('DNI'),
-                                                // TextEntry::make('estado')->label('Estado')->badge()->color(fn (bool $state) => $state ? 'success' : 'danger')->formatStateUsing(fn (bool $state) => $state ? 'Activo' : 'No Activo'),
-                                                // TextEntry::make('inicio')->label('Inicio de Actividad'),
-                                                // TextEntry::make('fin')->label('Fin de Actividad'),
-                                                // TextEntry::make('disposicion')->label('N° de Dispocisión'),
-                                                // TextEntry::make('resolucion')->label('N° de Resolución'),
-                                                // Entry::make('pdf_disposicion')
-                                                // ->label('Disposiciones en PDF')
-                                                // ->view('filament.infolists.custom-file-entry-dispo'),
-                                                // Entry::make('pdf_resolucion')
-                                                // ->label('Resoluciones en PDF')
-                                                // ->view('filament.infolists.custom-file-entry-reso'),
-                                            ])->columns(3),
                                     ]),
                                 InfoSection::make('')
                                     ->description('Duración del Proyecto')

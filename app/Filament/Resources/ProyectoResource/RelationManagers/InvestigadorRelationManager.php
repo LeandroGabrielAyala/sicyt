@@ -9,6 +9,11 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\Entry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\AttachAction;
@@ -58,17 +63,25 @@ class InvestigadorRelationManager extends RelationManager
                                 ->label('Fin'),
                             FileUpload::make('pdf_disposicion')
                                 ->label('PDF Disposición')
+                                ->required()
                                 ->disk('public')
-                                ->directory('disposiciones')
+                                ->directory('disposiciones_inv')
                                 ->acceptedFileTypes(['application/pdf'])
                                 ->multiple()
+                                ->preserveFilenames()
+                                ->reorderable()
+                                ->openable()
                                 ->columnSpanFull(),
                             FileUpload::make('pdf_resolucion')
                                 ->label('PDF Resolución')
+                                ->required()
                                 ->disk('public')
-                                ->directory('resoluciones')
+                                ->directory('resoluciones_inv')
                                 ->acceptedFileTypes(['application/pdf'])
                                 ->multiple()
+                                ->preserveFilenames()
+                                ->reorderable()
+                                ->openable()
                                 ->columnSpanFull(),
                             Toggle::make('vigente')
                                 ->label('Vigente')
@@ -78,8 +91,74 @@ class InvestigadorRelationManager extends RelationManager
             ])
 
             ->actions([
+                
+                ViewAction::make()->label('Ver')
+                    ->modalHeading(fn ($record) => 'Detalles del Investigador ' . $record->nombre . ' ' . $record->apellido)
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Cerrar')
+                    ->infolist(fn ($record) => [
+                        Tabs::make('Tabs')
+                            ->tabs([
+                                Tab::make('Particiáción en Proyecto')->schema([
+                                    Section::make('Detalle del Investigador en los PI.')
+                                        ->schema([
+                                            TextEntry::make('pivot.funcion.nombre')->label('Función'),
+                                            TextEntry::make('pivot.vigente')
+                                                ->label('Vigente / No Vigente')
+                                                ->badge()
+                                                ->color(fn (bool $state) => $state ? 'success' : 'danger')
+                                                ->formatStateUsing(fn (bool $state) => $state ? 'Vigente' : 'No Vigente'),  
+                                            TextEntry::make('pivot.inicio')->label('Inicio')->date(),
+                                            TextEntry::make('pivot.fin')->label('Fin')->date(),
+                                            Entry::make('pivot.pdf_disposicion')
+                                                ->label('Disposiciones en PDF')
+                                                ->view('filament.infolists.custom-file-entry-dispo-inv'),
+
+                                            Entry::make('pivot.pdf_resolucion')
+                                                ->label('Resoluciones en PDF')
+                                                ->view('filament.infolists.custom-file-entry-reso-inv'),
+                                        ])->columns(2),
+                                ]),
+                                Tab::make('Datos Generales')->schema([
+                                    Section::make('Información del Investigador')
+                                        ->schema([
+                                            TextEntry::make('nombre')->label('Nombre(s)')->color('customgray'),
+                                            TextEntry::make('apellido')->label('Apellido(s)')->color('customgray'),
+                                            TextEntry::make('categoriaInterna.categoria')->label('Categoría Interna UNCAUS')->color('customgray'),
+                                            TextEntry::make('incentivo.categoria')->label('Categoría de Incentivo')->color('customgray'),
+                                            TextEntry::make('titulo')->label('Título profesional')->color('customgray'),
+                                            TextEntry::make('titulo_posgrado')->label('Título de posgrado')->color('customgray'),
+                                        ])->columns(2),
+                                ]),
+                                Tab::make('Clasificación')->schema([
+                                    Section::make('Clasificación del Investigador según RACT')
+                                        ->schema([
+                                            TextEntry::make('objetivo.nombre')->label('Objetivo Socioeconómico')->color('customgray'),
+                                            TextEntry::make('campo.nombre')->label('Campo de Aplicación')->color('customgray'),
+                                            TextEntry::make('nivelAcademico.nombre')->label('Nivel Académico')->color('customgray'),
+                                        ])->columns(2),
+                                ]),
+                                Tab::make('Contacto')->schema([
+                                    Section::make('Datos de Contacto')
+                                        ->schema([
+                                            TextEntry::make('email')->label('Correo electrónico')->color('customgray'),
+                                            TextEntry::make('telefono')->label('Teléfono')->color('customgray'),
+                                        ])->columns(2),
+                                ]),
+                                Tab::make('Datos Personales')->schema([
+                                    Section::make('Datos personales del Investigador')
+                                        ->schema([
+                                            TextEntry::make('dni')->label('DNI')->color('customgray'),
+                                            TextEntry::make('cuil')->label('CUIL')->color('customgray'),
+                                            TextEntry::make('fecha_nac')->label('Fecha de Nacimiento')->color('customgray'),
+                                            TextEntry::make('domicilio')->label('Domicilio')->color('customgray'),
+                                            TextEntry::make('provincia')->label('Provincia')->color('customgray'),
+                                        ])->columns(2),
+                                ]),
+                            ])
+                        ]),
                 DetachAction::make()->label('Quitar'), // permite desasociar
-                ViewAction::make()->label('Ver'),   // opcional: ver detalles
+
             ]);
     }
 

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('investigadors', function (Blueprint $table) {
+        Schema::create('becarios', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
             $table->string('apellido');
@@ -22,15 +22,19 @@ return new class extends Migration
             $table->string('provincia');
             $table->string('email')->unique();
             $table->string('telefono', 20)->unique();
-            $table->foreignId('nivel_academico_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('disciplina_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('campo_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('objetivo_id')->constrained()->cascadeOnDelete();
-            $table->string('titulo');
-            $table->string('titulo_posgrado');
-            $table->foreignId('cargo_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('categoria_interna_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('incentivo_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('tipo_beca_id')->constrained()->cascadeOnDelete();
+            $table->text('plan_trabajo');
+            $table->decimal('pago', 8, 2);
+
+            $table->foreignId('carrera_id')->nullable()->constrained()->cascadeOnDelete();
+
+            // Solo para posgrado
+            $table->foreignId('nivel_academico_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('disciplina_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('campo_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('objetivo_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('titulo')->nullable();
+
             $table->timestamps();
         });
     }
@@ -40,6 +44,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('investigadors');
+        Schema::dropIfExists('becarios');
     }
 };

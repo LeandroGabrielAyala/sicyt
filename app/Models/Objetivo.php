@@ -14,9 +14,4 @@ class Objetivo extends Model
     {
         return $this->hasMany(Proyecto::class);
     }
-
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(Team::class);
-    }
 }

@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             IncentivoSeeder::class,
             InternaSeeder::class,
             NivelAcaSeeder::class,
+            TipoBecaSeeder::class,
         ]);
     }
 }
