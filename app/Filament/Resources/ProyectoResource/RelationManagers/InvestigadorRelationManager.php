@@ -6,6 +6,7 @@ use App\Models\Investigador;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -22,14 +23,15 @@ class InvestigadorRelationManager extends RelationManager
 {
     protected static string $relationship = 'investigador'; // importante que coincida con el nombre del método en Proyecto.php
 
-    protected static ?string $title = 'Investigadores asociados';
+    protected static ?string $title = 'Integrantes del Proyecto';
 
     public function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                TextColumn::make('nombre'),
                 TextColumn::make('apellido'),
+                TextColumn::make('nombre'),
+                TextColumn::make('dni'),
                 TextColumn::make('pivot.funcion.nombre')->label('Función'),
                 TextColumn::make('pivot.inicio')->date()->label('Inicio'),
                 TextColumn::make('pivot.fin')->date()->label('Fin'),
@@ -38,38 +40,40 @@ class InvestigadorRelationManager extends RelationManager
             ->headerActions([
                 AttachAction::make()->label('Asociar')
                     ->form([
-                        Select::make('recordId')
-                            ->label('Investigador')
-                            ->options(\App\Models\Investigador::all()->pluck('nombre_completo', 'id'))
-                            ->searchable()
-                            ->required(),
-                        Select::make('funcion_id')
-                            ->label('Función')
-                            ->options(\App\Models\Funcion::orderBy('nombre')->pluck('nombre', 'id'))
-                            ->searchable()
-                            ->required(),
-                        DatePicker::make('inicio')
-                            ->label('Inicio')
-                            ->required(),
-                        DatePicker::make('fin')
-                            ->label('Fin'),
-                        FileUpload::make('pdf_disposicion')
-                            ->label('PDF Disposición')
-                            ->disk('public')
-                            ->directory('disposiciones')
-                            ->acceptedFileTypes(['application/pdf'])
-                            ->multiple()
-                            ->maxFiles(1),
-                        FileUpload::make('pdf_resolucion')
-                            ->label('PDF Resolución')
-                            ->disk('public')
-                            ->directory('resoluciones')
-                            ->acceptedFileTypes(['application/pdf'])
-                            ->multiple()
-                            ->maxFiles(1),
-                        Toggle::make('vigente')
-                            ->label('Vigente')
-                            ->default(true),
+                        Grid::make(2)->schema([
+                            Select::make('recordId')
+                                ->label('Investigador')
+                                ->options(\App\Models\Investigador::all()->pluck('nombre_completo', 'id'))
+                                ->searchable()
+                                ->required(),
+                            Select::make('funcion_id')
+                                ->label('Función')
+                                ->options(\App\Models\Funcion::orderBy('nombre')->pluck('nombre', 'id'))
+                                ->searchable()
+                                ->required(),
+                            DatePicker::make('inicio')
+                                ->label('Inicio')
+                                ->required(),
+                            DatePicker::make('fin')
+                                ->label('Fin'),
+                            FileUpload::make('pdf_disposicion')
+                                ->label('PDF Disposición')
+                                ->disk('public')
+                                ->directory('disposiciones')
+                                ->acceptedFileTypes(['application/pdf'])
+                                ->multiple()
+                                ->columnSpanFull(),
+                            FileUpload::make('pdf_resolucion')
+                                ->label('PDF Resolución')
+                                ->disk('public')
+                                ->directory('resoluciones')
+                                ->acceptedFileTypes(['application/pdf'])
+                                ->multiple()
+                                ->columnSpanFull(),
+                            Toggle::make('vigente')
+                                ->label('Vigente')
+                                ->default(true),
+                        ]),
                     ]),
             ])
 

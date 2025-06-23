@@ -12,16 +12,6 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('proyecto_id')->constrained()->cascadeOnDelete();
             $table->foreignId('investigador_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('funcion_id')->constrained()->cascadeOnDelete();
-            $table->boolean('vigente')->default(true);
-            $table->date('inicio')->nullable();
-            $table->date('fin')->nullable();
-            $table->string('disposicion');
-            $table->string('resolucion');
-            $table->json('pdf_disposicion')->nullable();
-            $table->json('pdf_resolucion')->nullable();
-
-
             $table->timestamps();
 
             $table->unique(['proyecto_id', 'investigador_id']); // evita duplicados

@@ -7,8 +7,8 @@ use Illuminate\Support\Str;
 use App\Filament\Resources\ProyectoResource\Pages;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Section as InfoSection;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Components\Tabs as InfoTabs;
+use Filament\Infolists\Components\Tabs\Tab as InfoTab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\IconEntry;
@@ -39,7 +39,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadorRelationManager;
-use Livewire\Livewire;
+use Filament\Forms\Components\Tabs as FormTabs;
+use Filament\Forms\Components\Tabs\Tab as FormTab;
 
 class ProyectoResource extends Resource
 {
@@ -89,103 +90,84 @@ class ProyectoResource extends Resource
     }
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                FormSection::make('Datos del Proyecto')
-                ->description('Datos generales del Proyecto')
-                ->schema([
-                    TextInput::make('nro')
-                        ->label('Nro. de P.I.')
-                        ->required(),
-                    TextInput::make('duracion')
-                        ->required(),
-                    DatePicker::make('inicio')
-                        ->required(),
-                    DatePicker::make('fin')
-                    ->required(),
-                    // Select::make('investigadores')
-                    //     ->label('Integrantes')
-                    //     ->multiple()
-                    //     ->columnSpanFull()
-                    //     ->relationship('investigadores', 'apellido') // La columna es irrelevante, se sobreescribe
-                    //     ->preload()
-                    //     ->searchable()
-                    //     ->getOptionLabelFromRecordUsing(fn ($record) => $record->apellido . ', ' . $record->nombre)
-                    //     ->getSearchResultsUsing(function (string $search) {
-                    //         return \App\Models\Investigador::query()
-                    //             ->whereRaw("CONCAT(apellido, ' ', nombre) LIKE ?", ["%{$search}%"])
-                    //             ->limit(50)
-                    //             ->get()
-                    //             ->mapWithKeys(fn ($inv) => [$inv->id => $inv->apellido . ', ' . $inv->nombre]); // 👈 ESTA PARTE CAMBIÓ
-                    //     })
-                    //     ->getOptionLabelsUsing(function ($values) {
-                    //         return \App\Models\Investigador::whereIn('id', $values)
-                    //             ->get()
-                    //             ->mapWithKeys(fn ($inv) => [$inv->id => $inv->apellido . ', ' . $inv->nombre]);
-                    //     }),
-                    TextInput::make('nombre')
-                        ->required()
-                        ->maxLength(255)
-                        ->columnSpanFull(),
-                    RichEditor::make('resumen')
-                        ->required()
-                        ->maxLength(4000)
-                        ->columnSpanFull(),
-                ])->columns(4),
-                FormSection::make('Información Adicional')
-                ->description('Resolución y Estado del Proyecto')
-                ->schema([
-                    TextInput::make('presupuesto')
-                        ->helperText('Si coloca decimales, que sea con un punto "."')
-                        ->required(),
-                    Toggle::make('estado')
-                        ->label('No Vigente / Vigente')
-                        ->inline(false)
-                        ->required(),
-                    TextInput::make('resolucion')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('disposicion')
-                        ->required()
-                        ->maxLength(255),
-                    FileUpload::make('pdf_resolucion')
-                        ->label('Resolución en .PDF')
-                        ->multiple()
-                        ->required()
-                        ->disk('public')
-                        ->directory('resoluciones')
-                        ->preserveFilenames()
-                        ->reorderable()
-                        ->openable(),
-                    FileUpload::make('pdf_disposicion')
-                        ->label('Disposición en .PDF')
-                        ->multiple()
-                        ->required()
-                        ->disk('public')
-                        ->directory('disposiciones')
-                        ->preserveFilenames()
-                        ->reorderable()
-                        ->openable()
-                    ])->columns(2),
-                FormSection::make('Clasificación')
-                ->description('Datos relevante para el RACT')
-                ->schema([
-                    Select::make('campo_id')
-                        ->relationship('campo', 'nombre')
-                        ->required(),
-                    Select::make('objetivo_id')
-                        ->relationship('objetivo', 'nombre')
-                        ->required()
-                        //->searchable()
-                        ->preload(),
-                        //->multiple(),
-                    Select::make('actividad_id')
-                        ->relationship('actividad', 'nombre')
-                        ->required()
-                ])->columns(3),
-            ]);
-    }
+{
+    return $form
+        ->schema([
+            FormTabs::make('Proyecto')
+                ->tabs([
+                    FormTab::make('Datos del Proyecto')
+                        ->schema([
+                            TextInput::make('nro')
+                                ->label('Nro. de P.I.')
+                                ->required(),
+                            TextInput::make('duracion')
+                                ->required(),
+                            DatePicker::make('inicio')
+                                ->required(),
+                            DatePicker::make('fin')
+                                ->required(),
+                            TextInput::make('nombre')
+                                ->required()
+                                ->maxLength(255)
+                                ->columnSpanFull(),
+                            RichEditor::make('resumen')
+                                ->required()
+                                ->maxLength(4000)
+                                ->columnSpanFull(),
+                        ])->columns(4),
+
+                    FormTab::make('Información Adicional')
+                        ->schema([
+                            TextInput::make('presupuesto')
+                                ->helperText('Si coloca decimales, que sea con un punto "."')
+                                ->required(),
+                            Toggle::make('estado')
+                                ->label('No Vigente / Vigente')
+                                ->inline(false)
+                                ->required(),
+                            TextInput::make('resolucion')
+                                ->required()
+                                ->maxLength(255),
+                            TextInput::make('disposicion')
+                                ->required()
+                                ->maxLength(255),
+                            FileUpload::make('pdf_resolucion')
+                                ->label('Resolución en .PDF')
+                                ->multiple()
+                                ->required()
+                                ->disk('public')
+                                ->directory('resoluciones')
+                                ->preserveFilenames()
+                                ->reorderable()
+                                ->openable(),
+                            FileUpload::make('pdf_disposicion')
+                                ->label('Disposición en .PDF')
+                                ->multiple()
+                                ->required()
+                                ->disk('public')
+                                ->directory('disposiciones')
+                                ->preserveFilenames()
+                                ->reorderable()
+                                ->openable(),
+                        ])->columns(2),
+
+                    FormTab::make('Clasificación')
+                        ->schema([
+                            Select::make('campo_id')
+                                ->relationship('campo', 'nombre')
+                                ->required(),
+                            Select::make('objetivo_id')
+                                ->relationship('objetivo', 'nombre')
+                                ->required()
+                                ->preload(),
+                            Select::make('actividad_id')
+                                ->relationship('actividad', 'nombre')
+                                ->required(),
+                        ])->columns(3),
+                ])
+                ->columnSpanFull(),
+        ]);
+}
 
     public static function table(Table $table): Table
     {
@@ -277,9 +259,9 @@ class ProyectoResource extends Resource
                     ->modalCancelAction(fn () => null)
                     ->modalCancelActionLabel('Cerrar')
                     ->infolist(fn (ViewAction $action): array => [
-                        Tabs::make('Tabs')
+                        InfoTabs::make('Tabs')
                         ->tabs([
-                            Tab::make('Investigadores')
+                            InfoTab::make('Investigadores')
                                 ->schema([
                                     Entry::make('investigadores')
                                         ->label('Investigadores Asociados')
@@ -287,7 +269,7 @@ class ProyectoResource extends Resource
                                             'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
                                         ]),
                                 ])->columns(2),
-                            Tab::make('Datos Generales')
+                            InfoTab::make('Datos Generales')
                                 ->schema([
                                 InfoSection::make('')
                                     ->description(fn ($record) => 'Proyecto de Investigación N° ' . $record->nro)
@@ -331,7 +313,7 @@ class ProyectoResource extends Resource
                                             ->color('customgray'),
                                     ])->columns(3),
                                 ]),
-                            Tab::make('Estado')
+                            InfoTab::make('Estado')
                                 ->schema([
                                 InfoSection::make('')
                                     ->description('Resolución y Estado del Proyecto')
@@ -356,7 +338,7 @@ class ProyectoResource extends Resource
                                             ->view('filament.infolists.custom-file-entry-reso'),
                                     ])->columns(2),
                                 ]),
-                            Tab::make('Clasificación')
+                            InfoTab::make('Clasificación')
                                 ->schema([
                                 InfoSection::make('')
                                     ->description('Datos relevante para el RACT')

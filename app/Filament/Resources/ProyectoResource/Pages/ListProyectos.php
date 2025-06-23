@@ -21,6 +21,19 @@ class ListProyectos extends ListRecords
         ];
     }
 
+    public function getTitle(): string
+    {
+        return 'Lista de P.I. UNCAUS';
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            route('filament.admin.resources.proyectos-de-investigacion.index') => 'Proyectos de Investigación',
+            'Todos',
+        ];
+    }
+
     public function getTabs(): array
     {
         return [

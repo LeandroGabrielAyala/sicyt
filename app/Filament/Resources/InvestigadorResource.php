@@ -19,8 +19,10 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Forms\Components\Section as FormSection;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Section as InfoSection;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Components\Tabs as InfoTabs;
+use Filament\Infolists\Components\Tabs\Tab as InfoTab;
+use Filament\Forms\Components\Tabs as FormTabs;
+use Filament\Forms\Components\Tabs\Tab as FormTab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -60,90 +62,111 @@ class InvestigadorResource extends Resource
     {
         return $form
             ->schema([
-                FormSection::make('Datos del Investigador')
-                ->description('Datos personales.')
-                ->schema([
-                    TextInput::make('nombre')
-                        ->label('Nombre(s)')
-                        ->required(),
-                    TextInput::make('apellido')
-                        ->label('Apellido(s)')
-                        ->required(),
-                    DatePicker::make('fecha_nac')
-                        ->label('Fecha de nacimiento')
-                        ->required(),
-                    TextInput::make('dni')
-                        ->label('DNI')
-                        ->required(),
-                    TextInput::make('cuil')
-                        ->label('CUIL')
-                        ->required(),
-                    TextInput::make('domicilio')
-                        ->label('Domicilio')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('provincia')
-                        ->label('Provincia')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('email')
-                        ->label('Correo electrónico')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('telefono')
-                        ->label('Teléfono')
-                        ->required()
-                        ->maxLength(255)
-                ])->columns(3),
-                FormSection::make('Clasificación')
-                ->description('Datos relevante para el RACT')
-                ->schema([
-                    Select::make('nivel_academico_id')
-                        ->label('Nivel Académico')
-                        ->relationship('nivelAcademico', 'nombre')
-                        ->required(),
-                    Select::make('objetivo_id')
-                        ->label('Objetivo Socioeconomico')
-                        ->relationship('objetivo', 'nombre')
-                        ->required()
-                        ->preload(),
-                    Select::make('campo_id')
-                        ->label('Campo de Aplicación')
-                        ->relationship('campo', 'nombre')
-                        ->required()
-                        ->live()
-                        ->preload(),
-                    Select::make('disciplina_id')
-                        ->label('Disciplina')
-                        ->options(fn (Get $get): Collection => Disciplina::query()
-                            ->where('campo_id', $get('campo_id'))
-                            ->pluck('nombre', 'id'))
-                        ->required()
-                        ->preload(),
-                    TextInput::make('titulo')
-                        ->label('Título del Investigador')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('titulo_posgrado')
-                        ->label('Título de posgrado')
-                        ->required()
-                        ->maxLength(255),
-                    Select::make('cargo_id')
-                        ->label('Cargo docente')
-                        ->relationship('cargo', 'nombre')
-                        ->required()
-                        ->preload(),
-                    Select::make('categoria_interna_id')
-                        ->label('Categoría Interna UNCAUS')
-                        ->relationship('categoriaInterna', 'categoria')
-                        ->required()
-                        ->preload(),
-                    Select::make('incentivo_id')
-                        ->label('Categoría del Incentivo')
-                        ->relationship('incentivo', 'categoria')
-                        ->required()
-                        ->preload(),
-                ])->columns(3),
+                FormTabs::make('Formulario del Investigador')
+                    ->tabs([
+                        FormTab::make('Datos Personales')
+                            ->schema([
+                                FormSection::make('Datos del Investigador')
+                                    ->description('Datos personales.')
+                                    ->schema([
+                                        TextInput::make('nombre')
+                                            ->label('Nombre(s)')
+                                            ->required(),
+                                        TextInput::make('apellido')
+                                            ->label('Apellido(s)')
+                                            ->required(),
+                                        DatePicker::make('fecha_nac')
+                                            ->label('Fecha de nacimiento')
+                                            ->required(),
+                                        TextInput::make('dni')
+                                            ->label('DNI')
+                                            ->required(),
+                                        TextInput::make('cuil')
+                                            ->label('CUIL')
+                                            ->required(),
+                                        TextInput::make('domicilio')
+                                            ->label('Domicilio')
+                                            ->required()
+                                            ->maxLength(255),
+                                        TextInput::make('provincia')
+                                            ->label('Provincia')
+                                            ->required()
+                                            ->maxLength(255),
+                                        TextInput::make('email')
+                                            ->label('Correo electrónico')
+                                            ->required()
+                                            ->maxLength(255),
+                                        TextInput::make('telefono')
+                                            ->label('Teléfono')
+                                            ->required()
+                                            ->maxLength(255),
+                                    ])
+                                    ->columns(3),
+                            ]),
+                        
+                        FormTab::make('Clasificación')
+                            ->schema([
+                                FormSection::make('Clasificación')
+                                    ->description('Datos relevantes para el RACT')
+                                    ->schema([
+                                        Select::make('nivel_academico_id')
+                                            ->label('Nivel Académico')
+                                            ->relationship('nivelAcademico', 'nombre')
+                                            ->required(),
+
+                                        Select::make('objetivo_id')
+                                            ->label('Objetivo Socioeconómico')
+                                            ->relationship('objetivo', 'nombre')
+                                            ->required()
+                                            ->preload(),
+
+                                        Select::make('campo_id')
+                                            ->label('Campo de Aplicación')
+                                            ->relationship('campo', 'nombre')
+                                            ->required()
+                                            ->live()
+                                            ->preload(),
+
+                                        Select::make('disciplina_id')
+                                            ->label('Disciplina')
+                                            ->options(fn (Get $get): Collection => Disciplina::query()
+                                                ->where('campo_id', $get('campo_id'))
+                                                ->pluck('nombre', 'id'))
+                                            ->required()
+                                            ->preload(),
+
+                                        TextInput::make('titulo')
+                                            ->label('Título del Investigador')
+                                            ->required()
+                                            ->maxLength(255),
+
+                                        TextInput::make('titulo_posgrado')
+                                            ->label('Título de posgrado')
+                                            ->required()
+                                            ->maxLength(255),
+
+                                        Select::make('cargo_id')
+                                            ->label('Cargo docente')
+                                            ->relationship('cargo', 'nombre')
+                                            ->required()
+                                            ->preload(),
+
+                                        Select::make('categoria_interna_id')
+                                            ->label('Categoría Interna UNCAUS')
+                                            ->relationship('categoriaInterna', 'categoria')
+                                            ->required()
+                                            ->preload(),
+
+                                        Select::make('incentivo_id')
+                                            ->label('Categoría del Incentivo')
+                                            ->relationship('incentivo', 'categoria')
+                                            ->required()
+                                            ->preload(),
+                                    ])
+                                    ->columns(3),
+                            ]),
+                    ])
+                    ->columnSpanFull()
             ]);
     }
 
@@ -176,9 +199,9 @@ class InvestigadorResource extends Resource
                     ->modalCancelAction(fn () => null)
                     ->modalCancelActionLabel('Cerrar')
                     ->infolist(fn (ViewAction $action): array => [
-                        Tabs::make('Tabs')
+                        InfoTabs::make('Tabs')
                         ->tabs([
-                            Tab::make('Datos Generales')
+                            InfoTab::make('Datos Generales')
                                 ->schema([
                                 InfoSection::make('Detalle del Investigador en los PI.')
                                     ->description()
@@ -203,7 +226,7 @@ class InvestigadorResource extends Resource
                                             ->color('customgray'),
                                     ])->columns(2),
                                 ]),
-                            Tab::make('Clasificación')
+                            InfoTab::make('Clasificación')
                                 ->schema([
                                 InfoSection::make('Clasificación del Investigador según RACT')
                                     ->description()
@@ -219,7 +242,7 @@ class InvestigadorResource extends Resource
                                             ->color('customgray'),
                                     ])->columns(2),
                                 ]),
-                            Tab::make('Contacto')
+                            InfoTab::make('Contacto')
                                 ->schema([
                                 InfoSection::make('Datos de Contacto')
                                     ->description()
@@ -232,7 +255,7 @@ class InvestigadorResource extends Resource
                                             ->color('customgray')
                                     ])->columns(2),
                                 ]),
-                            Tab::make('Datos Personales')
+                            InfoTab::make('Datos Personales')
                                 ->schema([
                                 InfoSection::make('Datos personales del Investigador')
                                     ->description()
