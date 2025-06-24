@@ -25,6 +25,10 @@ class Investigador extends Model
     {
         return "{$this->nombre} {$this->apellido}";
     }
+    public function getApellidoNombreAttribute()
+    {
+        return "{$this->apellido}, {$this->nombre}";
+    }
 
     public function proyectos(): BelongsToMany
     {

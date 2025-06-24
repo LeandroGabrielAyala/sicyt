@@ -31,6 +31,8 @@ class ProyectoRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('nro')->label('Nro. PI'),
                 TextColumn::make('nombre')->label('Proyecto')->limit(50),
+                TextColumn::make('director_id')->label('Director')->limit(50),
+                TextColumn::make('codirector_id')->label('Codirector')->limit(50),
                 TextColumn::make('pivot.funcion.nombre')->label('Función'),
                 TextColumn::make('pivot.inicio')->label('Inicio')->date(),
                 TextColumn::make('pivot.fin')->label('Fin')->date(),

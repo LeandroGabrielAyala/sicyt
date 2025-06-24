@@ -14,10 +14,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Becario extends Model
 {
     protected $fillable = [
-        'nombre', 'apellido', 'dni', 'cuil', 'fecha_nac', 'domicilio', 'provincia', 'email', 'telefono',
-        'nivel_academico_id', 'disciplina_id', 'campo_id', 'objetivo_id',
+        'nombre', 'apellido', 'dni', 'cuil', 'fecha_nac', 'domicilio', 'provincia', 'email', 'telefono', 'nivel_academico_id', 'disciplina_id', 'campo_id', 'objetivo_id',
         'titulo', 'carrera_id', 'tipo_beca_id', 'plan_trabajo'
     ];
+
+    public function proyectos()
+    {
+        return $this->belongsToMany(Proyecto::class, 'becario_proyecto')
+            ->using(\App\Models\BecarioProyecto::class)
+            ->withPivot(['director_id', 'codirector_id', 'convocatoria_beca_id'])
+            ->withTimestamps();
+    }
 
     public function tipo_beca(): BelongsTo
     {

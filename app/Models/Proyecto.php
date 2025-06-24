@@ -23,6 +23,11 @@ class Proyecto extends Model
         'pdf_resolucion' => 'array',
     ];
 
+    public function getNombreCompletoAttribute()
+    {
+        return "{$this->nombre} {$this->apellido}";
+    }
+
     public function investigador(): BelongsToMany
     {
         return $this->belongsToMany(Investigador::class)
@@ -30,6 +35,25 @@ class Proyecto extends Model
             ->withPivot([
                 'funcion_id', 'inicio', 'fin', 'pdf_disposicion', 'pdf_resolucion', 'vigente',
             ])
+            ->withTimestamps();
+    }
+
+    public function director()
+    {
+        return $this->belongsTo(Investigador::class, 'director_id');
+    }
+
+    public function codirector()
+    {
+        return $this->belongsTo(Investigador::class, 'codirector_id');
+    }
+
+
+    public function becarios()
+    {
+        return $this->belongsToMany(Becario::class, 'becario_proyecto')
+            ->using(\App\Models\BecarioProyecto::class)
+            ->withPivot(['director_id', 'codirector_id', 'convocatoria_beca_id'])
             ->withTimestamps();
     }
 

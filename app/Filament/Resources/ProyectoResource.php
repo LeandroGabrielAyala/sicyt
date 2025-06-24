@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Filament\Resources\ProyectoResource\Pages;
+use App\Filament\Resources\ProyectoResource\RelationManagers\BecariosRelationManager;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Section as InfoSection;
 use Filament\Infolists\Components\Tabs as InfoTabs;
@@ -36,6 +37,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadorRelationManager;
+use App\Models\Investigador;
 use Filament\Forms\Components\Tabs as FormTabs;
 use Filament\Forms\Components\Tabs\Tab as FormTab;
 
@@ -103,6 +105,17 @@ class ProyectoResource extends Resource
                                 ->required(),
                             DatePicker::make('fin')
                                 ->required(),
+                            Select::make('director_id')
+                                ->label('Director PI')
+                                ->relationship('director', 'apellido') // mantenemos la relación
+                                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->apellido}, {$record->nombre}")
+                                ->required(),
+                            // TextInput::make('director_id')
+                            //     ->label('Director')
+                            //     ->formatStateUsing(fn ($state) => Investigador::find($state)?->apellido . ', ' . Investigador::find($state)?->nombre),
+                            // TextInput::make('codirector_id')
+                            //     ->label('Codirector')
+                            //     ->formatStateUsing(fn ($state) => $state ? Investigador::find($state)?->apellido . ', ' . Investigador::find($state)?->nombre : '-'),
                             TextInput::make('nombre')
                                 ->required()
                                 ->maxLength(255)
@@ -282,6 +295,15 @@ class ProyectoResource extends Resource
                                             ->columnSpanFull()
                                             ->color('customgray')
                                             ->html(),
+                                        TextEntry::make('director.apellido_nombre')
+                                        ->label('Director PI')
+                                        ->columnSpanFull()
+                                        ->color('customgray'),
+
+                                    TextEntry::make('codirector.apellido_nombre')
+                                        ->label('Codirector PI')
+                                        ->columnSpanFull()
+                                        ->color('customgray'),
                                     ]),
                                 InfoSection::make('')
                                     ->description('Duración del Proyecto')
@@ -347,6 +369,7 @@ class ProyectoResource extends Resource
     {
         return [
             InvestigadorRelationManager::class,
+            BecariosRelationManager::class
         ];
     }
 

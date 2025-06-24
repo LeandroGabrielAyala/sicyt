@@ -1,8 +1,13 @@
-* Tabla pivot entre Becarios y Proyectos
-* Agregar Director y Co-director de Beca
+* Hay que agregar campo Director y Codirector directamente a cada proyecto
+* Infolist de los Becarios
+* Cuando cambio a posgrado, deberia borrarse la carrera (o no)
 * Hacer bien lo de Pagos Mensuales a Becarios
+    * Tabla pivot con becarios (opcional agregar multiples Becarios)
 * Crear lo de Adscriptos todo casi igual a Becarios
 * Tabla pivot adscriptos y proyectos
+* Probar PDF
+* Probar Importacion y Exportacion .CSV
+* Notificación
 
 - Ciencias exactas y naturales
 Biología	

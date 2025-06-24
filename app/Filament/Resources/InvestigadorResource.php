@@ -233,7 +233,7 @@ class InvestigadorResource extends Resource
                                     ->schema([
                                         Entry::make('proyectos')
                                             ->label('Proyectos Asociados')
-                                            ->view('livewire.proyectos-list', [
+                                            ->view('livewire.proyectos-investigadores-list', [
                                                 'investigador' => $action->getRecord(),
                                             ]),
                                 ]),
