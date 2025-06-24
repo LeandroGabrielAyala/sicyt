@@ -14,4 +14,9 @@ class Objetivo extends Model
     {
         return $this->hasMany(Proyecto::class);
     }
+
+    public function becarios()
+    {
+        return $this->hasMany(Becario::class);
+    }
 }

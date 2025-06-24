@@ -20,8 +20,9 @@ class Campo extends Model
         return $this->hasMany(Disciplina::class);
     }
 
-    public function team(): BelongsTo
+    public function becarios()
     {
-        return $this->belongsTo(Team::class);
+        return $this->hasMany(Becario::class);
     }
+
 }

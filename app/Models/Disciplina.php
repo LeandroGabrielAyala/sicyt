@@ -15,8 +15,14 @@ class Disciplina extends Model
         return $this->belongsTo(Campo::class);
     }
 
-        public function proyecto(): HasMany
+    public function proyecto(): HasMany
     {
         return $this->hasMany(Proyecto::class);
     }
+
+    public function becarios()
+    {
+        return $this->hasMany(Becario::class);
+    }
+
 }
