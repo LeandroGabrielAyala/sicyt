@@ -1,5 +1,5 @@
-* Hay que agregar campo Director y Codirector directamente a cada proyecto
-* Infolist de los Becarios
+* Infolist de los Becarios (agregarle el director & codirector del proyecto asociado)
+* En los Becarios asociados y Proyectos asociados agregar el infolist en los RelationManager
 * Cuando cambio a posgrado, deberia borrarse la carrera (o no)
 * Hacer bien lo de Pagos Mensuales a Becarios
     * Tabla pivot con becarios (opcional agregar multiples Becarios)
@@ -8,6 +8,8 @@
 * Probar PDF
 * Probar Importacion y Exportacion .CSV
 * Notificación
+* Control de Roles y Permisos
+* Grafico de estadísticas
 
 - Ciencias exactas y naturales
 Biología	
