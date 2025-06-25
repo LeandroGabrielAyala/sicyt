@@ -17,16 +17,7 @@ class TipoBecaSeeder extends Seeder
             'nombre' => 'UNCAUS'
         ]);
         TipoBeca::create([
-            'nombre' => 'UNCAUS Grado'
-        ]);
-        TipoBeca::create([
-            'nombre' => 'UNCAUS Posgrado'
-        ]);
-        TipoBeca::create([
             'nombre' => 'CIN'
-        ]);
-        TipoBeca::create([
-            'nombre' => 'CONICET'
         ]);
     }
 }

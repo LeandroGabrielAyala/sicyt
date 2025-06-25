@@ -15,8 +15,8 @@ class ConvocatoriaBeca extends Model
         'pdf_resolucion' => 'array',
     ];
 
-    public function tipo_beca(): BelongsTo
+    public function tipoBeca()
     {
-        return $this->belongsTo(TipoBeca::class);
+        return $this->belongsTo(TipoBeca::class, 'tipo_beca_id');
     }
 }

@@ -38,6 +38,21 @@ class Proyecto extends Model
             ->withTimestamps();
     }
 
+    public function investigadorDirector()
+    {
+        return $this->belongsToMany(Investigador::class, 'investigador_proyecto')
+            ->withPivot('funcion_id')
+            ->wherePivot('funcion_id', 1);
+    }
+
+    public function investigadorCodirector()
+    {
+        return $this->belongsToMany(Investigador::class, 'investigador_proyecto')
+            ->withPivot('funcion_id')
+            ->wherePivot('funcion_id', [2, 6]);
+    }
+
+
     public function director()
     {
         return $this->belongsTo(Investigador::class, 'director_id');
@@ -48,14 +63,20 @@ class Proyecto extends Model
         return $this->belongsTo(Investigador::class, 'codirector_id');
     }
 
-
     public function becarios()
     {
         return $this->belongsToMany(Becario::class, 'becario_proyecto')
             ->using(\App\Models\BecarioProyecto::class)
-            ->withPivot(['director_id', 'codirector_id', 'convocatoria_beca_id'])
+            ->withPivot([
+                'director_id',
+                'codirector_id',
+                'convocatoria_beca_id',
+                'tipo_beca',
+                'vigente',
+            ])
             ->withTimestamps();
     }
+
 
     public function campo(): BelongsTo
     {

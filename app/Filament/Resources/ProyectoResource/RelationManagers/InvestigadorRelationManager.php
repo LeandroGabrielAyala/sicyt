@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProyectoResource\RelationManagers;
 
+use App\Models\Funcion;
 use App\Models\Investigador;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -48,12 +49,56 @@ class InvestigadorRelationManager extends RelationManager
                         Grid::make(2)->schema([
                             Select::make('recordId')
                                 ->label('Investigador')
-                                ->options(\App\Models\Investigador::all()->pluck('nombre_completo', 'id'))
+                                ->options(function () {
+                                    // IDs de investigadores ya asociados al proyecto
+                                    $idsInvestigadores = $this->ownerRecord->investigador()->pluck('investigadors.id')->toArray();
+
+                                    // Obtener los IDs de funciones "Director" y "Codirector"
+                                    $directorId = Funcion::where('nombre', 'Director')->value('id');
+                                    $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
+
+                                    // Obtener IDs de investigadores que ya son Director o Codirector para este proyecto
+                                    $investigadoresDirectores = $this->ownerRecord->investigador()
+                                        ->wherePivotIn('funcion_id', [$directorId, $codirectorId])
+                                        ->pluck('investigadors.id')
+                                        ->toArray();
+
+                                    // Excluir investigadores asociados y además excluir si ya hay Director/Codirector con esa función
+                                    $excluirIds = array_unique(array_merge($idsInvestigadores, $investigadoresDirectores));
+
+                                    // Obtener solo investigadores que no están en excluirIds
+                                    return Investigador::whereNotIn('id', $excluirIds)
+                                        ->get()
+                                        ->pluck('nombre_completo', 'id');
+                                })
                                 ->searchable()
                                 ->required(),
+
                             Select::make('funcion_id')
                                 ->label('Función')
-                                ->options(\App\Models\Funcion::orderBy('nombre')->pluck('nombre', 'id'))
+                                ->options(function () {
+                                    // Obtenemos IDs de funciones "Director" y "Codirector"
+                                    $directorId = Funcion::where('nombre', 'Director')->value('id');
+                                    $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
+
+                                    // Verificamos si el proyecto ya tiene asignado Director y/o Codirector
+                                    $tieneDirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $directorId)->exists();
+                                    $tieneCodirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $codirectorId)->exists();
+
+                                    // Obtenemos todas las funciones
+                                    $funciones = Funcion::orderBy('nombre')->pluck('nombre', 'id')->toArray();
+
+                                    // Si ya existe Director, quitamos esa opción
+                                    if ($tieneDirector) {
+                                        unset($funciones[$directorId]);
+                                    }
+                                    // Si ya existe Codirector, quitamos esa opción
+                                    if ($tieneCodirector) {
+                                        unset($funciones[$codirectorId]);
+                                    }
+
+                                    return $funciones;
+                                })
                                 ->searchable()
                                 ->required(),
                             DatePicker::make('inicio')
@@ -91,7 +136,6 @@ class InvestigadorRelationManager extends RelationManager
             ])
 
             ->actions([
-                
                 ViewAction::make()->label('Ver')
                     ->modalHeading(fn ($record) => 'Detalles del Investigador ' . $record->nombre . ' ' . $record->apellido)
                     ->modalSubmitAction(false)
@@ -156,7 +200,45 @@ class InvestigadorRelationManager extends RelationManager
                                         ])->columns(2),
                                 ]),
                             ])
+                        ]),                
+                EditAction::make()
+                    ->label('Editar')
+                    ->form([
+                        Grid::make(2)->schema([
+                            Select::make('funcion_id')->label('Función')
+                                ->options(fn () => \App\Models\Funcion::orderBy('nombre')->pluck('nombre', 'id'))
+                                ->required(),
+                            Toggle::make('vigente')->label('Vigente')->default(true),
+                            DatePicker::make('inicio')->label('Inicio')->required(),
+                            DatePicker::make('fin')->label('Fin'),
+                            FileUpload::make('pdf_disposicion')->label('PDF Disposición')
+                                ->disk('public')->directory('disposiciones_inv')
+                                ->acceptedFileTypes(['application/pdf'])->multiple()
+                                ->preserveFilenames()->reorderable()->openable(),
+                            FileUpload::make('pdf_resolucion')->label('PDF Resolución')
+                                ->disk('public')->directory('resoluciones_inv')
+                                ->acceptedFileTypes(['application/pdf'])->multiple()
+                                ->preserveFilenames()->reorderable()->openable(),
                         ]),
+                    ])
+                    ->mutateRecordDataUsing(function ($data, $record) {
+                        $data['pdf_disposicion'] = $record->pivot->pdf_disposicion;
+                        $data['pdf_resolucion'] = $record->pivot->pdf_resolucion;
+                        return $data;
+                    })
+                    ->mutateFormDataUsing(function (array $data, $record) {
+                        return [
+                            'funcion_id' => $data['funcion_id'],
+                            'inicio' => $data['inicio'],
+                            'fin' => $data['fin'],
+                            'vigente' => $data['vigente'],
+                            'pdf_disposicion' => $data['pdf_disposicion'] ?? $record->pivot->pdf_disposicion,
+                            'pdf_resolucion' => $data['pdf_resolucion'] ?? $record->pivot->pdf_resolucion,
+                        ];
+                    })
+                    ->after(function (RelationManager $livewire, $record, array $data) {
+                        $record->pivot->update($data);
+                    }),
                 DetachAction::make()->label('Quitar'), // permite desasociar
 
             ]);

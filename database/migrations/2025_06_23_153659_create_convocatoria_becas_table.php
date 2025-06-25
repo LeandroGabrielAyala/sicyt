@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('convocatoria_becas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tipo_beca_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('tipo_beca_id')->constrained('tipo_becas')->cascadeOnDelete();
             $table->integer('anio');
             $table->date('inicio');
             $table->date('fin');

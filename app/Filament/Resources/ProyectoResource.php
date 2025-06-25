@@ -105,17 +105,6 @@ class ProyectoResource extends Resource
                                 ->required(),
                             DatePicker::make('fin')
                                 ->required(),
-                            Select::make('director_id')
-                                ->label('Director PI')
-                                ->relationship('director', 'apellido') // mantenemos la relación
-                                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->apellido}, {$record->nombre}")
-                                ->required(),
-                            // TextInput::make('director_id')
-                            //     ->label('Director')
-                            //     ->formatStateUsing(fn ($state) => Investigador::find($state)?->apellido . ', ' . Investigador::find($state)?->nombre),
-                            // TextInput::make('codirector_id')
-                            //     ->label('Codirector')
-                            //     ->formatStateUsing(fn ($state) => $state ? Investigador::find($state)?->apellido . ', ' . Investigador::find($state)?->nombre : '-'),
                             TextInput::make('nombre')
                                 ->required()
                                 ->maxLength(255)
@@ -124,7 +113,7 @@ class ProyectoResource extends Resource
                                 ->required()
                                 ->maxLength(4000)
                                 ->columnSpanFull(),
-                        ])->columns(4),
+                        ])->columns(2),
 
                     FormTab::make('Información Adicional')
                         ->schema([
@@ -265,7 +254,6 @@ class ProyectoResource extends Resource
                 ]) /*, layout: FiltersLayout::AboveContent)->filtersFormColumns(2)*/
             ->actions([
                 ViewAction::make()->label('Ver')
-                    //->modalHeading('Detalles del Proyecto')
                     ->modalHeading(fn ($record) => 'Detalles del Proyecto de Investigación N° ' . $record->nro)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn () => null)
@@ -275,12 +263,36 @@ class ProyectoResource extends Resource
                         ->tabs([
                             InfoTab::make('Investigadores')
                                 ->schema([
+                                    TextEntry::make('investigadorDirector')
+                                        ->label('Director del Proyecto')
+                                        ->color('customgray')
+                                        ->getStateUsing(fn ($record) =>
+                                            $record->investigadorDirector->pluck('apellido_nombre')->implode(', ')
+                                        ),
+                                    TextEntry::make('investigadorCodirector')
+                                        ->label('Co-director del Proyecto')
+                                        ->color('customgray')
+                                        ->getStateUsing(fn ($record) => 
+                                            $record->investigadorCodirector->isNotEmpty()
+                                                ? $record->investigadorCodirector->pluck('apellido_nombre')->implode(', ')
+                                                : '-'
+                                        ),
                                     Entry::make('investigadores')
                                         ->label('Investigadores Asociados')
+                                        ->columnSpanFull()
                                         ->view('livewire.investigadores-list', [
                                             'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
                                         ]),
-                                ])->columnSpanFull(),
+                                ])->columns(2),
+                            InfoTab::make('Becarios')
+                                ->schema([
+                                    Entry::make('becarios')
+                                        ->label('Becarios Asociados')
+                                        ->columnSpanFull()
+                                        ->view('livewire.becarios-list', [
+                                            'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
+                                        ]),
+                                ])->columns(2),
                             InfoTab::make('Datos Generales')
                                 ->schema([
                                 InfoSection::make('')
@@ -295,15 +307,6 @@ class ProyectoResource extends Resource
                                             ->columnSpanFull()
                                             ->color('customgray')
                                             ->html(),
-                                        TextEntry::make('director.apellido_nombre')
-                                        ->label('Director PI')
-                                        ->columnSpanFull()
-                                        ->color('customgray'),
-
-                                    TextEntry::make('codirector.apellido_nombre')
-                                        ->label('Codirector PI')
-                                        ->columnSpanFull()
-                                        ->color('customgray'),
                                     ]),
                                 InfoSection::make('')
                                     ->description('Duración del Proyecto')

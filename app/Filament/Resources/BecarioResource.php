@@ -92,52 +92,22 @@ class BecarioResource extends Resource
                 DatePicker::make('fecha_nac')
                     ->required()
                     ->label('Fecha de nacimiento'),
-                // Select::make('tipo_beca_id')
-                //     ->label('Tipo de Beca')
-                //     ->relationship('tipo_beca', 'nombre')
-                //         ->options(TipoBeca::orderBy('nombre', 'desc')->pluck('nombre', 'id')
-                //     )
-                //     ->required()
-                //     ->columnSpanFull()
-                //     ->live(),
-                Select::make('tipo_beca_id')
-                    ->label('Tipo de Beca')
-                    ->relationship('tipo_beca', 'nombre')
-                    ->required()
-                    ->live(),
-                RichEditor::make('plan_trabajo')
-                        ->required()
-                        ->maxLength(4000)
-                        ->columnSpanFull(),
                 Select::make('carrera_id')
-                    ->relationship('carrera', 'nombre')
-                    ->required(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Grado')
-                    ->visible(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Grado')
-                    ->columnSpanFull(),
-
+                    ->relationship('carrera', 'nombre'),
                 Select::make('nivel_academico_id')
-                    ->relationship('nivelAcademico', 'nombre')
-                    ->required(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado')
-                    ->visible(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado'),
-
+                    ->relationship('nivelAcademico', 'nombre'),
                 Select::make('disciplina_id')
-                    ->relationship('disciplina', 'nombre')
-                    ->required(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado')
-                    ->visible(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado'),
-
+                    ->relationship('disciplina', 'nombre'),
                 Select::make('campo_id')
-                    ->relationship('campo', 'nombre')
-                    ->required(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado')
-                    ->visible(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado'),
-
+                    ->relationship('campo', 'nombre'),
                 Select::make('objetivo_id')
-                    ->relationship('objetivo', 'nombre')
-                    ->required(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado')
-                    ->visible(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado'),
-
+                    ->relationship('objetivo', 'nombre'),
                 TextInput::make('titulo')
-                    ->required(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado')
-                    ->visible(fn (callable $get) => TipoBeca::find($get('tipo_beca_id'))?->nombre === 'UNCAUS Posgrado'),
+                    ->columnSpanFull(),
+                RichEditor::make('plan_trabajo')
+                    ->required()
+                    ->maxLength(4000)
+                    ->columnSpanFull(),
         ]);
     }
 
@@ -155,36 +125,51 @@ class BecarioResource extends Resource
                     ->limit(50),
                 TextColumn::make('dni')
                     ->label('DNI'),
-                TextColumn::make('tipo_beca.nombre')
+                TextColumn::make('tipo_beca')
                     ->label('Tipo de Beca')
-                    ->searchable()
-                    ->limit(50)
+                    ->getStateUsing(fn ($record) => $record->tipo_beca)  // usa el atributo del join directo
                     ->badge()
-                    ->color(fn (string $state) => match (true) {
-                        str_contains($state, 'Grado') => 'success',
-                        str_contains($state, 'Posgrado') => 'info',
+                    ->color(fn (?string $state) => match ($state) {
+                        'Grado' => 'success',
+                        'Posgrado' => 'info',
+                        'CIN' => 'warning',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state) => match (true) {
-                        str_contains($state, 'Grado') => 'Grado',
-                        str_contains($state, 'Posgrado') => 'Posgrado',
-                        default => $state,
-                    }),
+                    ->formatStateUsing(fn (?string $state) => $state ?? '—'),
+TextColumn::make('tipo_convocatoria')
+    ->label('Tipo de Convocatoria')
+    ->getStateUsing(function ($record) {
+        return $record->proyectos
+            ->map(fn ($proyecto) => optional($proyecto->pivot->convocatoria?->tipoBeca)->nombre)
+            ->filter()
+            ->unique()
+            ->implode(', ');
+    })
+    ->formatStateUsing(fn ($state) => $state ?: '—')
+    ->badge()
+    ->color('gray'),
+TextColumn::make('anio_convocatoria')
+    ->label('Año Convocatoria')
+    ->getStateUsing(function ($record) {
+        return $record->proyectos
+            ->map(fn ($proyecto) => $proyecto->pivot->convocatoria?->anio)
+            ->filter()
+            ->unique()
+            ->implode(', ');
+    })
+    ->formatStateUsing(fn ($state) => $state ?: '—')
+    ->badge()
+    ->color('gray'),
+
                 TextColumn::make('email')
-                    ->label('Email'),
+                    ->label('Email')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('telefono')
                     ->label('Teléfono')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('tipo_beca')
-                    ->label('Tipo de Beca')
-                    ->relationship('tipo_beca', 'nombre')
-                    ->options([
-                        'UNCAUS Grado' => 'UNCAUS Grado',
-                        'UNCAUS Posgrado' => 'UNCAUS Posgrado',
-                        'CIN' => 'CIN',
-                    ])
+                //
             ])
             ->actions([
                 ViewAction::make()->label('Ver')
@@ -216,19 +201,17 @@ class BecarioResource extends Resource
 
                             Tab::make('Datos de la Beca')->schema([
                                 Section::make('Información general de la beca')->schema([
-                                    TextEntry::make('tipo_beca.nombre')
+                                    TextEntry::make('tipo_beca')
                                         ->label('Tipo de Beca')
+                                        ->getStateUsing(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca)
                                         ->badge()
-                                        ->color(fn (string $state) => match (true) {
-                                            str_contains($state, 'Grado') => 'success',
-                                            str_contains($state, 'Posgrado') => 'info',
+                                        ->color(fn (?string $state) => match (true) {
+                                            $state === 'Grado' => 'success',
+                                            $state === 'Posgrado' => 'info',
+                                            $state === 'CIN' => 'warning',
                                             default => 'gray',
                                         })
-                                        ->formatStateUsing(fn (string $state) => match (true) {
-                                            str_contains($state, 'Grado') => 'Grado',
-                                            str_contains($state, 'Posgrado') => 'Posgrado',
-                                            default => $state,
-                                        }),
+                                        ->formatStateUsing(fn (?string $state) => $state ?? '—'),
                                     TextEntry::make('plan_trabajo')
                                         ->label('Plan de trabajo')
                                         ->html()
@@ -236,26 +219,31 @@ class BecarioResource extends Resource
                                         ->columnSpanFull(),
                                 ])->columns(2),
                             ]),
-
                             Tab::make('Datos Académicos')->schema([
                                 Section::make('Formación del Becario')->schema([
                                     TextEntry::make('titulo')->label('Título profesional')
-                                        ->visible(fn ($record) => $record->tipo_beca?->nombre === 'UNCAUS Posgrado')->color('customgray'),
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
 
                                     TextEntry::make('carrera.nombre')->label('Carrera')
-                                        ->visible(fn ($record) => $record->tipo_beca?->nombre === 'UNCAUS Grado')->color('customgray'),
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Grado')
+                                        ->color('customgray'),
 
                                     TextEntry::make('nivelAcademico.nombre')->label('Nivel Académico')
-                                        ->visible(fn ($record) => $record->tipo_beca?->nombre === 'UNCAUS Posgrado')->color('customgray'),
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
 
                                     TextEntry::make('disciplina.nombre')->label('Disciplina')
-                                        ->visible(fn ($record) => $record->tipo_beca?->nombre === 'UNCAUS Posgrado')->color('customgray'),
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
 
                                     TextEntry::make('campo.nombre')->label('Campo de Aplicación')
-                                        ->visible(fn ($record) => $record->tipo_beca?->nombre === 'UNCAUS Posgrado')->color('customgray'),
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
 
                                     TextEntry::make('objetivo.nombre')->label('Objetivo Socioeconómico')
-                                        ->visible(fn ($record) => $record->tipo_beca?->nombre === 'UNCAUS Posgrado')->color('customgray'),
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
                                 ])->columns(2),
                             ]),
 

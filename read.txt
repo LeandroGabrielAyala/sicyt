@@ -1,4 +1,8 @@
+* Infolist de Proyecto tambien poner los Becarios asociados con sus directores, plan, etc..
+* Agregar .PDF a los becarios cuando asocias a un Proyecto
+
 * Infolist de los Becarios (agregarle el director & codirector del proyecto asociado)
+
 * En los Becarios asociados y Proyectos asociados agregar el infolist en los RelationManager
 * Cuando cambio a posgrado, deberia borrarse la carrera (o no)
 * Hacer bien lo de Pagos Mensuales a Becarios

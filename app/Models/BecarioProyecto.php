@@ -14,6 +14,12 @@ class BecarioProyecto extends Pivot
         'director_id',
         'codirector_id',
         'convocatoria_beca_id',
+        'tipo_beca',   // agregado
+        'vigente',     // agregado
+    ];
+
+    protected $casts = [
+        'vigente' => 'boolean',
     ];
 
     public function becario()
@@ -39,5 +45,15 @@ class BecarioProyecto extends Pivot
     public function convocatoria()
     {
         return $this->belongsTo(ConvocatoriaBeca::class, 'convocatoria_beca_id');
+    }
+
+    // Opciones para el campo tipo_beca (enum)
+    public static function tiposBeca(): array
+    {
+        return [
+            'Grado' => 'Grado',
+            'Posgrado' => 'Posgrado',
+            'CIN' => 'CIN',
+        ];
     }
 }

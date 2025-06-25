@@ -23,7 +23,7 @@ class Investigador extends Model
 
     public function getNombreCompletoAttribute()
     {
-        return "{$this->nombre} {$this->apellido}";
+        return "{$this->apellido}, {$this->nombre}";
     }
     public function getApellidoNombreAttribute()
     {

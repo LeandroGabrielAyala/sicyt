@@ -8,6 +8,8 @@ use Filament\Actions\CreateAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Filament\Resources\Pages\Page;
 
 
 
@@ -15,18 +17,16 @@ class ListBecarios extends ListRecords
 {
     protected static string $resource = BecarioResource::class;
 
-    protected function getHeaderActions(): array
+    public ?string $activeTab = 'Todos'; // Por defecto Todos
+
+    protected function getTableQuery(): Builder
     {
-        return [
-            CreateAction::make()
-                ->label('Nuevo Becario'),
-        ];
+        return Becario::query()
+            ->join('becario_proyecto', 'becarios.id', '=', 'becario_proyecto.becario_id')
+            ->select('becarios.*', 'becario_proyecto.tipo_beca');
     }
 
-    public function getTitle(): string
-    {
-        return 'Lista de Becarios';
-    }
+
 
     public function getTabs(): array
     {
@@ -34,27 +34,21 @@ class ListBecarios extends ListRecords
             Tab::make('Todos')
                 ->badge(Becario::count()),
 
-            Tab::make('UNCAUS Grado')
+            Tab::make('Grado')
                 ->label('UN Grado')
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereHas('tipo_beca', fn ($q) => $q->where('nombre', 'UNCAUS Grado'))
-                )
-                ->badge(Becario::whereHas('tipo_beca', fn ($q) => $q->where('nombre', 'UNCAUS Grado'))->count()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('becario_proyecto.tipo_beca', 'Grado'))
+                ->badge(DB::table('becario_proyecto')->where('tipo_beca', 'Grado')->count()),
 
-            Tab::make('UNCAUS Posgrado')
+            Tab::make('Posgrado')
                 ->label('UN Posgrado')
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereHas('tipo_beca', fn ($q) => $q->where('nombre', 'UNCAUS Posgrado'))
-                )
-                ->badge(Becario::whereHas('tipo_beca', fn ($q) => $q->where('nombre', 'UNCAUS Posgrado'))->count()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('becario_proyecto.tipo_beca', 'Posgrado'))
+                ->badge(DB::table('becario_proyecto')->where('tipo_beca', 'Posgrado')->count()),
 
             Tab::make('CIN')
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereHas('tipo_beca', fn ($q) => $q->where('nombre', 'CIN'))
-                )
-                ->badge(Becario::whereHas('tipo_beca', fn ($q) => $q->where('nombre', 'CIN'))->count()),
+                ->label('CIN')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('becario_proyecto.tipo_beca', 'CIN'))
+                ->badge(DB::table('becario_proyecto')->where('tipo_beca', 'CIN')->count()),
         ];
     }
-
 
 }

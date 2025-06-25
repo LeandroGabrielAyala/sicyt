@@ -22,10 +22,7 @@ return new class extends Migration
             $table->string('provincia');
             $table->string('email')->unique();
             $table->string('telefono', 20)->unique();
-            $table->foreignId('tipo_beca_id')->constrained()->cascadeOnDelete();
             $table->text('plan_trabajo');
-            // $table->decimal('pago', 8, 2);
-            // Ver tabla pivot con PI y los pagos
             
             // Solo para grado
             $table->foreignId('carrera_id')->nullable()->constrained()->cascadeOnDelete();

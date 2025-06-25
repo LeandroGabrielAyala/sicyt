@@ -39,8 +39,6 @@ class ConvocatoriaBecaResource extends Resource
             ->schema([
                 Select::make('tipo_beca_id')
                     ->relationship('tipo_beca', 'nombre')
-                        ->options(TipoBeca::orderBy('nombre', 'desc')->pluck('nombre', 'id')
-                    )
                     ->required()
                     ->columnSpanFull(),
                 Select::make('anio')

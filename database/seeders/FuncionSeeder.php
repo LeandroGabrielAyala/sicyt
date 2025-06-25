@@ -14,6 +14,12 @@ class FuncionSeeder extends Seeder
     public function run(): void
     {
         Funcion::create([
+            'nombre' => 'Director'
+        ]);
+        Funcion::create([
+            'nombre' => 'Co-director'
+        ]);
+        Funcion::create([
             'nombre' => 'Investigador'
         ]);
         Funcion::create([

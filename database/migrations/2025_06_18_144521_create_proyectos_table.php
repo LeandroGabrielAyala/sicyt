@@ -16,10 +16,6 @@ return new class extends Migration
             $table->integer('nro');
             $table->string('nombre');
             $table->text('resumen');
-            $table->unsignedBigInteger('director_id')->nullable();
-            $table->foreign('director_id')->references('id')->on('investigadors')->nullOnDelete();
-            $table->unsignedBigInteger('codirector_id')->nullable();
-            $table->foreign('codirector_id')->references('id')->on('investigadors')->nullOnDelete();
             $table->foreignId('campo_id')->constrained()->cascadeOnDelete();
             $table->foreignId('objetivo_id')->constrained()->cascadeOnDelete();
             $table->foreignId('actividad_id')->constrained()->cascadeOnDelete();

@@ -6,7 +6,6 @@ use App\Models\Campo;
 use App\Models\Carrera;
 use App\Models\Disciplina;
 use App\Models\Objetivo;
-use App\Models\TipoBeca;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,21 +14,23 @@ class Becario extends Model
 {
     protected $fillable = [
         'nombre', 'apellido', 'dni', 'cuil', 'fecha_nac', 'domicilio', 'provincia', 'email', 'telefono', 'nivel_academico_id', 'disciplina_id', 'campo_id', 'objetivo_id',
-        'titulo', 'carrera_id', 'tipo_beca_id', 'plan_trabajo'
+        'titulo', 'carrera_id', 'plan_trabajo'
     ];
 
     public function proyectos()
     {
         return $this->belongsToMany(Proyecto::class, 'becario_proyecto')
-            ->using(\App\Models\BecarioProyecto::class)
-            ->withPivot(['director_id', 'codirector_id', 'convocatoria_beca_id'])
+            ->using(\App\Models\BecarioProyecto::class) // <- IMPORTANTE
+            ->withPivot([
+                'director_id',
+                'codirector_id',
+                'convocatoria_beca_id',
+                'tipo_beca',
+                'vigente',
+            ])
             ->withTimestamps();
     }
 
-    public function tipo_beca(): BelongsTo
-    {
-        return $this->belongsTo(TipoBeca::class);
-    }
 
     public function carrera(): BelongsTo
     {
@@ -54,5 +55,10 @@ class Becario extends Model
     public function objetivo(): BelongsTo
     {
         return $this->belongsTo(Objetivo::class);
+    }
+
+    public function getNombreCompletoAttribute()
+    {
+        return "{$this->apellido}, {$this->nombre}";
     }
 }
