@@ -19,6 +19,27 @@ class ListBecarios extends ListRecords
 
     public ?string $activeTab = 'Todos'; // Por defecto Todos
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make()
+                ->label('Nuevo Becario'),
+        ];
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            route('filament.admin.resources.becarios.index') => 'Becarios',
+            'Todos',
+        ];
+    }
+
+    public function getTitle(): string
+    {
+        return 'Lista de Becarios';
+    }
+
     protected function getTableQuery(): Builder
     {
         return Becario::query()

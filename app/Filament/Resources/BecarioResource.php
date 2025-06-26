@@ -6,29 +6,23 @@ use App\Filament\Resources\BecarioResource\Pages;
 use App\Filament\Resources\BecarioResource\RelationManagers;
 use App\Filament\Resources\BecarioResource\RelationManagers\ProyectosRelationManager;
 use App\Models\Becario;
-use App\Models\TipoBeca;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Components\Tabs as InfoTabs;
+use Filament\Infolists\Components\Tabs\Tab as InfoTab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Entry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BecarioResource extends Resource
 {
@@ -49,85 +43,65 @@ class BecarioResource extends Resource
     public static function getNavigationBadgeColor(): string|array|null
     {
         return 'primary';
-
-        //return static::getModel()::count() > 5 ? 'primary' : 'warning';
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('nombre')
-                    ->required()
-                    ->label('Nombre(s)'),
-                TextInput::make('apellido')
-                    ->required()
-                    ->label('Apellido(s)'),
-                TextInput::make('dni')
-                    ->required()
-                    ->label('DNI')
-                    ->maxLength(10)
-                    ->unique(ignoreRecord: true),
-                TextInput::make('cuil')
-                    ->required()
-                    ->label('CUIL')
-                    ->maxLength(15)
-                    ->unique(ignoreRecord: true),
-                TextInput::make('domicilio')
-                    ->required()
-                    ->label('Domicilio'),
-                TextInput::make('provincia')
-                    ->required()
-                    ->label('Provincia'),
-                TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->label('Email')
-                    ->unique(ignoreRecord: true),
-                TextInput::make('telefono')
-                    ->required()
-                    ->maxLength(20)
-                    ->label('Teléfono')
-                    ->unique(ignoreRecord: true),
-                DatePicker::make('fecha_nac')
-                    ->required()
-                    ->label('Fecha de nacimiento'),
-                Select::make('carrera_id')
-                    ->relationship('carrera', 'nombre'),
-                Select::make('nivel_academico_id')
-                    ->relationship('nivelAcademico', 'nombre'),
-                Select::make('disciplina_id')
-                    ->relationship('disciplina', 'nombre'),
-                Select::make('campo_id')
-                    ->relationship('campo', 'nombre'),
-                Select::make('objetivo_id')
-                    ->relationship('objetivo', 'nombre'),
-                TextInput::make('titulo')
-                    ->columnSpanFull(),
-                RichEditor::make('plan_trabajo')
-                    ->required()
-                    ->maxLength(4000)
-                    ->columnSpanFull(),
-        ]);
+                Forms\Components\Tabs::make('Contenido')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Datos personales')
+                            ->schema([
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        TextInput::make('nombre')->required()->label('Nombre(s)'),
+                                        TextInput::make('apellido')->required()->label('Apellido(s)'),
+                                        TextInput::make('dni')->required()->label('DNI')->maxLength(10)->unique(ignoreRecord: true),
+                                        TextInput::make('cuil')->required()->label('CUIL')->maxLength(15)->unique(ignoreRecord: true),
+                                        TextInput::make('domicilio')->required()->label('Domicilio'),
+                                        TextInput::make('provincia')->required()->label('Provincia'),
+                                        TextInput::make('email')->email()->required()->label('Email')->unique(ignoreRecord: true),
+                                        TextInput::make('telefono')->required()->maxLength(20)->label('Teléfono')->unique(ignoreRecord: true),
+                                        DatePicker::make('fecha_nac')->required()->label('Fecha de nacimiento')->columnSpanFull(),
+                                    ]),
+                            ]),
+
+                        Forms\Components\Tabs\Tab::make('Formación académica')
+                            ->schema([
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Select::make('carrera_id')->relationship('carrera', 'nombre'),
+                                        Select::make('nivel_academico_id')->relationship('nivelAcademico', 'nombre'),
+                                        Select::make('disciplina_id')->relationship('disciplina', 'nombre'),
+                                        Select::make('campo_id')->relationship('campo', 'nombre'),
+                                        Select::make('objetivo_id')->relationship('objetivo', 'nombre'),
+                                        TextInput::make('titulo')->columnSpanFull(),
+                                    ]),
+                            ]),
+
+                        Forms\Components\Tabs\Tab::make('Plan de trabajo')
+                            ->schema([
+                                Forms\Components\Grid::make()
+                                    ->schema([
+                                        RichEditor::make('plan_trabajo')->required()->maxLength(4000)->columnSpanFull(),
+                                    ]),
+                            ]),
+                    ])->columnSpanFull(),
+            ]);
     }
+
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('apellido')
-                    ->label('Apellido(s)')
-                    ->searchable()
-                    ->limit(50),
-                TextColumn::make('nombre')
-                    ->label('Nombre(s)')
-                    ->searchable()
-                    ->limit(50),
-                TextColumn::make('dni')
-                    ->label('DNI'),
+                TextColumn::make('apellido')->label('Apellido(s)')->searchable()->limit(50),
+                TextColumn::make('nombre')->label('Nombre(s)')->searchable()->limit(50),
+                TextColumn::make('dni')->label('DNI'),
                 TextColumn::make('tipo_beca')
                     ->label('Tipo de Beca')
-                    ->getStateUsing(fn ($record) => $record->tipo_beca)  // usa el atributo del join directo
+                    ->getStateUsing(fn ($record) => $record->tipo_beca)
                     ->badge()
                     ->color(fn (?string $state) => match ($state) {
                         'Grado' => 'success',
@@ -136,51 +110,45 @@ class BecarioResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (?string $state) => $state ?? '—'),
-TextColumn::make('tipo_convocatoria')
-    ->label('Tipo de Convocatoria')
-    ->getStateUsing(function ($record) {
-        return $record->proyectos
-            ->map(fn ($proyecto) => optional($proyecto->pivot->convocatoria?->tipoBeca)->nombre)
-            ->filter()
-            ->unique()
-            ->implode(', ');
-    })
-    ->formatStateUsing(fn ($state) => $state ?: '—')
-    ->badge()
-    ->color('gray'),
-TextColumn::make('anio_convocatoria')
-    ->label('Año Convocatoria')
-    ->getStateUsing(function ($record) {
-        return $record->proyectos
-            ->map(fn ($proyecto) => $proyecto->pivot->convocatoria?->anio)
-            ->filter()
-            ->unique()
-            ->implode(', ');
-    })
-    ->formatStateUsing(fn ($state) => $state ?: '—')
-    ->badge()
-    ->color('gray'),
-
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('telefono')
-                    ->label('Teléfono')
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+                TextColumn::make('convocatoria')
+                    ->label('Convocatoria (Año)')
+                    ->getStateUsing(function ($record) {
+                        return $record->proyectos
+                            ->map(function ($proyecto) {
+                                $tipo = optional($proyecto->pivot->convocatoria?->tipoBeca)->nombre;
+                                $anio = $proyecto->pivot->convocatoria?->anio;
+                                return $tipo && $anio ? "$tipo ($anio)" : null;
+                            })
+                            ->filter()
+                            ->unique()
+                            ->implode(', ');
+                    })
+                    ->formatStateUsing(fn ($state) => $state ?: '—')
+                    ->badge()
+                    ->color('gray'),
+                TextColumn::make('email')->label('Email'),
+                TextColumn::make('telefono')->label('Teléfono')->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
-                ViewAction::make()->label('Ver')
+                ViewAction::make()
+                    ->label('Ver')
                     ->modalHeading(fn ($record) => 'Detalles del Becario ' . $record->nombre . ' ' . $record->apellido)
                     ->modalSubmitAction(false)
-                    ->modalCancelAction(fn () => null)
                     ->modalCancelActionLabel('Cerrar')
                     ->infolist(fn (ViewAction $action): array => [
-                        Tabs::make('Tabs')->tabs([
+                        InfoTabs::make('Tabs')->tabs([
 
-                            Tab::make('Datos Personales')->schema([
+                            InfoTab::make('Proyectos')->schema([
+                                Section::make('Proyectos Asociados')->schema([
+                                    Entry::make('proyectos')
+                                        ->label('Proyectos Asociados')
+                                        ->view('livewire.proyectos-becarios-list', [
+                                            'becario' => $action->getRecord(),
+                                        ]),
+                                ]),
+                            ]),
+
+                            InfoTab::make('Datos Personales')->schema([
                                 Section::make('Datos personales del Becario')->schema([
                                     TextEntry::make('nombre')->label('Nombre(s)')->color('customgray'),
                                     TextEntry::make('apellido')->label('Apellido(s)')->color('customgray'),
@@ -192,34 +160,14 @@ TextColumn::make('anio_convocatoria')
                                 ])->columns(2),
                             ]),
 
-                            Tab::make('Contacto')->schema([
+                            InfoTab::make('Contacto')->schema([
                                 Section::make('Datos de Contacto')->schema([
                                     TextEntry::make('email')->label('Correo electrónico')->color('customgray'),
                                     TextEntry::make('telefono')->label('Teléfono')->color('customgray'),
                                 ])->columns(2),
                             ]),
 
-                            Tab::make('Datos de la Beca')->schema([
-                                Section::make('Información general de la beca')->schema([
-                                    TextEntry::make('tipo_beca')
-                                        ->label('Tipo de Beca')
-                                        ->getStateUsing(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca)
-                                        ->badge()
-                                        ->color(fn (?string $state) => match (true) {
-                                            $state === 'Grado' => 'success',
-                                            $state === 'Posgrado' => 'info',
-                                            $state === 'CIN' => 'warning',
-                                            default => 'gray',
-                                        })
-                                        ->formatStateUsing(fn (?string $state) => $state ?? '—'),
-                                    TextEntry::make('plan_trabajo')
-                                        ->label('Plan de trabajo')
-                                        ->html()
-                                        ->color('customgray')
-                                        ->columnSpanFull(),
-                                ])->columns(2),
-                            ]),
-                            Tab::make('Datos Académicos')->schema([
+                            InfoTab::make('Datos Académicos')->schema([
                                 Section::make('Formación del Becario')->schema([
                                     TextEntry::make('titulo')->label('Título profesional')
                                         ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
@@ -247,18 +195,8 @@ TextColumn::make('anio_convocatoria')
                                 ])->columns(2),
                             ]),
 
-                            Tab::make('Proyectos')->schema([
-                                Section::make('Proyectos Asociados')->schema([
-                                    \Filament\Infolists\Components\Entry::make('proyectos')
-                                        ->label('Proyectos Asociados')
-                                        ->view('livewire.proyectos-becarios-list', [
-                                            'becario' => $action->getRecord(),
-                                        ]),
-                                ]),
-                            ]),
                         ])
-                        ]),
-
+                    ]),
                 EditAction::make(),
             ])
             ->bulkActions([
@@ -273,7 +211,6 @@ TextColumn::make('anio_convocatoria')
         return [
             ProyectosRelationManager::class,
         ];
-
     }
 
     public static function getPages(): array

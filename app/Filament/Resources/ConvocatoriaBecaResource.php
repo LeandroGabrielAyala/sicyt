@@ -21,6 +21,13 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Entry;
+use Filament\Infolists\Components\Tabs\Tab;
 
 class ConvocatoriaBecaResource extends Resource
 {
@@ -38,7 +45,7 @@ class ConvocatoriaBecaResource extends Resource
         return $form
             ->schema([
                 Select::make('tipo_beca_id')
-                    ->relationship('tipo_beca', 'nombre')
+                    ->relationship('tipoBeca', 'nombre')  // Cambiar aquí 'tipo_beca' por 'tipoBeca'
                     ->required()
                     ->columnSpanFull(),
                 Select::make('anio')
@@ -76,43 +83,77 @@ class ConvocatoriaBecaResource extends Resource
                     ->preserveFilenames()
                     ->reorderable()
                     ->openable(),
-            ]);
+            ])->columns(2);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('anio')
-                    ->label('Año de Convocatoria')
-                    ->sortable(),
-                TextColumn::make('tipo_beca.nombre')
-                    ->label('Nombre')
-                    ->searchable(),
-                TextColumn::make('inicio')
-                    ->date()
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('fin')
-                    ->date()
-                    ->sortable()
-                    ->searchable(),
-                IconColumn::make('estado')
-                    ->label('Estado')
-                    ->boolean(),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            TextColumn::make('tipoBeca.nombre')->label('Tipo')->searchable(),
+            TextColumn::make('anio')->label('Año')->sortable(),
+            TextColumn::make('inicio')->label('Inicio')->date()->sortable()->searchable(),
+            TextColumn::make('fin')->label('Fin')->date()->sortable()->searchable(),
+            IconColumn::make('estado')->label('Estado')->boolean(),
+        ])
+        ->actions([
+            ViewAction::make('view')
+                ->label('Ver')
+                ->modalHeading(fn (ConvocatoriaBeca $record) => 'Detalles de Convocatoria ' . $record->anio)
+                ->modalSubmitAction(false)
+                ->modalCancelAction(fn () => null)
+                ->modalCancelActionLabel('Cerrar')
+                ->infolist(fn (ViewAction $action): array => [
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            Tab::make('Datos Generales')
+                                ->schema([
+                                    Section::make('Información básica')
+                                        ->schema([
+                                            TextEntry::make('tipoBeca.nombre')
+                                                ->label('Tipo de Beca')
+                                                ->color('customgray'),
+                                            TextEntry::make('anio')
+                                                ->label('Año')
+                                                ->color('customgray'),
+                                            TextEntry::make('inicio')
+                                                ->label('Fecha de Inicio')
+                                                ->color('customgray'),
+                                            TextEntry::make('fin')
+                                                ->label('Fecha de Fin')
+                                                ->color('customgray'),
+                                            TextEntry::make('estado')
+                                                ->label('Estado')
+                                                ->color('customgray')
+                                                ->formatStateUsing(fn ($state) => $state ? 'Vigente' : 'No Vigente'),
+                                        ])->columns(2),
+                                ]),
+
+                            Tab::make('Documentos')
+                                ->schema([
+                                    Section::make('Documentación')
+                                        ->schema([
+                                            Entry::make('pdf_disposicion')
+                                                ->label('Disposiciones en PDF')
+                                                ->view('filament.infolists.custom-file-entry-dispo'),
+                                            Entry::make('pdf_resolucion')
+                                                ->label('Resoluciones en PDF')
+                                                ->view('filament.infolists.custom-file-entry-reso'),
+                                        ])->columns(2),
+                                    ]),
+                        ])
                 ]),
-            ]);
-    }
+            EditAction::make()
+        ])
+        ->filters([
+            //
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ]);
+}
 
     public static function getRelations(): array
     {

@@ -52,15 +52,14 @@ class Proyecto extends Model
             ->wherePivot('funcion_id', [2, 6]);
     }
 
-
     public function director()
     {
-        return $this->belongsTo(Investigador::class, 'director_id');
+        return $this->investigadores()?->firstWhere('pivot.funcion', 'director');
     }
 
     public function codirector()
     {
-        return $this->belongsTo(Investigador::class, 'codirector_id');
+        return $this->investigadores()?->firstWhere('pivot.funcion', 'codirector');
     }
 
     public function becarios()

@@ -17,4 +17,17 @@ class ListInvestigadors extends ListRecords
                 ->label('Nuevo Investigador'),
         ];
     }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            route('filament.admin.resources.investigadores-pi.index') => 'Investigadores',
+            'Todos',
+        ];
+    }
+
+    public function getTitle(): string
+    {
+        return 'Lista de Investigadores';
+    }
 }

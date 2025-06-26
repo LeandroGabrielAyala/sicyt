@@ -19,6 +19,12 @@ use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\DetachAction;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Entry;
+use Filament\Infolists\Components\Tabs\Tab;
 
 class BecariosRelationManager extends RelationManager
 {
@@ -54,12 +60,16 @@ public function table(Tables\Table $table): Tables\Table
                         'CIN' => 'warning',
                         default => 'gray',
                     }),
-                TextColumn::make('pivot.convocatoria.tipoBeca.nombre')
-                    ->label('Tipo de Convocatoria')
-                    ->formatStateUsing(fn ($state) => $state ?? '—')
+                TextColumn::make('convocatoria')
+                    ->label('Convocatoria (Año)')
+                    ->getStateUsing(function ($record) {
+                        $tipo = $record->pivot?->convocatoria?->tipoBeca?->nombre;
+                        $anio = $record->pivot?->convocatoria?->anio;
+
+                        return $tipo && $anio ? "$tipo ($anio)" : ($tipo ?? $anio ?? '—');
+                    })
                     ->badge()
                     ->color('gray'),
-                TextColumn::make('pivot.convocatoria.anio')->label('Convocatoria'),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -114,7 +124,72 @@ public function table(Tables\Table $table): Tables\Table
                     ]),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()->label('Ver')
+                    ->modalHeading(fn ($record) => 'Detalles del Becario ' . $record->nombre . ' ' . $record->apellido)
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(fn () => null)
+                    ->modalCancelActionLabel('Cerrar')
+                    ->infolist(fn (ViewAction $action): array => [
+                        Tabs::make('Tabs')->tabs([
+
+                            Tab::make('Datos Personales')->schema([
+                                Section::make('Datos personales del Becario')->schema([
+                                    TextEntry::make('nombre')->label('Nombre(s)')->color('customgray'),
+                                    TextEntry::make('apellido')->label('Apellido(s)')->color('customgray'),
+                                    TextEntry::make('dni')->label('DNI')->color('customgray'),
+                                    TextEntry::make('cuil')->label('CUIL')->color('customgray'),
+                                    TextEntry::make('fecha_nac')->label('Fecha de Nacimiento')->color('customgray')->date(),
+                                    TextEntry::make('domicilio')->label('Domicilio')->color('customgray'),
+                                    TextEntry::make('provincia')->label('Provincia')->color('customgray'),
+                                ])->columns(2),
+                            ]),
+
+                            Tab::make('Contacto')->schema([
+                                Section::make('Datos de Contacto')->schema([
+                                    TextEntry::make('email')->label('Correo electrónico')->color('customgray'),
+                                    TextEntry::make('telefono')->label('Teléfono')->color('customgray'),
+                                ])->columns(2),
+                            ]),
+
+                            Tab::make('Datos Académicos')->schema([
+                                Section::make('Formación del Becario')->schema([
+                                    TextEntry::make('titulo')->label('Título profesional')
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
+
+                                    TextEntry::make('carrera.nombre')->label('Carrera')
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Grado')
+                                        ->color('customgray'),
+
+                                    TextEntry::make('nivelAcademico.nombre')->label('Nivel Académico')
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
+
+                                    TextEntry::make('disciplina.nombre')->label('Disciplina')
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
+
+                                    TextEntry::make('campo.nombre')->label('Campo de Aplicación')
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
+
+                                    TextEntry::make('objetivo.nombre')->label('Objetivo Socioeconómico')
+                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
+                                        ->color('customgray'),
+                                ])->columns(2),
+                            ]),
+
+                            Tab::make('Proyectos')->schema([
+                                Section::make('Proyectos Asociados')->schema([
+                                    Entry::make('proyectos')
+                                        ->label('Proyectos Asociados')
+                                        ->view('livewire.proyectos-becarios-list', [
+                                            'becario' => $action->getRecord(),
+                                        ]),
+                                ]),
+                            ]),
+                        ])
+                    ]),
                 DetachAction::make(),
             ]);
     }

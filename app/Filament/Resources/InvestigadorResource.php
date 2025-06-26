@@ -174,10 +174,10 @@ class InvestigadorResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nombre')
-                    ->label('Nombre'),
                 TextColumn::make('apellido')
                     ->label('Apellido'),
+                TextColumn::make('nombre')
+                    ->label('Nombre'),
                 TextColumn::make('dni')
                     ->label('DNI'),
                 TextColumn::make('email')
