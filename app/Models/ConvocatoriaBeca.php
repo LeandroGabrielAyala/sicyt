@@ -20,6 +20,14 @@ class ConvocatoriaBeca extends Model
         return $this->belongsTo(TipoBeca::class, 'tipo_beca_id');
     }
 
+    // App\Models\ConvocatoriaBeca.php
+
+    public function getDescripcionAttribute(): string
+    {
+        return 'Convocatoria ' . $this->anio . ' (' . $this->tipoBeca->nombre . ')';
+    }
+
+
     public function becarios()
     {
         return $this->belongsToMany(Becario::class, 'becario_proyecto')

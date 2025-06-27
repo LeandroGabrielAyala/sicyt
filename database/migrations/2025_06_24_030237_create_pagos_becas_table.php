@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('pagos_becas', function (Blueprint $table) {
             $table->id();
-            $table->integer('anio');
-            $table->date('mes');
-            $table->foreignId('convocatoria_beca_id')->constrained()->cascadeOnDelete();
-            // Ver tabla pivot $table->foreignId('becario_id')->constrained()->cascadeOnDelete();
+            $table->integer('anio'); // Año del pago
+            $table->string('mes');   // Mes (ej. "Enero", "Febrero")
+            $table->enum('tipo_beca', ['Grado', 'Posgrado', 'CIN']); // <-- cambio aquí
+            $table->foreignId('convocatoria_beca_id')->constrained('convocatoria_becas')->cascadeOnDelete();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

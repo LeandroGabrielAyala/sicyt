@@ -69,4 +69,10 @@ class Becario extends Model
             ->withTimestamps();
     }
 
+    public function pagos(): HasMany
+    {
+        return $this->hasMany(BecarioPagoBeca::class);
+    }
+
+
 }
