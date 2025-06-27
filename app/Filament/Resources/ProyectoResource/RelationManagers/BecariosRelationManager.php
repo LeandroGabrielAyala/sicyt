@@ -13,7 +13,9 @@ use App\Models\Becario;
 use App\Models\Investigador;
 use App\Models\ConvocatoriaBeca;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Columns\TextColumn;
@@ -71,58 +73,59 @@ public function table(Tables\Table $table): Tables\Table
                     ->badge()
                     ->color('gray'),
             ])
-            ->headerActions([
-                AttachAction::make()
-                    ->form([
-                        Grid::make(2)->schema([
-                            Select::make('recordId')
-                                ->label('Becario')
-                                ->options(Becario::all()->pluck('nombre_completo', 'id'))
-                                ->searchable()
-                                ->required(),
-                            Select::make('director_id')
-                                ->label('Director de la Beca')
-                                ->options(function (callable $get) {
-                                    $codirectorId = $get('codirector_id');
-                                    return Investigador::when($codirectorId, function ($query) use ($codirectorId) {
-                                        $query->where('id', '!=', $codirectorId);
-                                    })->get()->pluck('nombre_completo', 'id');
-                                })
-                                ->searchable()
-                                ->reactive()
-                                ->required(),
-                            Select::make('codirector_id')
-                                ->label('Codirector de la Beca')
-                                ->options(function (callable $get) {
-                                    $directorId = $get('director_id');
-                                    return Investigador::when($directorId, function ($query) use ($directorId) {
-                                        $query->where('id', '!=', $directorId);
-                                    })->get()->pluck('nombre_completo', 'id');
-                                })
-                                ->searchable()
-                                ->reactive(),
-                            Select::make('tipo_beca_convocatoria')
-                                ->label('Tipo de Convocatoria')
-                                ->options(
-                                    \App\Models\TipoBeca::all()->pluck('nombre', 'id')
-                                )
-                                ->searchable()
-                                ->required(),
-                            Select::make('convocatoria_beca_id')
-                                ->label('Convocatoria')
-                                ->options(ConvocatoriaBeca::all()->pluck('anio', 'id'))
-                                ->required(),
-                            Select::make('tipo_beca')
-                                ->label('Tipo de Beca')
-                                ->options(\App\Models\BecarioProyecto::tiposBeca())
-                                ->required(),
-                            // Nuevo campo: vigente
-                            Toggle::make('vigente')
-                                ->label('Vigente / No Vigente')
-                                ->default(true),
-                        ]),
-                    ]),
-            ])
+->headerActions([
+    AttachAction::make()
+        ->form([
+            Grid::make(2)->schema([
+                Select::make('recordId')
+                    ->label('Becario')
+                    ->options(Becario::all()->pluck('nombre_completo', 'id'))
+                    ->searchable()
+                    ->required(),
+                Select::make('director_id')
+                    ->label('Director de la Beca')
+                    ->options(function (callable $get) {
+                        $codirectorId = $get('codirector_id');
+                        return Investigador::when($codirectorId, function ($query) use ($codirectorId) {
+                            $query->where('id', '!=', $codirectorId);
+                        })->get()->pluck('nombre_completo', 'id');  // <- primero get(), luego pluck()
+                    })
+                    ->searchable()
+                    ->reactive()
+                    ->required(),
+                Select::make('codirector_id')
+                    ->label('Codirector de la Beca')
+                    ->options(function (callable $get) {
+                        $directorId = $get('director_id');
+                        return Investigador::when($directorId, function ($query) use ($directorId) {
+                            $query->where('id', '!=', $directorId);
+                        })->get()->pluck('nombre_completo', 'id');  // <- igual acá
+                    })
+                    ->searchable()
+                    ->reactive(),
+                Select::make('tipo_beca_convocatoria')
+                    ->label('Tipo de Convocatoria')
+                    ->options(\App\Models\TipoBeca::all()->pluck('nombre', 'id'))
+                    ->searchable()
+                    ->required(),
+                Select::make('convocatoria_beca_id')
+                    ->label('Convocatoria')
+                    ->options(ConvocatoriaBeca::all()->pluck('anio', 'id'))
+                    ->required(),
+                Select::make('tipo_beca')
+                    ->label('Tipo de Beca')
+                    ->options(\App\Models\BecarioProyecto::tiposBeca())
+                    ->required(),
+                Toggle::make('vigente')
+                    ->label('Vigente / No Vigente')
+                    ->default(true),
+                TextInput::make('plan_trabajo')
+                    ->label('Plan de trabajo')
+                    ->required()
+                    ->columnSpanFull(),
+            ]),
+        ]),
+])
             ->actions([
                 ViewAction::make()->label('Ver')
                     ->modalHeading(fn ($record) => 'Detalles del Becario ' . $record->nombre . ' ' . $record->apellido)
@@ -190,6 +193,56 @@ public function table(Tables\Table $table): Tables\Table
                             ]),
                         ])
                     ]),
+                Tables\Actions\EditAction::make()
+                    ->label('Editar')
+                    ->form(fn ($record) => [
+                        Grid::make(2)->schema([
+                            Select::make('pivot.director_id')
+                                ->label('Director')
+                                ->options(Investigador::all()->pluck('nombre_completo', 'id'))
+                                ->required(),
+                            Select::make('pivot.codirector_id')
+                                ->label('Codirector')
+                                ->options(Investigador::all()->pluck('nombre_completo', 'id'))
+                                ->searchable(),
+                            Select::make('pivot.convocatoria_beca_id')
+                                ->label('Convocatoria')
+                                ->options(ConvocatoriaBeca::all()->pluck('anio', 'id'))
+                                ->required(),
+                            Select::make('pivot.tipo_beca')
+                                ->label('Tipo de Beca')
+                                ->options(\App\Models\BecarioProyecto::tiposBeca())
+                                ->required(),
+                            Toggle::make('pivot.vigente')
+                                ->label('Vigente')
+                                ->default(true),
+                        ]),
+                    ])
+                    ->mutateRecordDataUsing(function ($data, $record) {
+                        // Prellenar los valores desde el pivot
+                        return [
+                            'pivot.director_id' => $record->pivot->director_id,
+                            'pivot.codirector_id' => $record->pivot->codirector_id,
+                            'pivot.convocatoria_beca_id' => $record->pivot->convocatoria_beca_id,
+                            'pivot.tipo_beca' => $record->pivot->tipo_beca,
+                            'pivot.vigente' => $record->pivot->vigente,
+                        ];
+                    })
+                    ->mutateFormDataUsing(function (array $data) {
+                        // Solo retornamos los valores que vamos a actualizar
+                        return [
+                            'director_id' => $data['pivot.director_id'],
+                            'codirector_id' => $data['pivot.codirector_id'],
+                            'convocatoria_beca_id' => $data['pivot.convocatoria_beca_id'],
+                            'tipo_beca' => $data['pivot.tipo_beca'],
+                            'vigente' => $data['pivot.vigente'],
+                        ];
+                    })
+                    ->after(function (RelationManager $livewire, $record, array $data) {
+                        // Aplicar cambios directamente sobre la pivote
+                        $record->pivot->update($data);
+                    }),
+
                 DetachAction::make(),
             ]);
     }

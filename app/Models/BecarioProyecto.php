@@ -14,6 +14,7 @@ class BecarioProyecto extends Pivot
         'director_id',
         'codirector_id',
         'convocatoria_beca_id',
+        'plan_trabajo',
         'tipo_beca',   // agregado
         'vigente',     // agregado
     ];

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\BecarioResource\Pages;
 use App\Filament\Resources\BecarioResource\RelationManagers;
+use App\Filament\Resources\BecarioResource\RelationManagers\ConvocatoriasRelationManager;
 use App\Filament\Resources\BecarioResource\RelationManagers\ProyectosRelationManager;
 use App\Models\Becario;
 use Filament\Tables\Actions\EditAction;
@@ -77,14 +78,6 @@ class BecarioResource extends Resource
                                         Select::make('campo_id')->relationship('campo', 'nombre'),
                                         Select::make('objetivo_id')->relationship('objetivo', 'nombre'),
                                         TextInput::make('titulo')->columnSpanFull(),
-                                    ]),
-                            ]),
-
-                        Forms\Components\Tabs\Tab::make('Plan de trabajo')
-                            ->schema([
-                                Forms\Components\Grid::make()
-                                    ->schema([
-                                        RichEditor::make('plan_trabajo')->required()->maxLength(4000)->columnSpanFull(),
                                     ]),
                             ]),
                     ])->columnSpanFull(),
@@ -210,6 +203,7 @@ class BecarioResource extends Resource
     {
         return [
             ProyectosRelationManager::class,
+            ConvocatoriasRelationManager::class,
         ];
     }
 

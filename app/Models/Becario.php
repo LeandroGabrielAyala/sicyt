@@ -61,4 +61,12 @@ class Becario extends Model
     {
         return "{$this->apellido}, {$this->nombre}";
     }
+
+    public function convocatorias()
+    {
+        return $this->belongsToMany(ConvocatoriaBeca::class, 'becario_proyecto')
+            ->withPivot(['tipo_beca', 'vigente', 'director_id', 'codirector_id'])
+            ->withTimestamps();
+    }
+
 }

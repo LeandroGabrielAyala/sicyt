@@ -11,6 +11,8 @@ return new class extends Migration
             $table->foreignId('funcion_id')->nullable()->constrained()->nullOnDelete();
             $table->date('inicio')->nullable();
             $table->date('fin')->nullable();
+            $table->string('disposicion');
+            $table->string('resolucion');
             $table->json('pdf_disposicion')->nullable();
             $table->json('pdf_resolucion')->nullable();
             $table->boolean('vigente')->default(true);

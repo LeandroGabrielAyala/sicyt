@@ -9,6 +9,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Section;
@@ -43,97 +44,117 @@ class InvestigadorRelationManager extends RelationManager
                 TextColumn::make('pivot.fin')->date()->label('Fin'),
                 IconColumn::make('pivot.vigente')->label('Vigente')->boolean(),
             ])
-            ->headerActions([
-                AttachAction::make()->label('Asociar')
-                    ->form([
-                        Grid::make(2)->schema([
-                            Select::make('recordId')
-                                ->label('Investigador')
-                                ->options(function () {
-                                    // IDs de investigadores ya asociados al proyecto
-                                    $idsInvestigadores = $this->ownerRecord->investigador()->pluck('investigadors.id')->toArray();
 
-                                    // Obtener los IDs de funciones "Director" y "Codirector"
-                                    $directorId = Funcion::where('nombre', 'Director')->value('id');
-                                    $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
+->headerActions([
+    AttachAction::make()->label('Asociar')
+        ->form([
+            Grid::make(2)->schema([
+                Select::make('recordId')
+                    ->label('Investigador')
+                    ->options(function () {
+                        $idsInvestigadores = $this->ownerRecord->investigador()->pluck('investigadors.id')->toArray();
 
-                                    // Obtener IDs de investigadores que ya son Director o Codirector para este proyecto
-                                    $investigadoresDirectores = $this->ownerRecord->investigador()
-                                        ->wherePivotIn('funcion_id', [$directorId, $codirectorId])
-                                        ->pluck('investigadors.id')
-                                        ->toArray();
+                        $directorId = Funcion::where('nombre', 'Director')->value('id');
+                        $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
 
-                                    // Excluir investigadores asociados y además excluir si ya hay Director/Codirector con esa función
-                                    $excluirIds = array_unique(array_merge($idsInvestigadores, $investigadoresDirectores));
+                        $investigadoresDirectores = $this->ownerRecord->investigador()
+                            ->wherePivotIn('funcion_id', [$directorId, $codirectorId])
+                            ->pluck('investigadors.id')
+                            ->toArray();
 
-                                    // Obtener solo investigadores que no están en excluirIds
-                                    return Investigador::whereNotIn('id', $excluirIds)
-                                        ->get()
-                                        ->pluck('nombre_completo', 'id');
-                                })
-                                ->searchable()
-                                ->required(),
+                        $excluirIds = array_unique(array_merge($idsInvestigadores, $investigadoresDirectores));
 
-                            Select::make('funcion_id')
-                                ->label('Función')
-                                ->options(function () {
-                                    // Obtenemos IDs de funciones "Director" y "Codirector"
-                                    $directorId = Funcion::where('nombre', 'Director')->value('id');
-                                    $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
+                        return Investigador::whereNotIn('id', $excluirIds)
+                            ->get()
+                            ->pluck('apellido_nombre', 'id');
+                    })
+                    ->searchable()
+                    ->required(),
 
-                                    // Verificamos si el proyecto ya tiene asignado Director y/o Codirector
-                                    $tieneDirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $directorId)->exists();
-                                    $tieneCodirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $codirectorId)->exists();
+                Select::make('funcion_id')
+                    ->label('Función')
+                    ->options(function () {
+                        $directorId = Funcion::where('nombre', 'Director')->value('id');
+                        $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
 
-                                    // Obtenemos todas las funciones
-                                    $funciones = Funcion::orderBy('nombre')->pluck('nombre', 'id')->toArray();
+                        $tieneDirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $directorId)->exists();
+                        $tieneCodirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $codirectorId)->exists();
 
-                                    // Si ya existe Director, quitamos esa opción
-                                    if ($tieneDirector) {
-                                        unset($funciones[$directorId]);
-                                    }
-                                    // Si ya existe Codirector, quitamos esa opción
-                                    if ($tieneCodirector) {
-                                        unset($funciones[$codirectorId]);
-                                    }
+                        $funciones = Funcion::orderBy('nombre')->pluck('nombre', 'id')->toArray();
 
-                                    return $funciones;
-                                })
-                                ->searchable()
-                                ->required(),
-                            DatePicker::make('inicio')
-                                ->label('Inicio')
-                                ->required(),
-                            DatePicker::make('fin')
-                                ->label('Fin'),
-                            FileUpload::make('pdf_disposicion')
-                                ->label('PDF Disposición')
-                                ->required()
-                                ->disk('public')
-                                ->directory('disposiciones_inv')
-                                ->acceptedFileTypes(['application/pdf'])
-                                ->multiple()
-                                ->preserveFilenames()
-                                ->reorderable()
-                                ->openable()
-                                ->columnSpanFull(),
-                            FileUpload::make('pdf_resolucion')
-                                ->label('PDF Resolución')
-                                ->required()
-                                ->disk('public')
-                                ->directory('resoluciones_inv')
-                                ->acceptedFileTypes(['application/pdf'])
-                                ->multiple()
-                                ->preserveFilenames()
-                                ->reorderable()
-                                ->openable()
-                                ->columnSpanFull(),
-                            Toggle::make('vigente')
-                                ->label('Vigente')
-                                ->default(true),
-                        ]),
-                    ]),
-            ])
+                        if ($tieneDirector) {
+                            unset($funciones[$directorId]);
+                        }
+                        if ($tieneCodirector) {
+                            unset($funciones[$codirectorId]);
+                        }
+
+                        return $funciones;
+                    })
+                    ->searchable()
+                    ->required(),
+
+                DatePicker::make('inicio')
+                    ->label('Inicio')
+                    ->required(),
+
+                DatePicker::make('fin')
+                    ->label('Fin'),
+
+                TextInput::make('resolucion')
+                    ->required()
+                    ->maxLength(255),
+
+                TextInput::make('disposicion')
+                    ->required()
+                    ->maxLength(255),
+
+                FileUpload::make('pdf_disposicion')
+                    ->label('PDF Disposición')
+                    ->required()
+                    ->disk('public')
+                    ->directory('disposiciones_inv')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->multiple()
+                    ->preserveFilenames()
+                    ->reorderable()
+                    ->openable()
+                    ->columnSpanFull(),
+
+                FileUpload::make('pdf_resolucion')
+                    ->label('PDF Resolución')
+                    ->required()
+                    ->disk('public')
+                    ->directory('resoluciones_inv')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->multiple()
+                    ->preserveFilenames()
+                    ->reorderable()
+                    ->openable()
+                    ->columnSpanFull(),
+
+                Toggle::make('vigente')
+                    ->label('Vigente')
+                    ->default(true),
+            ]),
+        ])
+        ->using(function (\Illuminate\Database\Eloquent\Model $record, array $data, RelationManager $livewire) {
+            $livewire->getRelationship()->attach(
+                $data['recordId'],
+                [
+                    'funcion_id' => $data['funcion_id'],
+                    'inicio' => $data['inicio'],
+                    'fin' => $data['fin'],
+                    'resolucion' => $data['resolucion'],
+                    'disposicion' => $data['disposicion'],
+                    'pdf_disposicion' => $data['pdf_disposicion'],
+                    'pdf_resolucion' => $data['pdf_resolucion'],
+                    'vigente' => $data['vigente'] ?? true,
+                ]
+            );
+        }),
+])
+
 
             ->actions([
                 ViewAction::make()->label('Ver')
@@ -211,6 +232,12 @@ class InvestigadorRelationManager extends RelationManager
                             Toggle::make('vigente')->label('Vigente')->default(true),
                             DatePicker::make('inicio')->label('Inicio')->required(),
                             DatePicker::make('fin')->label('Fin'),
+                            TextInput::make('resolucion')
+                                ->required()
+                                ->maxLength(255),
+                            TextInput::make('disposicion')
+                                ->required()
+                                ->maxLength(255),
                             FileUpload::make('pdf_disposicion')->label('PDF Disposición')
                                 ->disk('public')->directory('disposiciones_inv')
                                 ->acceptedFileTypes(['application/pdf'])->multiple()

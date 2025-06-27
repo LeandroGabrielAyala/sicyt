@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ConvocatoriaBecaResource\Pages;
 use App\Filament\Resources\ConvocatoriaBecaResource\RelationManagers;
+use App\Filament\Resources\ConvocatoriaResource\RelationManagers\BecariosRelationManager;
 use App\Models\ConvocatoriaBeca;
 use App\Models\TipoBeca;
 use Filament\Forms;
@@ -53,8 +54,7 @@ class ConvocatoriaBecaResource extends Resource
                     ->options(
                         collect(range(now()->year, now()->year - 50))->mapWithKeys(fn ($year) => [$year => $year])
                     )
-                    ->required()
-                    ->formatStateUsing(fn ($state) => $state . '-01-01'),
+                    ->required(),
                 Toggle::make('estado')
                     ->label('No Vigente / Vigente')
                     ->inline(false)
@@ -65,6 +65,12 @@ class ConvocatoriaBecaResource extends Resource
                 DatePicker::make('fin')
                     ->label('Fin convocatoria')
                     ->required(),
+                TextInput::make('resolucion')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('disposicion')
+                    ->required()
+                    ->maxLength(255),
                 FileUpload::make('pdf_resolucion')
                     ->label('Resolución en .PDF')
                     ->multiple()
@@ -133,6 +139,10 @@ public static function table(Table $table): Table
                                 ->schema([
                                     Section::make('Documentación')
                                         ->schema([
+                                            TextEntry::make('disposicion')->label('Nro. de Disposición')
+                                                ->color('customgray'),
+                                            TextEntry::make('resolucion')->label('Nro. de Resolución')
+                                                ->color('customgray'),
                                             Entry::make('pdf_disposicion')
                                                 ->label('Disposiciones en PDF')
                                                 ->view('filament.infolists.custom-file-entry-dispo'),
@@ -158,7 +168,7 @@ public static function table(Table $table): Table
     public static function getRelations(): array
     {
         return [
-            //
+            BecariosRelationManager::class
         ];
     }
 

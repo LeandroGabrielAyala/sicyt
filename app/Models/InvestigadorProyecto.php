@@ -15,6 +15,8 @@ class InvestigadorProyecto extends Pivot
         'funcion_id',
         'inicio',
         'fin',
+        'disposicion', 
+        'resolucion',
         'pdf_disposicion',
         'pdf_resolucion',
         'vigente',

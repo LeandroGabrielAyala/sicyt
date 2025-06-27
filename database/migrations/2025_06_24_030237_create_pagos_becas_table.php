@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('pagos_becas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('convocatoria_beca_id')->constrained()->cascadeOnDelete();
             $table->integer('anio');
             $table->date('mes');
+            $table->foreignId('convocatoria_beca_id')->constrained()->cascadeOnDelete();
             // Ver tabla pivot $table->foreignId('becario_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

@@ -1,12 +1,13 @@
-* Cuando asocie un becario a un proyecto, ahi poner el plan de trabajo
-* Agregar .PDF a los becarios cuando asocias a un Proyecto (esto ver porque la convocatoria ya tendria los .PDF y ahi vincularlo con los becarios)
+* Cuanto va gastado en Proyectos
+
+* Crear lo de Adscriptos todo casi igual a Becarios
+* Tabla pivot adscriptos y proyectos
 
 * Cuando cambio a posgrado, deberia borrarse la carrera (o no)
 
 * Hacer bien lo de Pagos Mensuales a Becarios
     * Tabla pivot con becarios (opcional agregar multiples Becarios)
-* Crear lo de Adscriptos todo casi igual a Becarios
-* Tabla pivot adscriptos y proyectos
+
 * Probar PDF
 * Probar Importacion y Exportacion .CSV
 * Notificación

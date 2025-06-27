@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->foreignId('director_id')->nullable()->constrained('investigadors')->nullOnDelete();
             $table->foreignId('codirector_id')->nullable()->constrained('investigadors')->nullOnDelete();
 
+            $table->text('plan_trabajo');
             $table->enum('tipo_beca', ['Grado', 'Posgrado', 'CIN']);
             $table->boolean('vigente')->default(true);
 

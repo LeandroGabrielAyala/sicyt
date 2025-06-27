@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('provincia');
             $table->string('email')->unique();
             $table->string('telefono', 20)->unique();
-            $table->text('plan_trabajo');
             
             // Solo para grado
             $table->foreignId('carrera_id')->nullable()->constrained()->cascadeOnDelete();

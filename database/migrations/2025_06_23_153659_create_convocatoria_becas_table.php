@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('inicio');
             $table->date('fin');
             $table->boolean('estado');
+            $table->string('disposicion');
+            $table->string('resolucion');
             $table->json('pdf_disposicion')->nullable();
             $table->json('pdf_resolucion')->nullable();
             $table->timestamps();
