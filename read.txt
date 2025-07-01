@@ -1,3 +1,8 @@
+* Agregar a todos:
+    ** BUSQUEDA GLOBAL
+    ** FILTRO
+    ** SEARCHEABLE
+
 * Cuanto va gastado en Proyectos
 
 * Crear lo de Adscriptos todo casi igual a Becarios

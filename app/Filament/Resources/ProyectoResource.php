@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use App\Filament\Resources\ProyectoResource\Pages;
 use App\Filament\Resources\ProyectoResource\RelationManagers\BecariosRelationManager;
 use Filament\Infolists\Components\Entry;
@@ -11,10 +9,7 @@ use Filament\Infolists\Components\Section as InfoSection;
 use Filament\Infolists\Components\Tabs as InfoTabs;
 use Filament\Infolists\Components\Tabs\Tab as InfoTab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
-use Filament\Infolists\Components\IconEntry;
 use App\Models\Proyecto;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
@@ -22,7 +17,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section as FormSection;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
@@ -30,16 +24,14 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadorRelationManager;
-use App\Models\Investigador;
 use Filament\Forms\Components\Tabs as FormTabs;
 use Filament\Forms\Components\Tabs\Tab as FormTab;
+use Filament\Tables\Actions\ExportAction;
+
 
 class ProyectoResource extends Resource
 {
@@ -203,15 +195,6 @@ class ProyectoResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                /*TextColumn::make('pdf_resolucion')
-                    ->label('Descargar .PDF')
-                    ->searchable()
-                    ->badge()
-                    ->color(fn (bool $state) => $state ? 'primary' : 'primary')
-                    ->formatStateUsing(fn ($record) => 'Descargar ' . $record->resolucion)
-                    ->url(fn ($record) => Storage::url($record->pdf_resolucion))
-                    ->openUrlInNewTab()
-                    ->toggleable(isToggledHiddenByDefault: true),*/
                 TextColumn::make('presupuesto')
                     ->label('Presupuesto')
                     ->formatStateUsing(fn ($state) => '$' . number_format($state, 2, ',', '.'))
