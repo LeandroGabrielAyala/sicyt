@@ -30,7 +30,7 @@ class InvestigadorRelationManager extends RelationManager
 {
     protected static string $relationship = 'investigador'; // importante que coincida con el nombre del método en Proyecto.php
 
-    protected static ?string $title = 'Integrantes del Proyecto';
+    protected static ?string $title = 'Investigadores';
 
     public function table(Tables\Table $table): Tables\Table
     {

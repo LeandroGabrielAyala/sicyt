@@ -14,7 +14,7 @@ class PagoBeca extends Model
     protected $fillable = [
         'anio',
         'mes',
-        'tipo_beca_id',
+        'tipo_beca',
         'convocatoria_beca_id',
     ];
 

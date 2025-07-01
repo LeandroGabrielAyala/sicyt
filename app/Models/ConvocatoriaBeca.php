@@ -15,18 +15,17 @@ class ConvocatoriaBeca extends Model
         'pdf_resolucion' => 'array',
     ];
 
-    public function tipoBeca()
+    public function tipoBeca(): BelongsTo
     {
         return $this->belongsTo(TipoBeca::class, 'tipo_beca_id');
     }
 
     // App\Models\ConvocatoriaBeca.php
 
-    public function getDescripcionAttribute(): string
+    public function getDescripcionAttribute()
     {
-        return 'Convocatoria ' . $this->anio . ' (' . $this->tipoBeca->nombre . ')';
+        return 'Convocatoria ' . $this->anio . ' (' . ($this->tipoBeca->nombre ?? '-') . ')';
     }
-
 
     public function becarios()
     {

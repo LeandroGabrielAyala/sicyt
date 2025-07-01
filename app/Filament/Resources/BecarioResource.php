@@ -18,6 +18,8 @@ use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Tabs as InfoTabs;
 use Filament\Infolists\Components\Tabs\Tab as InfoTab;
+use Filament\Infolists\Components\Tabs as FormTabs;
+use Filament\Infolists\Components\Tabs\Tab as FormTab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Entry;
 use Filament\Resources\Resource;
@@ -50,9 +52,9 @@ class BecarioResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Tabs::make('Contenido')
+                FormTabs::make('Contenido')
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make('Datos personales')
+                        FormTab::make('Datos personales')
                             ->schema([
                                 Forms\Components\Grid::make(2)
                                     ->schema([
@@ -68,7 +70,7 @@ class BecarioResource extends Resource
                                     ]),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Formación académica')
+                        FormTab::make('Formación académica')
                             ->schema([
                                 Forms\Components\Grid::make(2)
                                     ->schema([

@@ -3,11 +3,6 @@
 * Crear lo de Adscriptos todo casi igual a Becarios
 * Tabla pivot adscriptos y proyectos
 
-* Cuando cambio a posgrado, deberia borrarse la carrera (o no)
-
-* Hacer bien lo de Pagos Mensuales a Becarios
-    * Tabla pivot con becarios (opcional agregar multiples Becarios)
-
 * Probar PDF
 * Probar Importacion y Exportacion .CSV
 * Notificación
