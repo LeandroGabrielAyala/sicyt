@@ -35,6 +35,15 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url('/app')
             ])
+            // ->colors([
+            //     'primary' => Color::Indigo,
+            //     'success' => Color::Emerald,
+            //     'info' => Color::Blue,
+            //     'warning' => Color::Orange,
+            //     'danger' => Color::Red,
+            //     'gray' => Color::Slate,
+            //     'customgray' => Color::CustomGray,
+            // ])
             ->colors([
                 'primary' => Color::Indigo,
                 'success' => Color::Emerald,
@@ -42,7 +51,18 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
                 'danger' => Color::Red,
                 'gray' => Color::Slate,
-                'customgray' => Color::CustomGray,
+                'customgray' => [
+                    50 => '#f9fafb',
+                    100 => '#f3f4f6',
+                    200 => '#e5e7eb',
+                    300 => '#d1d5db',
+                    400 => '#9ca3af',
+                    500 => '#6b7280',
+                    600 => '#4b5563',
+                    700 => '#374151',
+                    800 => '#1f2937',
+                    900 => '#111827',
+                ],
             ])
             ->font('Montserrat')
             ->navigationGroups([
@@ -72,6 +92,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 VerifyIsAdmin::class,
-            ]);
+            ])
+            ->databaseNotifications();
     }
 }

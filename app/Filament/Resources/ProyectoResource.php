@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\ProyectoExporter;
+use App\Filament\Imports\ProyectoImporter;
 use App\Filament\Resources\ProyectoResource\Pages;
 use App\Filament\Resources\ProyectoResource\RelationManagers\BecariosRelationManager;
 use Filament\Infolists\Components\Entry;
@@ -30,8 +32,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadorRelationManager;
 use Filament\Forms\Components\Tabs as FormTabs;
 use Filament\Forms\Components\Tabs\Tab as FormTab;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportAction;
-
+use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Tables\Actions\ImportAction;
+use Filament\Tables\Actions\ImportBulkAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 class ProyectoResource extends Resource
 {
@@ -344,10 +350,14 @@ class ProyectoResource extends Resource
                 ]),
                 Tables\Actions\EditAction::make()->label('Editar')
             ])
+            ->headerActions([
+                ExportAction::make()->exporter(ProyectoExporter::class),
+                ImportAction::make()->importer(ProyectoImporter::class),
+            ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                ])
             ]);
     }
 
