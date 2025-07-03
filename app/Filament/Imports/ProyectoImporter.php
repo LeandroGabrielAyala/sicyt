@@ -65,15 +65,52 @@ class ProyectoImporter extends Importer
         ];
     }
 
-    public function resolveRecord(): ?Proyecto
-    {
-        // return Proyecto::firstOrNew([
-        //     // Update existing records, matching them by `$this->data['column_name']`
-        //     'email' => $this->data['email'],
-        // ]);
+protected function resolveRelationId(string $relationName, string $label): ?int
+{
+    $modelInstance = new ($this->getModel());
+    $relationship = $modelInstance->{$relationName}();
+    $relatedModel = $relationship->getRelated();
 
-        return new Proyecto();
+    return $relatedModel::where('nombre', $label)->value('id');
+}
+
+protected function transformPdfField(?string $value): ?string
+{
+    if (blank($value)) {
+        return null;
     }
+
+    $files = explode(',', $value);
+
+    return json_encode(
+        collect($files)
+            ->map(fn($file) => trim($file))
+            ->toArray()
+    );
+}
+
+
+public function resolveRecord(): ?Proyecto
+{
+    return new Proyecto([
+        'nro' => $this->data['nro'],
+        'nombre' => $this->data['nombre'],
+        'resumen' => $this->data['resumen'],
+        'duracion' => (int) $this->data['duracion'],
+        'inicio' => \Carbon\Carbon::parse($this->data['inicio']),
+        'fin' => \Carbon\Carbon::parse($this->data['fin']),
+        'estado' => filter_var($this->data['estado'], FILTER_VALIDATE_BOOLEAN),
+        'disposicion' => $this->data['disposicion'],
+        'resolucion' => $this->data['resolucion'],
+        'pdf_disposicion' => $this->transformPdfField($this->data['pdf_disposicion']),
+        'pdf_resolucion' => $this->transformPdfField($this->data['pdf_resolucion']),
+        'presupuesto' => (float) str_replace(',', '.', $this->data['presupuesto']),
+        'campo_id' => $this->resolveRelationId('campo', $this->data['campo']),
+        'objetivo_id' => $this->resolveRelationId('objetivo', $this->data['objetivo']),
+        'actividad_id' => $this->resolveRelationId('actividad', $this->data['actividad']),
+    ]);
+}
+
 
     public static function getCompletedNotificationBody(Import $import): string
     {
