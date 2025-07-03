@@ -351,12 +351,14 @@ class ProyectoResource extends Resource
                 Tables\Actions\EditAction::make()->label('Editar')
             ])
             ->headerActions([
-                ExportAction::make()->exporter(ProyectoExporter::class),
+                ExportAction::make()->exporter(ProyectoExporter::class), // Todos los registros
                 ImportAction::make()->importer(ProyectoImporter::class),
             ])
+
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
+                    ExportBulkAction::make()->exporter(ProyectoExporter::class), // Solo seleccionados
+                    DeleteBulkAction::make(),
                 ])
             ]);
     }
