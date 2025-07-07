@@ -59,11 +59,6 @@ class User extends Authenticatable implements HasTenants
             return $this->team;
         }
 
-        public function team(): BelongsToMany
-        {
-            return $this->belongsToMany(Team::class);
-        }
-
         public function canAccessTenant(Model $tenant): bool
         {
             return $this->team()->whereKey($tenant)->exists();

@@ -6,6 +6,9 @@ use App\Models\Proyecto;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ProyectoExporter extends Exporter
 {
@@ -38,12 +41,29 @@ class ProyectoExporter extends Exporter
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Your proyecto export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
+        $body = 'La exportación se completó correctamente. ' . number_format($export->successful_rows) . ' fila(s) exportadas.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+            $body .= ' ' . number_format($failedRowsCount) . ' fila(s) fallaron.';
         }
 
         return $body;
     }
+
+    public static function getCompletedNotification(Export $export): ?Notification
+    {
+        Log::info('Notificación export:', [
+            'user_id' => optional($export->user)->id,
+            'auth_id' => optional(auth()->user())->id,
+        ]);
+
+        $user = $export->user ?? auth()->user();
+
+        return Notification::make()
+            ->title('Exportación de Proyectos')
+            ->body(self::getCompletedNotificationBody($export))
+            ->success()
+            ->sendToDatabase($user);
+    }
+
 }
