@@ -52,18 +52,21 @@ class ProyectoExporter extends Exporter
 
     public static function getCompletedNotification(Export $export): ?Notification
     {
-        Log::info('Notificación export:', [
-            'user_id' => optional($export->user)->id,
-            'auth_id' => optional(auth()->user())->id,
-        ]);
+        $user = $export->user ?? auth()->user;
 
-        $user = $export->user ?? auth()->user();
+        if (! $user) {
+            Log::warning('No se pudo identificar el usuario para enviar la notificación de exportación.');
+            return null;
+        }
+
 
         return Notification::make()
             ->title('Exportación de Proyectos')
             ->body(self::getCompletedNotificationBody($export))
             ->success()
-            ->sendToDatabase($user);
+            ->sendToDatabase($user) // esto guarda en la base
+            ->read(false); // ← asegura que aparezca como NO LEÍDA
     }
+
 
 }
