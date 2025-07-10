@@ -1,18 +1,22 @@
-* Testear exportar Excel, Docs y PDF
+1.
+* Crear lo de Adscriptos todo casi igual a Becarios
+* Tabla pivot adscriptos y proyectos
 
+2.
+* Exportar en .PDF y .DOCS
+* Agregar a todos Export/Import de .CSV, .PDF y .DOCS
+
+3.
+* Cuanto va gastado en Proyectos
+
+4.
 * Agregar a todos:
     ** BUSQUEDA GLOBAL
     ** FILTRO
     ** SEARCHEABLE
 
-* Cuanto va gastado en Proyectos
-
-* Crear lo de Adscriptos todo casi igual a Becarios
-* Tabla pivot adscriptos y proyectos
-
-* Probar PDF
-* Probar Importacion y Exportacion .CSV
-* Notificación
+5.
+* Solucionar o averiguar para que Panel Notificación
 * Control de Roles y Permisos
 * Grafico de estadísticas
 
