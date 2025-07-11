@@ -22,7 +22,7 @@ class IncentivoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Incentivo';
     protected static ?string $modelLabel = 'Incentivo';
-    protected static ?string $navigationGroup = 'Configuración Proyecto';
+    protected static ?string $navigationGroup = 'Configuración Proyectos';
     protected static ?string $slug = 'incentivo-pi';
     protected static ?int $navigationSort = 6;
 

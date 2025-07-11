@@ -22,9 +22,9 @@ class CargoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Cargo Docente';
     protected static ?string $modelLabel = 'Cargo Docente';
-    protected static ?string $navigationGroup = 'Configuración Proyecto';
+    protected static ?string $navigationGroup = 'Configuración Proyectos';
     protected static ?string $slug = 'cargo-docente-pi';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

@@ -97,6 +97,19 @@ class Proyecto extends Model
         return $this->belongsTo(Actividad::class);
     }
 
+    public function adscriptos()
+    {
+        return $this->belongsToMany(Adscripto::class, 'adscripto_proyecto')
+            ->withPivot([
+                'director_id',
+                'codirector_id',
+                'convocatoria_adscripto_id',
+                'vigente',
+            ])
+            ->withTimestamps();
+    }
+
+
     protected static function booted()
     {
         static::saving(function ($proyecto) {

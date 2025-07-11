@@ -22,7 +22,7 @@ class NivelAcademicoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Nivel Académico';
     protected static ?string $modelLabel = 'Nivel Académico';
-    protected static ?string $navigationGroup = 'Configuración Proyecto';
+    protected static ?string $navigationGroup = 'Configuración Proyectos';
     protected static ?string $slug = 'nivel-academico-pi';
     protected static ?int $navigationSort = 3;
 

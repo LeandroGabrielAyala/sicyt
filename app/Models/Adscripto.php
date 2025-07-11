@@ -38,4 +38,22 @@ class Adscripto extends Model
     {
         return $this->belongsTo(Carrera::class, 'titulo_id');
     }
+
+    public function proyectos()
+    {
+        return $this->belongsToMany(Proyecto::class, 'adscripto_proyecto')
+            ->withPivot([
+                'convocatoria_adscripto_id',
+                'director_id',
+                'codirector_id',
+                'vigente',
+            ])
+            ->withTimestamps();
+    }
+
+    public function getNombreCompletoAttribute()
+    {
+        return "{$this->apellido}, {$this->nombre}";
+    }
+
 }

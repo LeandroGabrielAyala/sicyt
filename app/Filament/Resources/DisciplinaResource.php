@@ -23,7 +23,7 @@ class DisciplinaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Disciplina';
     protected static ?string $modelLabel = 'Disciplina';
-    protected static ?string $navigationGroup = 'Configuración Proyecto';
+    protected static ?string $navigationGroup = 'Configuración Proyectos';
     protected static ?string $slug = 'disciplina-pi';
     protected static ?int $navigationSort = 4;
 

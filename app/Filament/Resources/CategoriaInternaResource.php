@@ -22,7 +22,7 @@ class CategoriaInternaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Categoria Interna';
     protected static ?string $modelLabel = 'Categoria Interna';
-    protected static ?string $navigationGroup = 'Configuración Proyecto';
+    protected static ?string $navigationGroup = 'Configuración Proyectos';
     protected static ?string $slug = 'categoria-interna-pi';
     protected static ?int $navigationSort = 5;
 

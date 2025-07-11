@@ -22,7 +22,7 @@ class FuncionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationLabel = 'Función en PI';
     protected static ?string $modelLabel = 'Función en PI';
-    protected static ?string $navigationGroup = 'Configuración Proyecto';
+    protected static ?string $navigationGroup = 'Configuración Proyectos';
     protected static ?string $slug = 'funcion-pi';
     protected static ?int $navigationSort = 2;
 

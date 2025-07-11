@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\ProyectoExporter;
 use App\Filament\Imports\ProyectoImporter;
 use App\Filament\Resources\ProyectoResource\Pages;
+use App\Filament\Resources\ProyectoResource\RelationManagers\AdscriptosRelationManager;
 use App\Filament\Resources\ProyectoResource\RelationManagers\BecariosRelationManager;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Section as InfoSection;
@@ -371,7 +372,8 @@ class ProyectoResource extends Resource
     {
         return [
             InvestigadorRelationManager::class,
-            BecariosRelationManager::class
+            BecariosRelationManager::class,
+            AdscriptosRelationManager::class
         ];
     }
 
