@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('becarios', function (Blueprint $table) {
+        Schema::create('adscriptos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
             $table->string('apellido');
@@ -21,19 +21,12 @@ return new class extends Migration
             $table->string('lugar_nac');
             $table->string('domicilio');
             $table->string('provincia');
+            $table->string('codigo');
             $table->string('email')->unique();
             $table->string('telefono', 20)->unique();
-            
-            // Solo para grado
-            $table->foreignId('carrera_id')->nullable()->constrained()->cascadeOnDelete();
-
-            // Solo para posgrado
-            $table->foreignId('nivel_academico_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('disciplina_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('campo_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('objetivo_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->string('titulo')->nullable();
-
+            $table->foreignId('carrera_id')->nullable()->constrained('carreras')->nullOnDelete();
+            $table->foreignId('titulo_id')->nullable()->constrained('carreras')->nullOnDelete();
+            // Poner en migracion carrera->titulo
             $table->timestamps();
         });
     }
@@ -43,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('becarios');
+        Schema::dropIfExists('adscriptos');
     }
 };

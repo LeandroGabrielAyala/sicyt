@@ -20,8 +20,6 @@ class ConvocatoriaBeca extends Model
         return $this->belongsTo(TipoBeca::class, 'tipo_beca_id');
     }
 
-    // App\Models\ConvocatoriaBeca.php
-
     public function getDescripcionAttribute()
     {
         return 'Convocatoria ' . $this->anio . ' (' . ($this->tipoBeca->nombre ?? '-') . ')';

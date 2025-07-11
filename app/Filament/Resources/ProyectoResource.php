@@ -150,6 +150,7 @@ class ProyectoResource extends Resource
 
                     FormTab::make('Clasificación')
                         ->schema([
+                            Select::make('carrera_id')->relationship('carrera', 'nombre'),
                             Select::make('campo_id')
                                 ->relationship('campo', 'nombre')
                                 ->required(),
@@ -338,6 +339,9 @@ class ProyectoResource extends Resource
                                 InfoSection::make('')
                                     ->description('Datos relevante para el RACT')
                                     ->schema([
+                                    TextEntry::make('carrera.nombre')
+                                        ->label('Carrera')
+                                        ->color('customgray'),
                                         TextEntry::make('campo.nombre')->label('Campo de Aplicación')
                                             ->color('customgray'),
                                         TextEntry::make('objetivo.nombre')->label('Objetivo Socioeconómico')

@@ -15,7 +15,7 @@ class Proyecto extends Model
     protected $fillable = [
         'nro', 'nombre', 'resumen', 'duracion', 'inicio', 'fin', 'disposicion', 
         'resolucion', 'pdf_resolucion', 'pdf_disposicion', 'presupuesto', 'estado',
-        'campo_id', 'objetivo_id', 'actividad_id'
+        'carrera_id', 'campo_id', 'objetivo_id', 'actividad_id'
     ];
 
     protected $casts = [
@@ -60,6 +60,11 @@ class Proyecto extends Model
     public function codirector()
     {
         return $this->investigadores()?->firstWhere('pivot.funcion', 'codirector');
+    }
+
+    public function carrera(): BelongsTo
+    {
+        return $this->belongsTo(Carrera::class);
     }
 
     public function becarios()

@@ -73,59 +73,59 @@ public function table(Tables\Table $table): Tables\Table
                     ->badge()
                     ->color('gray'),
             ])
-->headerActions([
-    AttachAction::make()
-        ->form([
-            Grid::make(2)->schema([
-                Select::make('recordId')
-                    ->label('Becario')
-                    ->options(Becario::all()->pluck('nombre_completo', 'id'))
-                    ->searchable()
-                    ->required(),
-                Select::make('director_id')
-                    ->label('Director de la Beca')
-                    ->options(function (callable $get) {
-                        $codirectorId = $get('codirector_id');
-                        return Investigador::when($codirectorId, function ($query) use ($codirectorId) {
-                            $query->where('id', '!=', $codirectorId);
-                        })->get()->pluck('nombre_completo', 'id');  // <- primero get(), luego pluck()
-                    })
-                    ->searchable()
-                    ->reactive()
-                    ->required(),
-                Select::make('codirector_id')
-                    ->label('Codirector de la Beca')
-                    ->options(function (callable $get) {
-                        $directorId = $get('director_id');
-                        return Investigador::when($directorId, function ($query) use ($directorId) {
-                            $query->where('id', '!=', $directorId);
-                        })->get()->pluck('nombre_completo', 'id');  // <- igual acá
-                    })
-                    ->searchable()
-                    ->reactive(),
-                Select::make('tipo_beca_convocatoria')
-                    ->label('Tipo de Convocatoria')
-                    ->options(\App\Models\TipoBeca::all()->pluck('nombre', 'id'))
-                    ->searchable()
-                    ->required(),
-                Select::make('convocatoria_beca_id')
-                    ->label('Convocatoria')
-                    ->options(ConvocatoriaBeca::all()->pluck('anio', 'id'))
-                    ->required(),
-                Select::make('tipo_beca')
-                    ->label('Tipo de Beca')
-                    ->options(\App\Models\BecarioProyecto::tiposBeca())
-                    ->required(),
-                Toggle::make('vigente')
-                    ->label('Vigente / No Vigente')
-                    ->default(true),
-                TextInput::make('plan_trabajo')
-                    ->label('Plan de trabajo')
-                    ->required()
-                    ->columnSpanFull(),
-            ]),
-        ]),
-])
+            ->headerActions([
+                AttachAction::make()
+                    ->form([
+                        Grid::make(2)->schema([
+                            Select::make('recordId')
+                                ->label('Becario')
+                                ->options(Becario::all()->pluck('nombre_completo', 'id'))
+                                ->searchable()
+                                ->required(),
+                            Select::make('director_id')
+                                ->label('Director de la Beca')
+                                ->options(function (callable $get) {
+                                    $codirectorId = $get('codirector_id');
+                                    return Investigador::when($codirectorId, function ($query) use ($codirectorId) {
+                                        $query->where('id', '!=', $codirectorId);
+                                    })->get()->pluck('nombre_completo', 'id');  // <- primero get(), luego pluck()
+                                })
+                                ->searchable()
+                                ->reactive()
+                                ->required(),
+                            Select::make('codirector_id')
+                                ->label('Codirector de la Beca')
+                                ->options(function (callable $get) {
+                                    $directorId = $get('director_id');
+                                    return Investigador::when($directorId, function ($query) use ($directorId) {
+                                        $query->where('id', '!=', $directorId);
+                                    })->get()->pluck('nombre_completo', 'id');  // <- igual acá
+                                })
+                                ->searchable()
+                                ->reactive(),
+                            Select::make('tipo_beca_convocatoria')
+                                ->label('Tipo de Convocatoria')
+                                ->options(\App\Models\TipoBeca::all()->pluck('nombre', 'id'))
+                                ->searchable()
+                                ->required(),
+                            Select::make('convocatoria_beca_id')
+                                ->label('Convocatoria')
+                                ->options(ConvocatoriaBeca::all()->pluck('anio', 'id'))
+                                ->required(),
+                            Select::make('tipo_beca')
+                                ->label('Tipo de Beca')
+                                ->options(\App\Models\BecarioProyecto::tiposBeca())
+                                ->required(),
+                            Toggle::make('vigente')
+                                ->label('Vigente / No Vigente')
+                                ->default(true),
+                            TextInput::make('plan_trabajo')
+                                ->label('Plan de trabajo')
+                                ->required()
+                                ->columnSpanFull(),
+                        ]),
+                    ]),
+            ])
             ->actions([
                 ViewAction::make()->label('Ver')
                     ->modalHeading(fn ($record) => 'Detalles del Becario ' . $record->nombre . ' ' . $record->apellido)

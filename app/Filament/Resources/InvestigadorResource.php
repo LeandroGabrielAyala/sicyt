@@ -78,6 +78,7 @@ class InvestigadorResource extends Resource
                                         DatePicker::make('fecha_nac')
                                             ->label('Fecha de nacimiento')
                                             ->required(),
+                                        TextInput::make('lugar_nac')->required()->label('Lugar de Nacimiento'),
                                         TextInput::make('dni')
                                             ->label('DNI')
                                             ->required(),

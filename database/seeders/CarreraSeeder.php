@@ -14,13 +14,28 @@ class CarreraSeeder extends Seeder
     public function run(): void
     {
         Carrera::create([
-            'nombre' => 'Farmcia'
+            'nombre' => 'Farmcia',
+            'titulo' => 'Farmaceutico'
         ]);
         Carrera::create([
-            'nombre' => 'Contador Público'
+            'nombre' => 'Contador Público',
+            'titulo' => 'Contador Público'
         ]);
         Carrera::create([
-            'nombre' => 'Ing. en Alimentos'
+            'nombre' => 'Ing. en Alimentos',
+            'titulo' => 'Ingeniero en Alimentos'
+        ]);
+        Carrera::create([
+            'nombre' => 'Abogacia',
+            'titulo' => 'Abogado'
+        ]);
+        Carrera::create([
+            'nombre' => 'Ing. Industrial',
+            'titulo' => 'Ingeniero Industrial'
+        ]);
+        Carrera::create([
+            'nombre' => 'Ing. en Sistemas',
+            'titulo' => 'Ingeniero en Sistemas'
         ]);
     }
 }

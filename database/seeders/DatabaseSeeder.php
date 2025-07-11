@@ -24,7 +24,13 @@ class DatabaseSeeder extends Seeder
             InternaSeeder::class,
             NivelAcaSeeder::class,
             TipoBecaSeeder::class,
-            CarreraSeeder::class
+            CarreraSeeder::class,
+            InvestigadorsSeeder::class,
+            BecariosSeeder::class,
+            ConvocatoriaBecasSeeder::class,
+            ProyectosSeeder::class,
+            BecarioProyectoSeeder::class,
+            AdscriptosSeeder::class
         ]);
     }
 }

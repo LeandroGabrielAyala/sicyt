@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('dni', 10)->unique();
             $table->string('cuil', 15)->unique();
             $table->date('fecha_nac');
+            $table->string('lugar_nac');
             $table->string('domicilio');
             $table->string('provincia');
             $table->string('email')->unique();

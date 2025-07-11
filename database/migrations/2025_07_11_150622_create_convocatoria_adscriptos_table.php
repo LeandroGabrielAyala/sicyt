@@ -11,16 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proyectos', function (Blueprint $table) {
+        Schema::create('convocatoria_adscriptos', function (Blueprint $table) {
             $table->id();
-            $table->integer('nro');
-            $table->string('nombre');
-            $table->text('resumen');
-            $table->foreignId('carrera_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('campo_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('objetivo_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('actividad_id')->constrained()->cascadeOnDelete();
-            $table->integer('duracion');
+            $table->integer('anio');
             $table->date('inicio');
             $table->date('fin');
             $table->boolean('estado');
@@ -28,7 +21,6 @@ return new class extends Migration
             $table->string('resolucion');
             $table->json('pdf_disposicion')->nullable();
             $table->json('pdf_resolucion')->nullable();
-            $table->decimal('presupuesto', 8, 2);
             $table->timestamps();
         });
     }
@@ -38,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proyectos');
+        Schema::dropIfExists('convocatoria_adscriptos');
     }
 };

@@ -41,6 +41,16 @@ class ConvocatoriaBecaResource extends Resource
     protected static ?string $slug = 'convocatoria-beca';
     protected static ?int $navigationSort = 1;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -145,10 +155,10 @@ public static function table(Table $table): Table
                                                 ->color('customgray'),
                                             Entry::make('pdf_disposicion')
                                                 ->label('Disposiciones en PDF')
-                                                ->view('filament.infolists.custom-file-entry-dispo'),
+                                                ->view('filament.infolists.convocatoria-beca-dispo'),
                                             Entry::make('pdf_resolucion')
                                                 ->label('Resoluciones en PDF')
-                                                ->view('filament.infolists.custom-file-entry-reso'),
+                                                ->view('filament.infolists.convocatoria-beca-reso'),
                                         ])->columns(2),
                                     ]),
                         ])

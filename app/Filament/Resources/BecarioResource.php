@@ -18,8 +18,8 @@ use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Tabs as InfoTabs;
 use Filament\Infolists\Components\Tabs\Tab as InfoTab;
-use Filament\Infolists\Components\Tabs as FormTabs;
-use Filament\Infolists\Components\Tabs\Tab as FormTab;
+use Filament\Forms\Components\Tabs as FormTabs;
+use Filament\Forms\Components\Tabs\Tab as FormTab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Entry;
 use Filament\Resources\Resource;
@@ -67,6 +67,7 @@ class BecarioResource extends Resource
                                         TextInput::make('email')->email()->required()->label('Email')->unique(ignoreRecord: true),
                                         TextInput::make('telefono')->required()->maxLength(20)->label('Teléfono')->unique(ignoreRecord: true),
                                         DatePicker::make('fecha_nac')->required()->label('Fecha de nacimiento')->columnSpanFull(),
+                                        TextInput::make('lugar_nac')->required()->label('Lugar de Nacimiento')
                                     ]),
                             ]),
 

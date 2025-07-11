@@ -34,6 +34,10 @@ class CarreraResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
+                TextInput::make('titulo')
+                    ->required()
+                    ->maxLength(255)
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -42,6 +46,8 @@ class CarreraResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nombre')
+                    ->searchable(),
+                TextColumn::make('titulo')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

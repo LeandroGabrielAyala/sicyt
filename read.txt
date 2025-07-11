@@ -1,5 +1,4 @@
 1.
-* Crear lo de Adscriptos todo casi igual a Becarios
 * Tabla pivot adscriptos y proyectos
 
 2.
