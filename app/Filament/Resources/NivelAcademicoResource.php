@@ -26,6 +26,16 @@ class NivelAcademicoResource extends Resource
     protected static ?string $slug = 'nivel-academico-pi';
     protected static ?int $navigationSort = 3;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

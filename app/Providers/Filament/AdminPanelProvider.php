@@ -35,15 +35,6 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url('/app')
             ])
-            // ->colors([
-            //     'primary' => Color::Indigo,
-            //     'success' => Color::Emerald,
-            //     'info' => Color::Blue,
-            //     'warning' => Color::Orange,
-            //     'danger' => Color::Red,
-            //     'gray' => Color::Slate,
-            //     'customgray' => Color::CustomGray,
-            // ])
             ->colors([
                 'primary' => Color::Indigo,
                 'success' => Color::Emerald,
@@ -67,7 +58,10 @@ class AdminPanelProvider extends PanelProvider
             ->font('Montserrat')
             ->navigationGroups([
                 'Proyectos',
+                'Becas',
                 'Configuración Proyectos',
+                'Configuración Becas',
+                'Configuración RACT',
             ])
             ->brandLogo(asset('images/logo-sicyt.png'))
             ->favicon(asset('images/logo-sicyt.png'))

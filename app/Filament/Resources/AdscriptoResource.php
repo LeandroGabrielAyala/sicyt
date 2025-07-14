@@ -19,8 +19,11 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Entry;
+use Filament\Tables\Actions\ViewAction;
+
 
 class AdscriptoResource extends Resource
 {
@@ -106,6 +109,54 @@ class AdscriptoResource extends Resource
                 //
             ])
             ->actions([
+                ViewAction::make()
+                    ->label('Ver')
+                    ->modalHeading(fn ($record) => 'Detalles del Adscripto ' . $record->nombre . ' ' . $record->apellido)
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Cerrar')
+                    ->infolist(fn (ViewAction $action): array => [
+                        InfoTabs::make('Tabs')->tabs([
+
+                            InfoTab::make('Datos Personales')->schema([
+                                Section::make('Datos personales')->schema([
+                                    TextEntry::make('nombre')->label('Nombre(s)')->color('gray'),
+                                    TextEntry::make('apellido')->label('Apellido(s)')->color('gray'),
+                                    TextEntry::make('dni')->label('DNI')->color('gray'),
+                                    TextEntry::make('cuil')->label('CUIL')->color('gray'),
+                                    TextEntry::make('fecha_nac')->label('Fecha de nacimiento')->color('gray')->date(),
+                                    TextEntry::make('lugar_nac')->label('Lugar de nacimiento')->color('gray'),
+                                    TextEntry::make('domicilio')->label('Domicilio')->color('gray'),
+                                    TextEntry::make('provincia')->label('Provincia')->color('gray'),
+                                    TextEntry::make('codigo')->label('Código Postal')->color('gray'),
+                                ])->columns(2),
+                            ]),
+
+                            InfoTab::make('Proyecto')->schema([
+                                Section::make('')->schema([
+                                    Entry::make('proyectos')
+                                        ->label('Proyectos Asociados')
+                                        ->view('livewire.proyectos-adscriptos-list', [
+                                            'adscripto' => $action->getRecord(),
+                                        ]),
+                                ]),
+                            ]),
+
+                            InfoTab::make('Contacto')->schema([
+                                Section::make('Datos de contacto')->schema([
+                                    TextEntry::make('email')->label('Correo electrónico')->color('gray'),
+                                    TextEntry::make('telefono')->label('Teléfono')->color('gray'),
+                                ])->columns(2),
+                            ]),
+
+                            InfoTab::make('Formación')->schema([
+                                Section::make('Formación académica')->schema([
+                                    TextEntry::make('carrera.nombre')->label('Carrera')->color('gray'),
+                                    TextEntry::make('titulo.titulo')->label('Título')->color('gray'),
+                                ])->columns(2),
+                            ]),
+                        ])
+                    ]),
+
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

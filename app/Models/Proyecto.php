@@ -100,6 +100,7 @@ class Proyecto extends Model
     public function adscriptos()
     {
         return $this->belongsToMany(Adscripto::class, 'adscripto_proyecto')
+            ->using(AdscriptoProyecto::class)
             ->withPivot([
                 'director_id',
                 'codirector_id',
@@ -108,7 +109,6 @@ class Proyecto extends Model
             ])
             ->withTimestamps();
     }
-
 
     protected static function booted()
     {

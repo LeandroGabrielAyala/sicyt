@@ -26,6 +26,16 @@ class CategoriaInternaResource extends Resource
     protected static ?string $slug = 'categoria-interna-pi';
     protected static ?int $navigationSort = 5;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

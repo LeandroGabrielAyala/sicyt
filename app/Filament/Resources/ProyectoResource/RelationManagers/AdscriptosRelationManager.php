@@ -14,6 +14,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\EditAction;
@@ -24,6 +25,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Tables\Columns\IconColumn;
 
 class AdscriptosRelationManager extends RelationManager
 {
@@ -47,14 +49,14 @@ class AdscriptosRelationManager extends RelationManager
                 TextColumn::make('pivot.codirector_id')
                     ->label('Codirector')
                     ->formatStateUsing(fn ($state) => $state ? Investigador::find($state)?->nombre_completo : '—'),
-                TextColumn::make('pivot.vigente')
+                IconColumn::make('pivot.vigente')
                     ->label('Vigente')
                     ->boolean(),
-                TextColumn::make('convocatoria')
+                TextColumn::make('pivot.convocatoria.anio')
                     ->label('Convocatoria')
-                    ->getStateUsing(fn ($record) => $record->pivot?->convocatoria?->anio ?? '—')
                     ->badge()
                     ->color('gray'),
+
             ])
             ->headerActions([
                 AttachAction::make()
@@ -62,7 +64,7 @@ class AdscriptosRelationManager extends RelationManager
                         Grid::make(2)->schema([
                             Select::make('recordId')
                                 ->label('Adscripto')
-                                ->options(Adscripto::all()->pluck('apellido', 'id'))
+                                ->options(Adscripto::all()->pluck('nombre_completo', 'id'))
                                 ->searchable()
                                 ->required(),
                             Select::make('director_id')
@@ -82,6 +84,19 @@ class AdscriptosRelationManager extends RelationManager
                             Toggle::make('vigente')
                                 ->label('Vigente')
                                 ->default(true),
+
+                            FileUpload::make('pdf_disposicion')
+                                ->label('Disposición')
+                                ->multiple()
+                                ->directory('disposiciones_ads')
+                                ->visibility('public'),
+
+                            FileUpload::make('pdf_resolucion')
+                                ->label('Resolución')
+                                ->multiple()
+                                ->directory('resoluciones_ads')
+                                ->visibility('public'),
+
                         ]),
                     ]),
             ])

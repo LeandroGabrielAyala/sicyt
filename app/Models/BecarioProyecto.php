@@ -15,12 +15,19 @@ class BecarioProyecto extends Pivot
         'codirector_id',
         'convocatoria_beca_id',
         'plan_trabajo',
+        'tipo_beca_convocatoria',
         'tipo_beca',   // agregado
-        'vigente',     // agregado
+        'vigente',
+        'disposicion', 
+        'resolucion',
+        'pdf_disposicion',
+        'pdf_resolucion',
     ];
 
     protected $casts = [
         'vigente' => 'boolean',
+        'pdf_disposicion' => 'array',
+        'pdf_resolucion' => 'array',
     ];
 
     public function becario()

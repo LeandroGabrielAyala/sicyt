@@ -42,11 +42,14 @@ class Adscripto extends Model
     public function proyectos()
     {
         return $this->belongsToMany(Proyecto::class, 'adscripto_proyecto')
+            ->using(AdscriptoProyecto::class)
             ->withPivot([
-                'convocatoria_adscripto_id',
                 'director_id',
                 'codirector_id',
+                'convocatoria_adscripto_id',
                 'vigente',
+                'pdf_disposicion',
+                'pdf_resolucion'
             ])
             ->withTimestamps();
     }

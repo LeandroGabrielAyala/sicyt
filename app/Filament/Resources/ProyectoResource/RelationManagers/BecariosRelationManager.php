@@ -12,9 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Becario;
 use App\Models\Investigador;
 use App\Models\ConvocatoriaBeca;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Actions\AttachAction;
@@ -123,6 +125,17 @@ public function table(Tables\Table $table): Tables\Table
                                 ->label('Plan de trabajo')
                                 ->required()
                                 ->columnSpanFull(),
+                            FileUpload::make('pdf_disposicion')
+                                ->label('Disposición')
+                                ->multiple()
+                                ->directory('disposiciones_becas')
+                                ->visibility('public'),
+
+                            FileUpload::make('pdf_resolucion')
+                                ->label('Resolución')
+                                ->multiple()
+                                ->directory('resoluciones_becas')
+                                ->visibility('public'),
                         ]),
                     ]),
             ])
@@ -192,58 +205,55 @@ public function table(Tables\Table $table): Tables\Table
                                 ]),
                             ]),
                         ])
-                    ]),
-                Tables\Actions\EditAction::make()
-                    ->label('Editar')
-                    ->form(fn ($record) => [
-                        Grid::make(2)->schema([
-                            Select::make('pivot.director_id')
-                                ->label('Director')
-                                ->options(Investigador::all()->pluck('nombre_completo', 'id'))
-                                ->required(),
-                            Select::make('pivot.codirector_id')
-                                ->label('Codirector')
-                                ->options(Investigador::all()->pluck('nombre_completo', 'id'))
-                                ->searchable(),
-                            Select::make('pivot.convocatoria_beca_id')
-                                ->label('Convocatoria')
-                                ->options(ConvocatoriaBeca::all()->pluck('anio', 'id'))
-                                ->required(),
-                            Select::make('pivot.tipo_beca')
-                                ->label('Tipo de Beca')
-                                ->options(\App\Models\BecarioProyecto::tiposBeca())
-                                ->required(),
-                            Toggle::make('pivot.vigente')
-                                ->label('Vigente')
-                                ->default(true),
-                        ]),
-                    ])
-                    ->mutateRecordDataUsing(function ($data, $record) {
-                        // Prellenar los valores desde el pivot
-                        return [
-                            'pivot.director_id' => $record->pivot->director_id,
-                            'pivot.codirector_id' => $record->pivot->codirector_id,
-                            'pivot.convocatoria_beca_id' => $record->pivot->convocatoria_beca_id,
-                            'pivot.tipo_beca' => $record->pivot->tipo_beca,
-                            'pivot.vigente' => $record->pivot->vigente,
-                        ];
-                    })
-                    ->mutateFormDataUsing(function (array $data) {
-                        // Solo retornamos los valores que vamos a actualizar
-                        return [
-                            'director_id' => $data['pivot.director_id'],
-                            'codirector_id' => $data['pivot.codirector_id'],
-                            'convocatoria_beca_id' => $data['pivot.convocatoria_beca_id'],
-                            'tipo_beca' => $data['pivot.tipo_beca'],
-                            'vigente' => $data['pivot.vigente'],
-                        ];
-                    })
-                    ->after(function (RelationManager $livewire, $record, array $data) {
-                        // Aplicar cambios directamente sobre la pivote
-                        $record->pivot->update($data);
-                    }),
+                ]),
 
-                DetachAction::make(),
+            Tables\Actions\EditAction::make()
+                ->label('Editar')
+                ->record(fn ($record) => $record) // este es el modelo del recurso (Becario)
+                ->model(fn ($record) => $record->pivot) // este es el modelo a editar (pivot)
+                ->form([
+                    Grid::make(2)->schema([
+                        Select::make('director_id')
+                            ->label('Director')
+                            ->options(Investigador::all()->pluck('nombre_completo', 'id'))
+                            ->required(),
+
+                        Select::make('codirector_id')
+                            ->label('Codirector')
+                            ->options(Investigador::all()->pluck('nombre_completo', 'id'))
+                            ->searchable(),
+
+                        Select::make('convocatoria_beca_id')
+                            ->label('Convocatoria')
+                            ->options(ConvocatoriaBeca::all()->pluck('anio', 'id'))
+                            ->required(),
+
+                        Select::make('tipo_beca') // ✅ este es el campo correcto
+                            ->label('Tipo de Beca')
+                            ->options(\App\Models\BecarioProyecto::tiposBeca()) // asumimos que esto devuelve ['Grado' => 'Grado', ...]
+                            ->required(),
+
+
+                        Select::make('tipo_beca')
+                            ->label('Tipo de Beca')
+                            ->options(\App\Models\BecarioProyecto::tiposBeca())
+                            ->required(),
+
+                        Toggle::make('vigente')
+                            ->label('Vigente'),
+
+                        Textarea::make('plan_trabajo')
+                            ->label('Plan de trabajo')
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
+                ])
+                ->using(function ($record, array $data) {
+                    // $record es el modelo de la tabla pivote (BecarioProyecto)
+                    $record->update($data);
+                }),
+
+                DetachAction::make()->label('Quitar'),
             ]);
     }
 }
