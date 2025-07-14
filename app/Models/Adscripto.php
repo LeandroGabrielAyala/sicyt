@@ -48,8 +48,6 @@ class Adscripto extends Model
                 'codirector_id',
                 'convocatoria_adscripto_id',
                 'vigente',
-                'pdf_disposicion',
-                'pdf_resolucion'
             ])
             ->withTimestamps();
     }

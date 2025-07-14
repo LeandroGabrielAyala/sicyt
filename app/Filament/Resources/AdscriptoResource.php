@@ -104,7 +104,7 @@ class AdscriptoResource extends Resource
                 TextColumn::make('dni')->label('DNI'),
                 TextColumn::make('email')->label('Email'),
                 TextColumn::make('telefono')->label('Teléfono')->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('apellido', 'asc') // 👈 Orden alfabético por defecto
             ->filters([
                 //
             ])

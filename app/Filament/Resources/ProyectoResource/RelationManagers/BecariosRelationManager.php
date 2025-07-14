@@ -77,6 +77,7 @@ public function table(Tables\Table $table): Tables\Table
             ])
             ->headerActions([
                 AttachAction::make()
+                    ->label('Asociar')
                     ->form([
                         Grid::make(2)->schema([
                             Select::make('recordId')
@@ -125,17 +126,6 @@ public function table(Tables\Table $table): Tables\Table
                                 ->label('Plan de trabajo')
                                 ->required()
                                 ->columnSpanFull(),
-                            FileUpload::make('pdf_disposicion')
-                                ->label('Disposición')
-                                ->multiple()
-                                ->directory('disposiciones_becas')
-                                ->visibility('public'),
-
-                            FileUpload::make('pdf_resolucion')
-                                ->label('Resolución')
-                                ->multiple()
-                                ->directory('resoluciones_becas')
-                                ->visibility('public'),
                         ]),
                     ]),
             ])

@@ -13,16 +13,10 @@ class AdscriptoProyecto extends Pivot
             'codirector_id',
             'convocatoria_adscripto_id',
             'vigente',
-            'disposicion', 
-            'resolucion',
-            'pdf_disposicion',
-            'pdf_resolucion',
         ];
 
         protected $casts = [
             'vigente' => 'boolean',
-            'pdf_disposicion' => 'array',
-            'pdf_resolucion' => 'array',
         ];
 
         public function convocatoria()

@@ -45,115 +45,119 @@ class InvestigadorRelationManager extends RelationManager
                 IconColumn::make('pivot.vigente')->label('Vigente')->boolean(),
             ])
 
-->headerActions([
-    AttachAction::make()->label('Asociar')
-        ->form([
-            Grid::make(2)->schema([
-                Select::make('recordId')
-                    ->label('Investigador')
-                    ->options(function () {
-                        $idsInvestigadores = $this->ownerRecord->investigador()->pluck('investigadors.id')->toArray();
+            ->headerActions([
+                AttachAction::make()->label('Asociar')
+                    ->form([
+                        Grid::make(2)->schema([
+                            Select::make('recordId')
+                                ->label('Investigador')
+                                ->options(function () {
+                                    $idsInvestigadores = $this->ownerRecord->investigador()->pluck('investigadors.id')->toArray();
 
-                        $directorId = Funcion::where('nombre', 'Director')->value('id');
-                        $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
+                                    $directorId = Funcion::where('nombre', 'Director')->value('id');
+                                    $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
 
-                        $investigadoresDirectores = $this->ownerRecord->investigador()
-                            ->wherePivotIn('funcion_id', [$directorId, $codirectorId])
-                            ->pluck('investigadors.id')
-                            ->toArray();
+                                    $investigadoresDirectores = $this->ownerRecord->investigador()
+                                        ->wherePivotIn('funcion_id', [$directorId, $codirectorId])
+                                        ->pluck('investigadors.id')
+                                        ->toArray();
 
-                        $excluirIds = array_unique(array_merge($idsInvestigadores, $investigadoresDirectores));
+                                    $excluirIds = array_unique(array_merge($idsInvestigadores, $investigadoresDirectores));
 
-                        return Investigador::whereNotIn('id', $excluirIds)
-                            ->get()
-                            ->pluck('apellido_nombre', 'id');
-                    })
-                    ->searchable()
-                    ->required(),
+                                    return Investigador::whereNotIn('id', $excluirIds)
+                                        ->get()
+                                        ->pluck('apellido_nombre', 'id');
+                                })
+                                ->searchable()
+                                ->required(),
 
-                Select::make('funcion_id')
-                    ->label('Función')
-                    ->options(function () {
-                        $directorId = Funcion::where('nombre', 'Director')->value('id');
-                        $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
+                            Select::make('funcion_id')
+                                ->label('Función')
+                                ->options(function () {
+                                    $directorId = Funcion::where('nombre', 'Director')->value('id');
+                                    $codirectorId = Funcion::where('nombre', 'Co-director')->value('id');
 
-                        $tieneDirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $directorId)->exists();
-                        $tieneCodirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $codirectorId)->exists();
+                                    $tieneDirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $directorId)->exists();
+                                    $tieneCodirector = $this->ownerRecord->investigador()->wherePivot('funcion_id', $codirectorId)->exists();
 
-                        $funciones = Funcion::orderBy('nombre')->pluck('nombre', 'id')->toArray();
+                                    $funciones = Funcion::orderBy('nombre')->pluck('nombre', 'id')->toArray();
 
-                        if ($tieneDirector) {
-                            unset($funciones[$directorId]);
-                        }
-                        if ($tieneCodirector) {
-                            unset($funciones[$codirectorId]);
-                        }
+                                    if ($tieneDirector) {
+                                        unset($funciones[$directorId]);
+                                    }
+                                    if ($tieneCodirector) {
+                                        unset($funciones[$codirectorId]);
+                                    }
 
-                        return $funciones;
-                    })
-                    ->searchable()
-                    ->required(),
+                                    return $funciones;
+                                })
+                                ->searchable()
+                                ->required(),
 
-                DatePicker::make('inicio')
-                    ->label('Inicio')
-                    ->required(),
+                            DatePicker::make('inicio')
+                                ->label('Inicio')
+                                ->required(),
 
-                DatePicker::make('fin')
-                    ->label('Fin'),
+                            DatePicker::make('fin')
+                                ->label('Fin'),
+                                
+                            TextInput::make('disposicion')
+                                ->label('N° de Disposición')
+                                ->required()
+                                ->maxLength(255)
+                                ->columnSpanFull(),
 
-                TextInput::make('resolucion')
-                    ->required()
-                    ->maxLength(255),
+                            FileUpload::make('pdf_disposicion')
+                                ->label('PDF Disposición')
+                                ->required()
+                                ->disk('public')
+                                ->directory('disposiciones_inv')
+                                ->acceptedFileTypes(['application/pdf'])
+                                ->multiple()
+                                ->preserveFilenames()
+                                ->reorderable()
+                                ->openable()
+                                ->columnSpanFull(),
 
-                TextInput::make('disposicion')
-                    ->required()
-                    ->maxLength(255),
+                            TextInput::make('resolucion')
+                                ->label('N° de Resolución')
+                                ->required()
+                                ->maxLength(255)
+                                ->columnSpanFull(),
 
-                FileUpload::make('pdf_disposicion')
-                    ->label('PDF Disposición')
-                    ->required()
-                    ->disk('public')
-                    ->directory('disposiciones_inv')
-                    ->acceptedFileTypes(['application/pdf'])
-                    ->multiple()
-                    ->preserveFilenames()
-                    ->reorderable()
-                    ->openable()
-                    ->columnSpanFull(),
+                            FileUpload::make('pdf_resolucion')
+                                ->label('PDF Resolución')
+                                ->required()
+                                ->disk('public')
+                                ->directory('resoluciones_inv')
+                                ->acceptedFileTypes(['application/pdf'])
+                                ->multiple()
+                                ->preserveFilenames()
+                                ->reorderable()
+                                ->openable()
+                                ->columnSpanFull(),
 
-                FileUpload::make('pdf_resolucion')
-                    ->label('PDF Resolución')
-                    ->required()
-                    ->disk('public')
-                    ->directory('resoluciones_inv')
-                    ->acceptedFileTypes(['application/pdf'])
-                    ->multiple()
-                    ->preserveFilenames()
-                    ->reorderable()
-                    ->openable()
-                    ->columnSpanFull(),
-
-                Toggle::make('vigente')
-                    ->label('Vigente')
-                    ->default(true),
-            ]),
-        ])
-        ->using(function (\Illuminate\Database\Eloquent\Model $record, array $data, RelationManager $livewire) {
-            $livewire->getRelationship()->attach(
-                $data['recordId'],
-                [
-                    'funcion_id' => $data['funcion_id'],
-                    'inicio' => $data['inicio'],
-                    'fin' => $data['fin'],
-                    'resolucion' => $data['resolucion'],
-                    'disposicion' => $data['disposicion'],
-                    'pdf_disposicion' => $data['pdf_disposicion'],
-                    'pdf_resolucion' => $data['pdf_resolucion'],
-                    'vigente' => $data['vigente'] ?? true,
-                ]
-            );
-        }),
-])
+                            Toggle::make('vigente')
+                                ->label('Vigente')
+                                ->default(true),
+                        ]),
+                    ])
+                    ->using(function (\Illuminate\Database\Eloquent\Model $record, array $data, RelationManager $livewire) {
+                        $livewire->getRelationship()->attach(
+                            $data['recordId'],
+                            [
+                                'funcion_id' => $data['funcion_id'],
+                                'inicio' => $data['inicio'],
+                                'fin' => $data['fin'],
+                                'resolucion' => $data['resolucion'],
+                                'disposicion' => $data['disposicion'],
+                                'pdf_disposicion' => $data['pdf_disposicion'],
+                                'pdf_resolucion' => $data['pdf_resolucion'],
+                                'vigente' => $data['vigente'] ?? true,
+                            ]
+                        );
+                    }),
+            ])
 
 
             ->actions([

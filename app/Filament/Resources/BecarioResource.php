@@ -124,7 +124,7 @@ class BecarioResource extends Resource
                     ->color('gray'),
                 TextColumn::make('email')->label('Email'),
                 TextColumn::make('telefono')->label('Teléfono')->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('apellido', 'asc') // 👈 Orden alfabético por defecto
             ->actions([
                 ViewAction::make()
                     ->label('Ver')

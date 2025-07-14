@@ -26,8 +26,6 @@ class Becario extends Model
                 'convocatoria_beca_id',
                 'tipo_beca',
                 'vigente',
-                'pdf_disposicion',
-                'pdf_resolucion'
             ])
             ->withTimestamps();
     }

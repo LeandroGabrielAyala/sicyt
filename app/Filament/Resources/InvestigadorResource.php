@@ -189,7 +189,7 @@ class InvestigadorResource extends Resource
                     ->label('Disposición')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('apellido', 'asc') // 👈 Orden alfabético por defecto
             ->filters([
                 //
             ])

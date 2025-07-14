@@ -60,6 +60,7 @@ class AdscriptosRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
+                    ->label('Asociar')
                     ->form([
                         Grid::make(2)->schema([
                             Select::make('recordId')
@@ -84,24 +85,12 @@ class AdscriptosRelationManager extends RelationManager
                             Toggle::make('vigente')
                                 ->label('Vigente')
                                 ->default(true),
-
-                            FileUpload::make('pdf_disposicion')
-                                ->label('Disposición')
-                                ->multiple()
-                                ->directory('disposiciones_ads')
-                                ->visibility('public'),
-
-                            FileUpload::make('pdf_resolucion')
-                                ->label('Resolución')
-                                ->multiple()
-                                ->directory('resoluciones_ads')
-                                ->visibility('public'),
-
                         ]),
                     ]),
             ])
             ->actions([
                 ViewAction::make()
+                    ->label('Ver')
                     ->modalHeading(fn ($record) => 'Detalles del Adscripto ' . $record->nombre . ' ' . $record->apellido)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar')
@@ -109,20 +98,20 @@ class AdscriptosRelationManager extends RelationManager
                         Tabs::make('Detalles')->tabs([
                             Tab::make('Personales')->schema([
                                 Section::make()->schema([
-                                    TextEntry::make('nombre')->label('Nombre(s)')->color('gray'),
                                     TextEntry::make('apellido')->label('Apellido(s)')->color('gray'),
+                                    TextEntry::make('nombre')->label('Nombre(s)')->color('gray'),
                                     TextEntry::make('dni')->label('DNI')->color('gray'),
                                     TextEntry::make('cuil')->label('CUIL')->color('gray'),
                                     TextEntry::make('fecha_nac')->label('Fecha de nacimiento')->color('gray')->date(),
                                     TextEntry::make('lugar_nac')->label('Lugar de nacimiento')->color('gray'),
                                     TextEntry::make('domicilio')->label('Domicilio')->color('gray'),
                                     TextEntry::make('provincia')->label('Provincia')->color('gray'),
-                                ])->columns(2),
+                                ])->columns(3),
                             ]),
                             Tab::make('Contacto')->schema([
                                 Section::make()->schema([
-                                    TextEntry::make('telefono')->label('Teléfono')->color('gray'),
                                     TextEntry::make('email')->label('Correo electrónico')->color('gray'),
+                                    TextEntry::make('telefono')->label('Teléfono')->color('gray'),
                                 ])->columns(2),
                             ]),
                             Tab::make('Formación')->schema([
@@ -133,41 +122,47 @@ class AdscriptosRelationManager extends RelationManager
                             ]),
                         ])
                     ]),
-                EditAction::make()
+                
+                    EditAction::make()
+                    ->label('Editar')
                     ->form(fn ($record) => [
                         Grid::make(2)->schema([
-                            Select::make('pivot.director_id')
+                            Select::make('director_id')
                                 ->label('Director')
                                 ->options(Investigador::all()->pluck('nombre_completo', 'id'))
                                 ->required(),
-                            Select::make('pivot.codirector_id')
+
+                            Select::make('codirector_id')
                                 ->label('Codirector')
                                 ->options(Investigador::all()->pluck('nombre_completo', 'id'))
                                 ->searchable(),
-                            Select::make('pivot.convocatoria_adscripto_id')
+
+                            Select::make('convocatoria_adscripto_id')
                                 ->label('Convocatoria')
                                 ->options(ConvocatoriaAdscripto::all()->pluck('anio', 'id'))
                                 ->required(),
-                            Toggle::make('pivot.vigente')
+
+                            Toggle::make('vigente')
                                 ->label('Vigente')
                                 ->default(true),
                         ]),
                     ])
                     ->mutateRecordDataUsing(fn ($data, $record) => [
-                        'pivot.director_id' => $record->pivot->director_id,
-                        'pivot.codirector_id' => $record->pivot->codirector_id,
-                        'pivot.convocatoria_adscripto_id' => $record->pivot->convocatoria_adscripto_id,
-                        'pivot.vigente' => $record->pivot->vigente,
+                        'director_id' => $record->pivot->director_id,
+                        'codirector_id' => $record->pivot->codirector_id,
+                        'convocatoria_adscripto_id' => $record->pivot->convocatoria_adscripto_id,
+                        'vigente' => $record->pivot->vigente,
                     ])
-                    ->mutateFormDataUsing(fn ($data) => [
-                        'director_id' => $data['pivot.director_id'],
-                        'codirector_id' => $data['pivot.codirector_id'],
-                        'convocatoria_adscripto_id' => $data['pivot.convocatoria_adscripto_id'],
-                        'vigente' => $data['pivot.vigente'],
-                    ])
-                    ->after(fn (RelationManager $livewire, $record, array $data) => $record->pivot->update($data)),
+                    ->after(function (RelationManager $livewire, $record, array $data) {
+                        $record->pivot->update([
+                            'director_id' => $data['director_id'],
+                            'codirector_id' => $data['codirector_id'],
+                            'convocatoria_adscripto_id' => $data['convocatoria_adscripto_id'],
+                            'vigente' => $data['vigente'],
+                        ]);
+                    }),
 
-                DetachAction::make(),
+                DetachAction::make()->label('Quitar'),
             ]);
     }
 }

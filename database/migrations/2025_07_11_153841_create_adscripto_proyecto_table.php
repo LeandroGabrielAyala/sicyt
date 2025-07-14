@@ -19,11 +19,6 @@ return new class extends Migration
             $table->foreignId('director_id')->nullable()->constrained('investigadors')->nullOnDelete();
             $table->foreignId('codirector_id')->nullable()->constrained('investigadors')->nullOnDelete();
 
-            $table->string('disposicion');
-            $table->string('resolucion');
-            $table->json('pdf_disposicion')->nullable();
-            $table->json('pdf_resolucion')->nullable();
-
             $table->boolean('vigente')->default(true);
             $table->timestamps();
 

@@ -1,5 +1,7 @@
 1.
-* Tabla pivot adscriptos y proyectos
+* ¿Plan de trabajo para integrantes de un PI?
+* Becarios a cargo de un Investigador, mostrar en el Infolist
+    ** Tabla Pivot y RelationManager (Investigador-Becario)
 
 2.
 * Exportar en .PDF y .DOCS

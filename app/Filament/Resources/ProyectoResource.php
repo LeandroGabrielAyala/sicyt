@@ -252,22 +252,48 @@ class ProyectoResource extends Resource
                     ->infolist(fn (ViewAction $action): array => [
                         InfoTabs::make('Tabs')
                         ->tabs([
+                            InfoTab::make('Datos Generales')
+                                ->schema([
+                                InfoSection::make('')
+                                    ->description(fn ($record) => 'Proyecto de Investigación N° ' . $record->nro)
+                                    ->schema([
+                                        TextEntry::make('investigadorDirector')
+                                            ->label('Director del Proyecto')
+                                            ->color('customgray')
+                                            ->getStateUsing(fn ($record) =>
+                                                $record->investigadorDirector->pluck('apellido_nombre')->implode(', ')
+                                            ),
+                                        TextEntry::make('investigadorCodirector')
+                                            ->label('Co-director del Proyecto')
+                                            ->color('customgray')
+                                            ->getStateUsing(fn ($record) => 
+                                                $record->investigadorCodirector->isNotEmpty()
+                                                    ? $record->investigadorCodirector->pluck('apellido_nombre')->implode(', ')
+                                                    : '-'
+                                            ),
+                                        TextEntry::make('nombre')
+                                            ->label('Denominación del Proyecto')
+                                            ->columnSpanFull()
+                                            ->color('customgray'),
+                                        TextEntry::make('resumen')
+                                            ->label('Resumen del Proyecto')
+                                            ->columnSpanFull()
+                                            ->color('customgray')
+                                            ->html(),
+                                    ])->columns(2),
+                                InfoSection::make('')
+                                    ->description('Duración del Proyecto')
+                                    ->schema([
+                                        TextEntry::make('duracion')->label('Duración en meses')
+                                            ->color('customgray'),
+                                        TextEntry::make('inicio')->label('Inicio de actividad')
+                                            ->color('customgray'),
+                                        TextEntry::make('fin')->label('Fin de actividad')
+                                            ->color('customgray'),
+                                    ])->columns(3),
+                                ]),
                             InfoTab::make('Investigadores')
                                 ->schema([
-                                    TextEntry::make('investigadorDirector')
-                                        ->label('Director del Proyecto')
-                                        ->color('customgray')
-                                        ->getStateUsing(fn ($record) =>
-                                            $record->investigadorDirector->pluck('apellido_nombre')->implode(', ')
-                                        ),
-                                    TextEntry::make('investigadorCodirector')
-                                        ->label('Co-director del Proyecto')
-                                        ->color('customgray')
-                                        ->getStateUsing(fn ($record) => 
-                                            $record->investigadorCodirector->isNotEmpty()
-                                                ? $record->investigadorCodirector->pluck('apellido_nombre')->implode(', ')
-                                                : '-'
-                                        ),
                                     Entry::make('investigadores')
                                         ->label('Investigadores Asociados')
                                         ->columnSpanFull()
@@ -284,32 +310,6 @@ class ProyectoResource extends Resource
                                             'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
                                         ]),
                                 ])->columns(2),
-                            InfoTab::make('Datos Generales')
-                                ->schema([
-                                InfoSection::make('')
-                                    ->description(fn ($record) => 'Proyecto de Investigación N° ' . $record->nro)
-                                    ->schema([
-                                        TextEntry::make('nombre')
-                                            ->label('Denominación del Proyecto')
-                                            ->columnSpanFull()
-                                            ->color('customgray'),
-                                        TextEntry::make('resumen')
-                                            ->label('Resumen del Proyecto')
-                                            ->columnSpanFull()
-                                            ->color('customgray')
-                                            ->html(),
-                                    ]),
-                                InfoSection::make('')
-                                    ->description('Duración del Proyecto')
-                                    ->schema([
-                                        TextEntry::make('duracion')->label('Duración en meses')
-                                            ->color('customgray'),
-                                        TextEntry::make('inicio')->label('Inicio de actividad')
-                                            ->color('customgray'),
-                                        TextEntry::make('fin')->label('Fin de actividad')
-                                            ->color('customgray'),
-                                    ])->columns(3),
-                                ]),
                             InfoTab::make('Estado')
                                 ->schema([
                                 InfoSection::make('')
