@@ -20,7 +20,7 @@ class BecariosRelationManager extends RelationManager
     public function table(Tables\Table $table): Tables\Table
     {
         return $table
-            ->heading('Becarios que tiene cargo como Director/Co-director.')
+            ->heading('Becarios a cargo del Director/Co-director.')
             ->query(
                 fn (): Builder => \App\Models\BecarioProyecto::query()
                     ->where(function ($query) {
@@ -35,7 +35,16 @@ class BecariosRelationManager extends RelationManager
                 TextColumn::make('convocatoria.tipoBeca.nombre')->label('Tipo Beca'),
                 TextColumn::make('convocatoria.anio')->label('Año Conv.'),
                 TextColumn::make('tipo_beca')->label('Tipo'),
-                TextColumn::make('plan_trabajo')->label('Plan Trabajo')->limit(30),
+                TextColumn::make('funcion')
+                    ->label('Función')
+                    ->state(fn ($record) => 
+                        $record->director_id === $this->ownerRecord->id
+                            ? 'Director'
+                            : ($record->codirector_id === $this->ownerRecord->id
+                                ? 'Co-director'
+                                : '—'
+                            )
+                    ),
                 TextColumn::make('vigente')->label('Vigente')->formatStateUsing(fn($state) => $state ? '✔️' : '❌'),
             ])
             ->actions([
@@ -77,8 +86,18 @@ class BecariosRelationManager extends RelationManager
                                 ])->columns(2),
                             ]),
 
-                            InfoTab::make('Beca')->schema([
+                            InfoTab::make('Datos de Beca')->schema([
                                 InfoSection::make('Información de la beca')->schema([
+                                    TextEntry::make('funcion')
+                                        ->label('Función')
+                                        ->state(fn ($record) => 
+                                            $record->director_id === $this->ownerRecord->id
+                                                ? 'Director'
+                                                : ($record->codirector_id === $this->ownerRecord->id
+                                                    ? 'Codirector'
+                                                    : '—'
+                                                )
+                                        ),
                                     TextEntry::make('convocatoria.tipoBeca.nombre')->label('Tipo Beca'),
                                     TextEntry::make('convocatoria.anio')->label('Año Convocatoria'),
                                     TextEntry::make('tipo_beca')->label('Tipo'),

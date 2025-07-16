@@ -1,6 +1,6 @@
 1.
-* Becarios a cargo de un Investigador, mostrar en el Infolist
-    ** Tabla Pivot y RelationManager (Investigador-Becario)
+* Lo mismo que hice con Becarios-Investigador, hacer con Adscripto.
+* Funcion agregarle a todo RelationManager, vista Blade, etc.. que cumple con el becario
 
 2.
 * Exportar en .PDF y .DOCS

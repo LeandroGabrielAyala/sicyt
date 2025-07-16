@@ -43,10 +43,23 @@
                 <!-- Detalle: Plan + Proyecto -->
                 <tr x-show="openId === {{ $bp->id }}" x-transition class="bg-[#19213a]" style="border-bottom: 1px solid #ffffff1a;">
                     <td colspan="5" class="px-4 py-4 border-t space-y-4" style="border-color: #ffffff1a; color: #8c9aaf;">
-                        <div class="mt-4">
-                            <span style="color: #6670c5; font-weight: 600;">Plan de Trabajo de la Beca:</span><br>
-                            {{ $bp->plan_trabajo }}
+                        <div class="mt-4 space-y-2">
+                            <div>
+                                <span style="color: #6670c5; font-weight: 600;">Plan de Trabajo de la Beca:</span><br>
+                                {{ $bp->plan_trabajo }}
+                            </div>
+
+                            <div>
+                                <span style="color: #6670c5; font-weight: 600;">Función del Investigador:</span><br>
+                                {{ $bp->director_id === $investigador->id ? 'Director' : ($bp->codirector_id === $investigador->id ? 'Codirector' : '—') }}
+                            </div>
                         </div>
+                    </td>
+                </tr>
+
+                <!-- Detalle: Plan + Proyecto -->
+                <tr x-show="openId === {{ $bp->id }}" x-transition class="bg-[#19213a]" style="border-bottom: 1px solid #ffffff1a;">
+                    <td colspan="5" class="px-4 py-4 border-t space-y-4" style="border-color: #ffffff1a; color: #8c9aaf;">
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                             <div>

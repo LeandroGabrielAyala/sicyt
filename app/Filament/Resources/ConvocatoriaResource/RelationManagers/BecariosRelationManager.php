@@ -6,6 +6,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,12 +31,12 @@ class BecariosRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('nombre_completo')
             ->columns([
-                TextColumn::make('nombre')->label('Nombre'),
                 TextColumn::make('apellido')->label('Apellido'),
+                TextColumn::make('nombre')->label('Nombre'),
                 TextColumn::make('pivot.tipo_beca')->label('Tipo de Beca'),
-                TextColumn::make('pivot.vigente')->label('Estado')->formatStateUsing(
-                    fn ($state) => $state ? 'Vigente' : 'No vigente'
-                ),
+                IconColumn::make('pivot.vigente')
+                    ->label('Estado')
+                    ->boolean(),
             ])
             ->filters([
                 //

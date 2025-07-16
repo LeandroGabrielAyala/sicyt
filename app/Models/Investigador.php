@@ -92,5 +92,15 @@ class Investigador extends Model
         return $this->hasMany(Becario::class);
     }
 
+    public function adscriptosComoDirector()
+    {
+        return $this->hasMany(\App\Models\AdscriptoProyecto::class, 'director_id');
+    }
+
+    public function adscriptosComoCodirector()
+    {
+        return $this->hasMany(\App\Models\AdscriptoProyecto::class, 'codirector_id');
+    }
+
 
 }

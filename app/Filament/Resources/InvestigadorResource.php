@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\InvestigadorResource\RelationManagers\ProyectoRelationManager;
 use App\Filament\Resources\InvestigadorResource\RelationManagers\BecariosRelationManager;
+use App\Filament\Resources\InvestigadorResource\RelationManagers\AdscriptosRelationManager;
 use Illuminate\Support\Facades\Storage;
 use App\Filament\Resources\InvestigadorResource\Pages;
 use App\Filament\Resources\InvestigadorResource\RelationManagers;
@@ -197,7 +198,7 @@ class InvestigadorResource extends Resource
             ])
             ->actions([
                 ViewAction::make()->label('Ver')
-                ->modalHeading(fn ($record) => 'Detalles del Investigador ' . $record->nombre . ' ' . $record->apellido)
+                ->modalHeading(fn ($record) => 'Detalles del Investigador ' . $record->apellido . ', ' . $record->nombre)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn () => null)
                     ->modalCancelActionLabel('Cerrar')
@@ -252,6 +253,15 @@ class InvestigadorResource extends Resource
                                 ]),
                             ]),
 
+                            InfoTab::make('Adscriptos')->schema([
+                                InfoSection::make('Adscriptos a cargo')->schema([
+                                    Entry::make('adscriptos')
+                                        ->label('Adscriptos a cargo')
+                                        ->view('livewire.adscriptos-investigadores-list', [
+                                            'investigador' => $action->getRecord(),
+                                        ]),
+                                ]),
+                            ]),
 
                             InfoTab::make('Clasificación')
                                 ->schema([
@@ -322,7 +332,8 @@ class InvestigadorResource extends Resource
     {
         return [
             ProyectoRelationManager::class,
-            BecariosRelationManager::class
+            BecariosRelationManager::class,
+            AdscriptosRelationManager::class
         ];
     }
 

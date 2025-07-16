@@ -310,6 +310,15 @@ class ProyectoResource extends Resource
                                             'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
                                         ]),
                                 ])->columns(2),
+                            InfoTab::make('Adscriptos')
+                                ->schema([
+                                    Entry::make('adscriptos')
+                                        ->label('Adscriptos Asociados')
+                                        ->columnSpanFull()
+                                        ->view('livewire.adscriptos-list', [
+                                            'proyecto' => $action->getRecord(),
+                                        ]),
+                                    ]),
                             InfoTab::make('Estado')
                                 ->schema([
                                 InfoSection::make('')

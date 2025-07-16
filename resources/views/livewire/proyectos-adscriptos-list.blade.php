@@ -6,7 +6,7 @@
                 <th class="px-4 py-3 border-b border-r" style="border-color: #ffffff1a;">Convocatoria</th>
                 <th class="px-4 py-3 border-b border-r" style="border-color: #ffffff1a;">Director</th>
                 <th class="px-4 py-3 border-b border-r" style="border-color: #ffffff1a;">Codirector</th>
-                <th class="px-4 py-3 border-b" style="border-color: #ffffff1a;">Vigente</th>
+                <th class="px-4 py-3 border-b" style="border-color: #ffffff1a;">Vigencia</th>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +25,7 @@
                         {{ $proyecto->pivot->codirector?->nombre_completo ?? '—' }}
                     </td>
                     <td class="px-4 py-3" style="border-color: #ffffff1a;">
-                        {{ $proyecto->pivot->vigente ? '✔️ Vigente' : '❌ No Vigente' }}
+                        {{ $proyecto->pivot->vigente ? 'Vigente' : 'No Vigente' }}
                     </td>
                 </tr>
 
@@ -41,8 +41,8 @@
                                 {{ $proyecto->investigadorCodirector->first()?->apellido_nombre ?? '—' }}
                             </div>
                             <div>
-                                <span style="color: #6670c5; font-weight: 600;">Estado del Proyecto:</span><br>
-                                {{ $proyecto->estado === 1 ? '✔️ Vigente' : '❌ No vigente' }}
+                                <span style="color: #6670c5; font-weight: 600;">Vigencia del PI:</span><br>
+                                {{ $proyecto->estado === 1 ? 'Vigente' : 'No vigente' }}
                             </div>
                         </div>
 
