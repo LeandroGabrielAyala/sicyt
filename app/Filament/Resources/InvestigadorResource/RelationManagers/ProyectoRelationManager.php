@@ -31,8 +31,20 @@ class ProyectoRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('nro')->label('Nro. PI'),
                 TextColumn::make('nombre')->label('Proyecto')->limit(50),
-                TextColumn::make('director_id')->label('Director')->limit(50),
-                TextColumn::make('codirector_id')->label('Codirector')->limit(50),
+                TextColumn::make('investigadorDirector')
+                    ->label('Director')
+                    ->color('customgray')
+                    ->getStateUsing(fn ($record) =>
+                        $record->investigadorDirector->pluck('apellido_nombre')->implode(', ')
+                    ),
+                TextColumn::make('investigadorCodirector')
+                    ->label('Co-director')
+                    ->color('customgray')
+                    ->getStateUsing(fn ($record) =>
+                        $record->investigadorCodirector->isNotEmpty()
+                            ? $record->investigadorCodirector->pluck('apellido_nombre')->implode(', ')
+                            : '-'
+                    ),
                 TextColumn::make('pivot.funcion.nombre')->label('Función'),
                 TextColumn::make('pivot.inicio')->label('Inicio')->date(),
                 TextColumn::make('pivot.fin')->label('Fin')->date(),
@@ -41,48 +53,92 @@ class ProyectoRelationManager extends RelationManager
             ->actions([
                 ViewAction::make()
                     ->label('Ver')
-                    ->modalHeading(fn ($record) => 'Detalles del Proyecto Nº ' . $record->nro)
+                    ->modalHeading(fn ($record) => 'Detalles del Proyecto N° ' . $record->nro)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar')
                     ->infolist(fn ($record) => [
                         Tabs::make('Tabs')
                             ->tabs([
-                                Tab::make('Participación')->schema([
-                                    Section::make('Detalles de Participación')
+                                Tab::make('Datos Generales')->schema([
+                                    Section::make('')
+                                        ->description('Proyecto de Investigación N° ' . $record->nro)
                                         ->schema([
-                                            TextEntry::make('nombre')->label('Nombre')->color('customgray')->columnSpanFull(),
-                                            TextEntry::make('pivot.funcion.nombre')->label('Función'),
-                                            TextEntry::make('pivot.vigente')
-                                                ->label('Estado en el P.I.')
-                                                ->badge()
-                                                ->color(fn (bool $state) => $state ? 'success' : 'danger')
-                                                ->formatStateUsing(fn (bool $state) => $state ? 'Vigente' : 'No Vigente'),
-                                            TextEntry::make('vigente')
-                                                ->label('Vigencia del P.I.')
-                                                ->badge()
-                                                ->color(fn (bool $state) => $state ? 'success' : 'danger')
-                                                ->formatStateUsing(fn (bool $state) => $state ? 'Vigente' : 'No Vigente'),
-                                            TextEntry::make('duracion')->label('Duración en meses'),
-                                            TextEntry::make('inicio')->label('Inicio de actividad'),
-                                            TextEntry::make('fin')->label('Fin de actividad'),
-                                            Entry::make('pdf_disposicion')
-                                                ->label('Disposición del P.I.')
-                                                ->view('filament.infolists.custom-file-entry-dispo'),
-                                            Entry::make('pdf_resolucion')
-                                                ->label('Resolución del P.I.')
-                                                ->view('filament.infolists.custom-file-entry-reso'),
+                                            TextEntry::make('investigadorDirector')
+                                                ->label('Director del Proyecto')
+                                                ->color('customgray')
+                                                ->getStateUsing(fn ($record) =>
+                                                    $record->investigadorDirector->pluck('apellido_nombre')->implode(', ')
+                                                ),
+                                            TextEntry::make('investigadorCodirector')
+                                                ->label('Co-director del Proyecto')
+                                                ->color('customgray')
+                                                ->getStateUsing(fn ($record) =>
+                                                    $record->investigadorCodirector->isNotEmpty()
+                                                        ? $record->investigadorCodirector->pluck('apellido_nombre')->implode(', ')
+                                                        : '-'
+                                                ),
+                                            TextEntry::make('nombre')
+                                                ->label('Denominación del Proyecto')
+                                                ->columnSpanFull()
+                                                ->color('customgray'),
+                                            TextEntry::make('resumen')
+                                                ->label('Resumen del Proyecto')
+                                                ->columnSpanFull()
+                                                ->color('customgray')
+                                                ->html(),
+                                        ])->columns(2),
+                                    Section::make('')
+                                        ->description('Duración del Proyecto')
+                                        ->schema([
+                                            TextEntry::make('duracion')->label('Duración en meses')
+                                                ->color('customgray'),
+                                            TextEntry::make('inicio')->label('Inicio de actividad')
+                                                ->color('customgray'),
+                                            TextEntry::make('fin')->label('Fin de actividad')
+                                                ->color('customgray'),
                                         ])->columns(3),
                                 ]),
-                                Tab::make('Resumen')->schema([
+
+                                Tab::make('Estado')->schema([
                                     Section::make('')
+                                        ->description('Resolución y Estado del Proyecto')
                                         ->schema([
-                                            TextEntry::make('resumen')->label('Resumen del Proyecto')->color('customgray')->html()->columnSpanFull(),
-                                        ])->columns(1),
+                                            TextEntry::make('estado')
+                                                ->label('Estado')
+                                                ->badge()
+                                                ->color(fn (bool $state) => $state ? 'success' : 'danger')
+                                                ->formatStateUsing(fn (bool $state) => $state ? 'Vigente' : 'No Vigente'),
+                                            TextEntry::make('presupuesto')->label('Presupuesto')
+                                                ->formatStateUsing(fn ($state) => '$' . number_format($state, 2, ',', '.'))
+                                                ->color('customgray'),
+                                            TextEntry::make('disposicion')->label('Nro. de Disposición')
+                                                ->color('customgray'),
+                                            TextEntry::make('resolucion')->label('Nro. de Resolución')
+                                                ->color('customgray'),
+                                            Entry::make('pdf_disposicion')
+                                                ->label('Disposiciones en PDF')
+                                                ->view('filament.infolists.custom-file-entry-dispo'),
+                                            Entry::make('pdf_resolucion')
+                                                ->label('Resoluciones en PDF')
+                                                ->view('filament.infolists.custom-file-entry-reso'),
+                                        ])->columns(2),
+                                ]),
+
+                                Tab::make('Clasificación')->schema([
+                                    Section::make('')
+                                        ->description('Datos relevantes para el RACT')
+                                        ->schema([
+                                            TextEntry::make('carrera.nombre')->label('Carrera')->color('customgray'),
+                                            TextEntry::make('campo.nombre')->label('Campo de Aplicación')->color('customgray'),
+                                            TextEntry::make('objetivo.nombre')->label('Objetivo Socioeconómico')->color('customgray'),
+                                            TextEntry::make('actividad.nombre')->label('Tipo de Actividad')->color('customgray'),
+                                        ])->columns(3),
                                 ]),
                             ])
                     ])
             ]);
     }
+
 
     public function form(Forms\Form $form): Forms\Form
     {

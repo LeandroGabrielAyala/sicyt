@@ -9,6 +9,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Entry;
@@ -137,6 +138,11 @@ class InvestigadorRelationManager extends RelationManager
                                 ->openable()
                                 ->columnSpanFull(),
 
+                            TextInput::make('plan_trabajo')
+                                ->label('Plan de trabajo')
+                                ->required()
+                                ->columnSpanFull(),
+
                             Toggle::make('vigente')
                                 ->label('Vigente')
                                 ->default(true),
@@ -153,6 +159,7 @@ class InvestigadorRelationManager extends RelationManager
                                 'disposicion' => $data['disposicion'],
                                 'pdf_disposicion' => $data['pdf_disposicion'],
                                 'pdf_resolucion' => $data['pdf_resolucion'],
+                                'plan_trabajo' => $data['plan_trabajo'],
                                 'vigente' => $data['vigente'] ?? true,
                             ]
                         );
@@ -250,6 +257,10 @@ class InvestigadorRelationManager extends RelationManager
                                 ->disk('public')->directory('resoluciones_inv')
                                 ->acceptedFileTypes(['application/pdf'])->multiple()
                                 ->preserveFilenames()->reorderable()->openable(),
+                            Textarea::make('plan_trabajo')
+                                ->label('Plan de trabajo')
+                                ->required()
+                                ->columnSpanFull(),
                         ]),
                     ])
                     ->mutateRecordDataUsing(function ($data, $record) {
@@ -263,6 +274,7 @@ class InvestigadorRelationManager extends RelationManager
                             'inicio' => $data['inicio'],
                             'fin' => $data['fin'],
                             'vigente' => $data['vigente'],
+                            'plan_trabajo' => $data['plan_trabajo'],
                             'pdf_disposicion' => $data['pdf_disposicion'] ?? $record->pivot->pdf_disposicion,
                             'pdf_resolucion' => $data['pdf_resolucion'] ?? $record->pivot->pdf_resolucion,
                         ];

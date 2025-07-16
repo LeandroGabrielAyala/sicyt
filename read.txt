@@ -1,5 +1,4 @@
 1.
-* ¿Plan de trabajo para integrantes de un PI?
 * Becarios a cargo de un Investigador, mostrar en el Infolist
     ** Tabla Pivot y RelationManager (Investigador-Becario)
 

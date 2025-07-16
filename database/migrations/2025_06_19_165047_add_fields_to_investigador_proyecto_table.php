@@ -15,13 +15,14 @@ return new class extends Migration
             $table->string('resolucion');
             $table->json('pdf_disposicion')->nullable();
             $table->json('pdf_resolucion')->nullable();
+            $table->text('plan_trabajo');
             $table->boolean('vigente')->default(true);
         });
     }
 
     public function down(): void {
         Schema::table('investigador_proyecto', function (Blueprint $table) {
-            $table->dropColumn(['funcion_id', 'inicio', 'fin', 'pdf_disposicion', 'pdf_resolucion', 'vigente']);
+            $table->dropColumn(['funcion_id', 'inicio', 'fin', 'pdf_disposicion', 'pdf_resolucion', 'plan_trabajo', 'vigente']);
         });
     }
 

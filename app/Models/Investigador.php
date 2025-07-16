@@ -35,7 +35,7 @@ class Investigador extends Model
         return $this->belongsToMany(Proyecto::class)
             ->using(InvestigadorProyecto::class)
             ->withPivot([
-                'funcion_id', 'inicio', 'fin', 'pdf_disposicion', 'pdf_resolucion', 'vigente',
+                'funcion_id', 'inicio', 'fin', 'plan_trabajo', 'pdf_disposicion', 'pdf_resolucion', 'vigente',
             ])
             ->withTimestamps();
     }
@@ -74,5 +74,23 @@ class Investigador extends Model
     {
         return $this->belongsTo(NivelAcademico::class);
     }
+
+    // Becarios donde es director
+    public function becariosComoDirector()
+    {
+        return $this->hasMany(\App\Models\BecarioProyecto::class, 'director_id');
+    }
+
+    // Becarios donde es codirector
+    public function becariosComoCodirector()
+    {
+        return $this->hasMany(\App\Models\BecarioProyecto::class, 'codirector_id');
+    }
+
+    public function becarios()
+    {
+        return $this->hasMany(Becario::class);
+    }
+
 
 }

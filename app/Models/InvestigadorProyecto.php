@@ -19,6 +19,7 @@ class InvestigadorProyecto extends Pivot
         'resolucion',
         'pdf_disposicion',
         'pdf_resolucion',
+        'plan_trabajo',
         'vigente',
     ];
 

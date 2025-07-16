@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\InvestigadorResource\RelationManagers\ProyectoRelationManager;
+use App\Filament\Resources\InvestigadorResource\RelationManagers\BecariosRelationManager;
 use Illuminate\Support\Facades\Storage;
 use App\Filament\Resources\InvestigadorResource\Pages;
 use App\Filament\Resources\InvestigadorResource\RelationManagers;
@@ -239,6 +241,18 @@ class InvestigadorResource extends Resource
                                             ]),
                                 ]),
                             ]),
+                            // NUEVO TAB Becarios
+                            InfoTab::make('Becarios')->schema([
+                                InfoSection::make('Becarios a cargo')->schema([
+                                    Entry::make('becarios')
+                                        ->label('Becarios a cargo')
+                                        ->view('livewire.becarios-investigadores-list', [
+                                            'investigador' => $action->getRecord(),
+                                        ]),
+                                ]),
+                            ]),
+
+
                             InfoTab::make('Clasificación')
                                 ->schema([
                                 InfoSection::make('Clasificación del Investigador según RACT')
@@ -307,7 +321,8 @@ class InvestigadorResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\InvestigadorResource\RelationManagers\ProyectoRelationManager::class,
+            ProyectoRelationManager::class,
+            BecariosRelationManager::class
         ];
     }
 

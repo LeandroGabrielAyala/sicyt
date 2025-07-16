@@ -76,6 +76,7 @@ class Proyecto extends Model
                 'codirector_id',
                 'convocatoria_beca_id',
                 'tipo_beca',
+                'plan_trabajo',
                 'vigente',
             ])
             ->withTimestamps();
