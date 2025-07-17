@@ -1,9 +1,9 @@
-1.
-* Corregir que no se muestran los .PDF
+1. LISTO ✔
 
 2.
-* Exportar en .PDF y .DOCS
-* Agregar a todos Export/Import de .CSV, .PDF y .DOCS
+* LISTO ✔ - Exportar en .PDF
+* Generar Plantillas .DOCS
+* Agregar a todos Export/Import de .CSV y .XLSX (Falta Adscripto, Becarios y Pago de Becas CON TODOS LA LISTA DE BECARIOS PAGADOS)
 
 3.
 * Cuanto va gastado en Proyectos

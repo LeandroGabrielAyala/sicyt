@@ -8,6 +8,10 @@ use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Imports\ProyectoImporter;
+use Filament\Actions\ImportAction;
+use Filament\Actions\CreateAction;
+
 
 class ListProyectos extends ListRecords
 {
@@ -16,8 +20,12 @@ class ListProyectos extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->label('Nuevo Proyecto'),
+            ImportAction::make()
+                ->importer(ProyectoImporter::class)
+                ->label('Importar Proyectos')
+                ->modalHeading('Subir archivo CSV de Proyectos'),
         ];
     }
 

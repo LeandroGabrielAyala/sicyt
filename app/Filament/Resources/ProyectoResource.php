@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Exports\ProyectoExporter;
-use App\Filament\Imports\ProyectoImporter;
 use App\Filament\Resources\ProyectoResource\Pages;
 use App\Filament\Resources\ProyectoResource\RelationManagers\AdscriptosRelationManager;
 use App\Filament\Resources\ProyectoResource\RelationManagers\BecariosRelationManager;
@@ -22,6 +20,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -33,12 +32,13 @@ use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadorRelationManager;
 use Filament\Forms\Components\Tabs as FormTabs;
 use Filament\Forms\Components\Tabs\Tab as FormTab;
+use App\Filament\Exports\ProyectoExporter;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ImportAction;
-use Filament\Tables\Actions\ImportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Actions\ImportAction;
+use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
 
 class ProyectoResource extends Resource
 {
@@ -124,11 +124,35 @@ class ProyectoResource extends Resource
                                 ->inline(false)
                                 ->required(),
                             TextInput::make('resolucion')
+                                ->label('N° Resolución')
                                 ->required()
-                                ->maxLength(255),
+                                ->maxLength(255)
+                                // Al cargar el formulario, modifico el valor para mostrar sólo la parte central
+                                ->afterStateHydrated(function ($state, callable $set) {
+                                    if (!$state) return;
+
+                                    $parteCentral = preg_replace('/^RES-(.*)-C\.S\.$/', '$1', $state);
+                                    $set('resolucion', $parteCentral);
+                                })
+                                // Al guardar, agrego prefijo y sufijo
+                                ->dehydrateStateUsing(function ($state) {
+                                    return 'RES-' . $state . '-C.S.';
+                                }),
                             TextInput::make('disposicion')
+                                ->label('N° Disposición')
                                 ->required()
-                                ->maxLength(255),
+                                ->maxLength(255)
+                                // Al cargar el formulario, modifico el valor para mostrar sólo la parte central
+                                ->afterStateHydrated(function ($state, callable $set) {
+                                    if (!$state) return;
+
+                                    $parteCentral = preg_replace('/^RES-(.*)-C\.S\.$/', '$1', $state);
+                                    $set('disposicion', $parteCentral);
+                                })
+                                // Al guardar, agrego prefijo y sufijo
+                                ->dehydrateStateUsing(function ($state) {
+                                    return 'RES-' . $state . '-C.S.';
+                                }),
                             FileUpload::make('pdf_resolucion')
                                 ->label('Resolución en .PDF')
                                 ->multiple()
@@ -151,7 +175,8 @@ class ProyectoResource extends Resource
 
                     FormTab::make('Clasificación')
                         ->schema([
-                            Select::make('carrera_id')->relationship('carrera', 'nombre'),
+                            Select::make('carrera_id')->relationship('carrera', 'nombre')
+                                ->required(),
                             Select::make('campo_id')
                                 ->relationship('campo', 'nombre')
                                 ->required(),
@@ -179,7 +204,7 @@ class ProyectoResource extends Resource
                 TextColumn::make('nombre')
                     ->label('Nombre')
                     ->searchable()
-                    ->limit(50),
+                    ->limit(40),
                 IconColumn::make('estado')
                     ->label('Estado')
                     ->boolean(),
@@ -244,6 +269,14 @@ class ProyectoResource extends Resource
                     }),
                 ]) /*, layout: FiltersLayout::AboveContent)->filtersFormColumns(2)*/
             ->actions([
+                MediaAction::make('ver_resolucion')
+                    ->label(fn ($record) => $record->resolucion ?? 'Sin Resolución')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->media(fn ($record) => $record->pdf_resolucion
+                        ? asset('storage/' . $record->pdf_resolucion[0])
+                        : null
+                    ),
+
                 ViewAction::make()->label('Ver')
                     ->modalHeading(fn ($record) => 'Detalles del Proyecto de Investigación N° ' . $record->nro)
                     ->modalSubmitAction(false)
@@ -362,11 +395,11 @@ class ProyectoResource extends Resource
                                 ])
                         ])
                 ]),
-                Tables\Actions\EditAction::make()->label('Editar')
+                EditAction::make()->label('Editar'),
             ])
             ->headerActions([
-                ExportAction::make()->exporter(ProyectoExporter::class), // Todos los registros
-                ImportAction::make()->importer(ProyectoImporter::class),
+                // ExportAction::make()->exporter(ProyectoExporter::class),
+                // ImportAction::make()->importer(ProyectoImporter::class),
             ])
 
             ->bulkActions([

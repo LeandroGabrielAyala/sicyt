@@ -32,12 +32,12 @@
                             : '<span class="text-red-500 font-medium">No Vigente</span>' !!}
                     </td>
                     <td class="px-3 py-2 space-x-2">
-                        @foreach ($adscripto->pivot->convocatoria?->pdf_disposicion ?? [] as $file)
-                            <a href="{{ Storage::disk('public')->url($file) }}" target="_blank" class="text-indigo-400 underline">Disposición</a>
+                        @foreach ($adscripto->pivot->convocatoria?->pdf_disposicion ?? [] as $pdf)
+                            <a href="{{ asset('storage/' . $pdf) }}" target="_blank" class="text-indigo-400 underline">Disposición</a>
                             <br>
                         @endforeach
-                        @foreach ($adscripto->pivot->convocatoria?->pdf_resolucion ?? [] as $file)
-                            <a href="{{ Storage::disk('public')->url($file) }}" target="_blank" class="text-emerald-400 underline">Resolución</a>
+                        @foreach ($adscripto->pivot->convocatoria?->pdf_resolucion ?? [] as $pdf)
+                            <a href="{{ asset('storage/' . $pdf) }}" target="_blank" class="text-emerald-400 underline">Resolución</a>
                         @endforeach
                     </td>
                 </tr>
@@ -46,11 +46,11 @@
                     <td colspan="5" class="px-4 py-4 space-y-4" style="color: #8c9aaf;">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <span class="font-semibold text-indigo-400">Director del Adscripto:</span><br>
+                                <span style="color: #6670c5; font-weight: 600;">Director del Adscripto:</span><br>
                                 {{ $adscripto->pivot->director?->apellido_nombre ?? '—' }}
                             </div>
                             <div>
-                                <span class="font-semibold text-indigo-400">Codirector del Adscripto:</span><br>
+                                <span style="color: #6670c5; font-weight: 600;">Codirector del Adscripto:</span><br>
                                 {{ $adscripto->pivot->codirector?->apellido_nombre ?? '—' }}
                             </div>
                         </div>

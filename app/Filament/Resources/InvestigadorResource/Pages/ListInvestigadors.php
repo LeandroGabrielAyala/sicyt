@@ -5,6 +5,9 @@ namespace App\Filament\Resources\InvestigadorResource\Pages;
 use App\Filament\Resources\InvestigadorResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Imports\InvestigadorImporter;
+use Filament\Actions\ImportAction;
+use Filament\Actions\CreateAction;
 
 class ListInvestigadors extends ListRecords
 {
@@ -15,6 +18,10 @@ class ListInvestigadors extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Nuevo Investigador'),
+            ImportAction::make()
+                ->importer(InvestigadorImporter::class)
+                ->label('Importar Investigadores')
+                ->modalHeading('Subir archivo CSV de Investigadores'),
         ];
     }
 

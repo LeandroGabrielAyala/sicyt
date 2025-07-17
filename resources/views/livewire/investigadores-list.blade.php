@@ -35,11 +35,11 @@
                     </td>
                     <td class="px-3 py-2 space-y-1" style="border-color: #ffffff1a;">
                         @foreach ($investigador->pivot->pdf_disposicion ?? [] as $pdf)
-                            <a href="{{ Storage::url($pdf) }}" target="_blank" class="underline text-indigo-400 hover:text-indigo-600 block transition-colors duration-150">Disposición</a>
+                            <a href="{{ asset('storage/' . $pdf) }}" target="_blank" class="underline text-indigo-400 hover:text-indigo-600 block transition-colors duration-150">Disposición</a>
                         @endforeach
                         
                         @foreach ($investigador->pivot->pdf_resolucion ?? [] as $pdf)
-                            <a href="{{ Storage::url($pdf) }}" target="_blank" class="underline text-purple-400 hover:text-purple-600 block transition-colors duration-150">Resolución</a>
+                            <a href="{{ asset('storage/' . $pdf) }}" target="_blank" class="underline text-purple-400 hover:text-purple-600 block transition-colors duration-150">Resolución</a>
                         @endforeach
                     </td>
                 </tr>

@@ -44,8 +44,9 @@ class EditInvestigador extends EditRecord
     protected function getFormActions(): array
     {
         return [
-            Actions\Action::make('save')
-                ->label('Guardar cambios'), // ✅ Traducción personalizada
+            Action::make('save')
+                ->label('Guardar cambios')
+                ->submit('save'), // ✅ Traducción personalizada
             Action::make('cancelar')
                 ->label('Cancelar')
                 ->action(fn () => $this->redirect($this->getResource()::getUrl()))

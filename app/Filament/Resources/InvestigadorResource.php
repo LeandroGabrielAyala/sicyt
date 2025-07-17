@@ -30,13 +30,13 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Exports\InvestigadorExporter;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 class InvestigadorResource extends Resource
 {
@@ -210,11 +210,11 @@ class InvestigadorResource extends Resource
                                 InfoSection::make('Detalle del Investigador en los PI.')
                                     ->description()
                                     ->schema([
-                                        TextEntry::make('nombre')
-                                            ->label('Nombre(s)')
-                                            ->color('customgray'),
                                         TextEntry::make('apellido')
                                             ->label('Apellido(s)')
+                                            ->color('customgray'),
+                                        TextEntry::make('nombre')
+                                            ->label('Nombre(s)')
                                             ->color('customgray'),
                                         TextEntry::make('categoriaInterna.categoria')
                                             ->label('Categoría Interna UNCAUS')
@@ -227,6 +227,9 @@ class InvestigadorResource extends Resource
                                             ->color('customgray'),
                                         TextEntry::make('titulo_posgrado')
                                             ->label('Título de posgrado')
+                                            ->color('customgray'),
+                                        TextEntry::make('cargo.nombre')
+                                            ->label('Cargo')
                                             ->color('customgray'),
                                     ])->columns(2),
                                 ]),
@@ -277,6 +280,9 @@ class InvestigadorResource extends Resource
                                         TextEntry::make('nivelAcademico.nombre')
                                             ->label('Nivel Académico')
                                             ->color('customgray'),
+                                        TextEntry::make('disciplina.nombre')
+                                            ->label('Disciplina')
+                                            ->color('customgray'),
                                     ])->columns(2),
                                 ]),
                             InfoTab::make('Contacto')
@@ -322,9 +328,10 @@ class InvestigadorResource extends Resource
                     ->label('Editar'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([
+                    ExportBulkAction::make()->exporter(InvestigadorExporter::class), // Solo seleccionados
+                    DeleteBulkAction::make(),
+                ])
             ]);
     }
 

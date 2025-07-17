@@ -12,7 +12,7 @@
 
                     <span class="grid">
                         <span class="truncate">
-                            <a href="{{ Storage::url($file) }}" target="_blank" rel="noopener noreferrer">
+                            <a href="{{ asset('storage/' . $file) }}" target="_blank" rel="noopener noreferrer">
                                 {{ basename($file) }}
                             </a>
                         </span>

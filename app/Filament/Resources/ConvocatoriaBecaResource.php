@@ -29,6 +29,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Tabs\Tab;
+use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
 
 class ConvocatoriaBecaResource extends Resource
 {
@@ -113,6 +114,13 @@ public static function table(Table $table): Table
             IconColumn::make('estado')->label('Estado')->boolean(),
         ])
         ->actions([
+            MediaAction::make('ver_resolucion')
+                ->label(fn ($record) => $record->resolucion ?? 'Sin Resolución')
+                ->icon('heroicon-o-document-arrow-down')
+                ->media(fn ($record) => $record->pdf_resolucion
+                    ? asset('storage/' . $record->pdf_resolucion[0])
+                    : null
+                ),
             ViewAction::make('view')
                 ->label('Ver')
                 ->modalHeading(fn (ConvocatoriaBeca $record) => 'Detalles de Convocatoria ' . $record->anio)
@@ -149,16 +157,16 @@ public static function table(Table $table): Table
                                 ->schema([
                                     Section::make('Documentación')
                                         ->schema([
-                                            TextEntry::make('disposicion')->label('Nro. de Disposición')
-                                                ->color('customgray'),
                                             TextEntry::make('resolucion')->label('Nro. de Resolución')
                                                 ->color('customgray'),
-                                            Entry::make('pdf_disposicion')
-                                                ->label('Disposiciones en PDF')
-                                                ->view('filament.infolists.convocatoria-beca-dispo'),
+                                            TextEntry::make('disposicion')->label('Nro. de Disposición')
+                                                ->color('customgray'),
                                             Entry::make('pdf_resolucion')
                                                 ->label('Resoluciones en PDF')
                                                 ->view('filament.infolists.convocatoria-beca-reso'),
+                                            Entry::make('pdf_disposicion')
+                                                ->label('Disposiciones en PDF')
+                                                ->view('filament.infolists.convocatoria-beca-dispo'),
                                         ])->columns(2),
                                     ]),
                         ])

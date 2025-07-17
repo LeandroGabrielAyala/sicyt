@@ -47,10 +47,10 @@
                             <div>
                                 <span style="color: #6670c5; font-weight: 600;">Documentación:</span><br>
                                 @foreach ($proyecto->pivot->convocatoria?->pdf_disposicion ?? [] as $pdf)
-                                    <a href="{{ Storage::url($pdf) }}" target="_blank" class="underline block text-blue-400 hover:text-blue-600 transition-colors duration-150">Disposición</a>
+                                    <a href="{{ asset('storage/' . $pdf) }}" target="_blank" class="underline block text-blue-400 hover:text-blue-600 transition-colors duration-150">Disposición</a>
                                 @endforeach
                                 @foreach ($proyecto->pivot->convocatoria?->pdf_resolucion ?? [] as $pdf)
-                                    <a href="{{ Storage::url($pdf) }}" target="_blank" class="underline block text-green-400 hover:text-green-600 transition-colors duration-150">Resolución</a>
+                                    <a href="{{ asset('storage/' . $pdf) }}" target="_blank" class="underline block text-green-400 hover:text-green-600 transition-colors duration-150">Resolución</a>
                                 @endforeach
                             </div>
                         </div>

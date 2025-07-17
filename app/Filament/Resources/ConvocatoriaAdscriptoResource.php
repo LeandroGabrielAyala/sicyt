@@ -24,8 +24,7 @@ use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
 
 class ConvocatoriaAdscriptoResource extends Resource
 {
@@ -105,6 +104,13 @@ class ConvocatoriaAdscriptoResource extends Resource
                 IconColumn::make('estado')->label('Estado')->boolean(),
             ])
             ->actions([
+                MediaAction::make('ver_resolucion')
+                    ->label(fn ($record) => $record->resolucion ?? 'Sin Resolución')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->media(fn ($record) => $record->pdf_resolucion
+                        ? asset('storage/' . $record->pdf_resolucion[0])
+                        : null
+                    ),
                 ViewAction::make('view')
                     ->label('Ver')
                     ->modalHeading(fn (ConvocatoriaAdscripto $record) => 'Detalles de Convocatoria ' . $record->anio)
@@ -138,16 +144,16 @@ class ConvocatoriaAdscriptoResource extends Resource
                                     ->schema([
                                         Section::make('Documentación')
                                             ->schema([
-                                                TextEntry::make('disposicion')->label('Nro. de Disposición')
-                                                    ->color('customgray'),
                                                 TextEntry::make('resolucion')->label('Nro. de Resolución')
                                                     ->color('customgray'),
-                                                Entry::make('pdf_disposicion')
-                                                    ->label('Disposiciones en PDF')
-                                                    ->view('filament.infolists.convocatoria-ads-dispo'),
+                                                TextEntry::make('disposicion')->label('Nro. de Disposición')
+                                                    ->color('customgray'),
                                                 Entry::make('pdf_resolucion')
                                                     ->label('Resoluciones en PDF')
                                                     ->view('filament.infolists.convocatoria-ads-reso'),
+                                                Entry::make('pdf_disposicion')
+                                                    ->label('Disposiciones en PDF')
+                                                    ->view('filament.infolists.convocatoria-ads-dispo'),
                                             ])->columns(2),
                                         ]),
                             ])

@@ -59,7 +59,7 @@
                             <div class="mt-4">
                                 <span style="color: #6670c5; font-weight: 600;">Disposición del Adscripto:</span><br>
                                 @forelse ($proyecto->pivot->convocatoria?->pdf_disposicion ?? [] as $pdf)
-                                    <a href="{{ Storage::url($pdf) }}" target="_blank" class="underline block text-blue-400 hover:text-blue-600 transition-colors duration-150">Ver archivo</a>
+                                    <a href="{{ asset('storage/' . $pdf) }}" target="_blank" class="underline block text-blue-400 hover:text-blue-600 transition-colors duration-150">Ver archivo</a>
                                 @empty
                                     <span class="text-gray-400">—</span>
                                 @endforelse
@@ -67,7 +67,7 @@
                             <div class="mt-4">                                
                                 <span style="color: #6670c5; font-weight: 600;">Resolución del Adscripto:</span><br>
                                 @forelse ($proyecto->pivot->convocatoria?->pdf_resolucion ?? [] as $pdf)
-                                    <a href="{{ Storage::url($pdf) }}" target="_blank" class="underline block text-green-400 hover:text-green-600 transition-colors duration-150">Ver archivo</a>
+                                    <a href="{{ asset('storage/' . $pdf) }}" target="_blank" class="underline block text-green-400 hover:text-green-600 transition-colors duration-150">Ver archivo</a>
                                 @empty
                                     <span class="text-gray-400">—</span>
                                 @endforelse
