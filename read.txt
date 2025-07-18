@@ -3,7 +3,7 @@
 2.
 * LISTO ✔ - Exportar en .PDF
 * Generar Plantillas .DOCS
-* Agregar a todos Export/Import de .CSV y .XLSX (Falta Adscripto, Becarios y Pago de Becas CON TODOS LA LISTA DE BECARIOS PAGADOS)
+* Agregar a todos Export/Import de .CSV y .XLSX (Falta Adscripto y Pago de Becas CON TODOS LA LISTA DE BECARIOS PAGADOS)
 
 3.
 * Cuanto va gastado en Proyectos

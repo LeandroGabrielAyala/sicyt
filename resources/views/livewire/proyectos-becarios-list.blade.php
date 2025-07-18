@@ -62,7 +62,7 @@
                 </tr>
 
                 <tr x-show="openId === {{ $proyecto->id }}" x-transition class="bg-[#19213a]" style="border-bottom: 1px solid #ffffff1a;">
-                    <td colspan="4" class="px-4 py-4 border-t" style="border-color: #ffffff1a; color: #8c9aaf;">
+                    <td colspan="5" class="px-4 py-4 border-t" style="border-color: #ffffff1a; color: #8c9aaf;">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <span style="color: #6670c5; font-weight: 600;">Director PI:</span><br>

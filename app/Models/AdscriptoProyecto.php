@@ -24,6 +24,11 @@ class AdscriptoProyecto extends Pivot
             return $this->belongsTo(\App\Models\ConvocatoriaAdscripto::class, 'convocatoria_adscripto_id');
         }
 
+        public function convocatoriaAdscripto()
+        {
+            return $this->belongsTo(\App\Models\ConvocatoriaAdscripto::class, 'convocatoria_adscripto_id');
+        }
+
         public function director()
         {
             return $this->belongsTo(\App\Models\Investigador::class, 'director_id');

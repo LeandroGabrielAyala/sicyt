@@ -36,8 +36,6 @@ use App\Filament\Exports\ProyectoExporter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ImportAction;
 use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
 
 class ProyectoResource extends Resource

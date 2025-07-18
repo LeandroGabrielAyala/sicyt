@@ -23,6 +23,10 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Entry;
 use Filament\Tables\Actions\ViewAction;
+use App\Filament\Exports\AdscriptoExporter;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 
 class AdscriptoResource extends Resource
@@ -160,9 +164,10 @@ class AdscriptoResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([
+                    ExportBulkAction::make()->exporter(AdscriptoExporter::class), // Solo seleccionados
+                    DeleteBulkAction::make(),
+                ])
             ]);
     }
 

@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Becario;
+use App\Models\BecarioProyecto;
 use App\Models\Investigador;
 use App\Models\ConvocatoriaBeca;
 use Filament\Forms\Components\FileUpload;
@@ -22,6 +23,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Tabs;
@@ -50,10 +52,10 @@ public function table(Tables\Table $table): Tables\Table
                     ->label('Nombre completo')
                     ->formatStateUsing(fn ($state, $record) => $record->apellido . ', ' . $record->nombre),
                 TextColumn::make('pivot.director_id')
-                    ->label('Director')
+                    ->label('Director Beca')
                     ->formatStateUsing(fn ($state) => \App\Models\Investigador::find($state)?->apellido . ', ' . \App\Models\Investigador::find($state)?->nombre),
                 TextColumn::make('pivot.codirector_id')
-                    ->label('Codirector')
+                    ->label('Codirector Beca')
                     ->formatStateUsing(fn ($state) => $state ? \App\Models\Investigador::find($state)?->apellido . ', ' . \App\Models\Investigador::find($state)?->nombre : '-'),
                 TextColumn::make('pivot.tipo_beca')
                     ->label('Tipo de Beca')
@@ -196,52 +198,44 @@ public function table(Tables\Table $table): Tables\Table
                             ]),
                         ])
                 ]),
+                
+EditAction::make()
+    ->label('Editar')
+    ->record(fn ($record) => $record)
+    ->model(fn ($record) => $record->pivot)
+    ->form([
+        Grid::make(2)->schema([
+            Select::make('director_id')
+                ->label('Director')
+                ->options(\App\Models\Investigador::all()->pluck('nombre_completo', 'id'))
+                ->required(),
 
-            Tables\Actions\EditAction::make()
-                ->label('Editar')
-                ->record(fn ($record) => $record) // este es el modelo del recurso (Becario)
-                ->model(fn ($record) => $record->pivot) // este es el modelo a editar (pivot)
-                ->form([
-                    Grid::make(2)->schema([
-                        Select::make('director_id')
-                            ->label('Director')
-                            ->options(Investigador::all()->pluck('nombre_completo', 'id'))
-                            ->required(),
+            Select::make('codirector_id')
+                ->label('Codirector')
+                ->options(\App\Models\Investigador::all()->pluck('nombre_completo', 'id'))
+                ->searchable(),
 
-                        Select::make('codirector_id')
-                            ->label('Codirector')
-                            ->options(Investigador::all()->pluck('nombre_completo', 'id'))
-                            ->searchable(),
+            Select::make('convocatoria_beca_id')
+                ->label('Convocatoria')
+                ->options(\App\Models\ConvocatoriaBeca::all()->pluck('anio', 'id'))
+                ->required(),
 
-                        Select::make('convocatoria_beca_id')
-                            ->label('Convocatoria')
-                            ->options(ConvocatoriaBeca::all()->pluck('anio', 'id'))
-                            ->required(),
+            Select::make('tipo_beca')
+                ->label('Tipo de Beca')
+                ->options(\App\Models\BecarioProyecto::tiposBeca())
+                ->required(),
 
-                        Select::make('tipo_beca') // ✅ este es el campo correcto
-                            ->label('Tipo de Beca')
-                            ->options(\App\Models\BecarioProyecto::tiposBeca()) // asumimos que esto devuelve ['Grado' => 'Grado', ...]
-                            ->required(),
+            Toggle::make('vigente')
+                ->label('Vigente')
+                ->default(true),
 
+            Textarea::make('plan_trabajo')
+                ->label('Plan de trabajo')
+                ->required()
+                ->columnSpanFull(),
+        ]),
+    ]),
 
-                        Select::make('tipo_beca')
-                            ->label('Tipo de Beca')
-                            ->options(\App\Models\BecarioProyecto::tiposBeca())
-                            ->required(),
-
-                        Toggle::make('vigente')
-                            ->label('Vigente'),
-
-                        Textarea::make('plan_trabajo')
-                            ->label('Plan de trabajo')
-                            ->required()
-                            ->columnSpanFull(),
-                    ]),
-                ])
-                ->using(function ($record, array $data) {
-                    // $record es el modelo de la tabla pivote (BecarioProyecto)
-                    $record->update($data);
-                }),
 
                 DetachAction::make()->label('Quitar'),
             ]);

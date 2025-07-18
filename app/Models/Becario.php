@@ -19,16 +19,18 @@ class Becario extends Model
     public function proyectos()
     {
         return $this->belongsToMany(Proyecto::class, 'becario_proyecto')
-            ->using(\App\Models\BecarioProyecto::class) // <- IMPORTANTE
+            ->using(\App\Models\BecarioProyecto::class)
             ->withPivot([
                 'director_id',
                 'codirector_id',
-                'convocatoria_beca_id',
+                'convocatoria_beca_id',  // ya estaba
                 'tipo_beca',
                 'vigente',
+                'plan_trabajo',          // <-- Agregar este campo aquí
             ])
             ->withTimestamps();
     }
+
 
 
     public function carrera(): BelongsTo

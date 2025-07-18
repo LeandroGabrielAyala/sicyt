@@ -26,6 +26,10 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Filament\Exports\BecarioExporter;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 class BecarioResource extends Resource
 {
@@ -196,9 +200,10 @@ class BecarioResource extends Resource
                 EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([
+                    ExportBulkAction::make()->exporter(BecarioExporter::class), // Solo seleccionados
+                    DeleteBulkAction::make(),
+                ])
             ]);
     }
 

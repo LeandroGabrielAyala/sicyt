@@ -41,16 +41,23 @@ class Adscripto extends Model
 
     public function proyectos()
     {
-        return $this->belongsToMany(Proyecto::class, 'adscripto_proyecto')
-            ->using(AdscriptoProyecto::class)
+        return $this->belongsToMany(\App\Models\Proyecto::class)
+            ->using(\App\Models\AdscriptoProyecto::class) // si tenés un modelo intermedio
             ->withPivot([
-                'director_id',
-                'codirector_id',
                 'convocatoria_adscripto_id',
                 'vigente',
+                'director_id',
+                'codirector_id',
             ])
             ->withTimestamps();
     }
+
+
+    public function convocatorias()
+    {
+        return $this->proyectos->map(fn ($proyecto) => $proyecto->pivot->convocatoriaAdscripto)->filter()->unique('id');
+    }
+
 
     public function getNombreCompletoAttribute()
     {

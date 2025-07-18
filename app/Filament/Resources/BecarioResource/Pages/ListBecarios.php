@@ -10,6 +10,9 @@ use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Filament\Resources\Pages\Page;
+use Filament\Actions\ImportAction;
+use Filament\Actions;
+use App\Filament\Imports\BecarioImporter;
 
 
 
@@ -24,6 +27,10 @@ class ListBecarios extends ListRecords
         return [
             CreateAction::make()
                 ->label('Nuevo Becario'),
+            ImportAction::make()
+                ->importer(BecarioImporter::class)
+                ->label('Importar Becarios')
+                ->modalHeading('Subir archivo CSV de Becarios'),
         ];
     }
 
@@ -52,7 +59,8 @@ class ListBecarios extends ListRecords
     public function getTabs(): array
     {
         return [
-            Tab::make('Todos')
+
+            'Todos' => Tab::make()
                 ->badge(Becario::count()),
 
             Tab::make('Grado')

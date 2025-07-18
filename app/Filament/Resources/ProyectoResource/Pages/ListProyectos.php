@@ -45,7 +45,8 @@ class ListProyectos extends ListRecords
     public function getTabs(): array
     {
         return [
-            'Todos' => Tab::make(),
+            'Todos' => Tab::make()
+                ->badge(Proyecto::count()),
             'Vigente' => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) =>
                     $query->where(function ($query) {

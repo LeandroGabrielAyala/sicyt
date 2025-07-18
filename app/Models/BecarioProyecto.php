@@ -49,6 +49,7 @@ class BecarioProyecto extends Pivot
         return $this->belongsTo(ConvocatoriaBeca::class, 'convocatoria_beca_id');
     }
 
+
     // Opciones para el campo tipo_beca (enum)
     public static function tiposBeca(): array
     {
