@@ -21,6 +21,9 @@ use Filament\Infolists\Components\{Section, TextEntry, ViewEntry, Entry, Tabs};
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class PagoBecaResource extends Resource
 {
@@ -168,7 +171,8 @@ Select::make('becario_id')
             ])
             ->actions([
                 ViewAction::make()
-                    ->label('Ver')
+                    ->label('')
+                    ->color('primary')
                     ->modalHeading(fn ($record) => 'Pago de Becas - ' . $record->anio . ' / ' . $record->mes)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar')
@@ -181,7 +185,49 @@ Select::make('becario_id')
                                 ]),
                     ]),
 
-                EditAction::make(),
+                EditAction::make()->label(''),
+                Action::make('exportar_pdf')
+                    ->label('')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('primary')
+                    ->action(function (PagoBeca $record) {
+                        $record->loadMissing(['becariosPivot.becario', 'convocatoriaBeca']);
+
+                        $pdf = Pdf::loadView('pdf.pago-beca', [
+                            'pago' => $record,
+                            'numeroNota' => '197-25',
+                        ]);
+
+                        $fileName = 'nota_sicyt_pago_' . $record->mes . '_' . $record->anio . '.pdf';
+
+                        return response()->streamDownload(function () use ($pdf) {
+                            echo $pdf->output();
+                        }, $fileName);
+                    }),
+                    Action::make('duplicar')
+                        ->label('')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('primary')
+                        ->requiresConfirmation()
+                        ->action(function (PagoBeca $record, $livewire) {
+                            // Clonar el PagoBeca
+                            $nuevoPago = $record->replicate();
+                            $nuevoPago->created_at = now();
+                            $nuevoPago->updated_at = now();
+                            $nuevoPago->save();
+
+                            // Clonar los registros relacionados en becariosPivot
+                            foreach ($record->becariosPivot as $pivot) {
+                                $nuevoPago->becariosPivot()->create([
+                                    'becario_id' => $pivot->becario_id,
+                                    'monto' => $pivot->monto,
+                                ]);
+                            }
+
+                            // Redirigir al formulario de edición del nuevo
+                            $livewire->redirect(Pages\EditPagoBeca::getUrl(['record' => $nuevoPago]));
+                        }),
+
             ])
 
             ->bulkActions([

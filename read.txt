@@ -1,9 +1,6 @@
-1. LISTO ✔
-
-2.
-* LISTO ✔ - Exportar en .PDF
-* Generar Plantillas .DOCS
-* Agregar a todos Export/Import de .CSV y .XLSX (Falta Adscripto y Pago de Becas CON TODOS LA LISTA DE BECARIOS PAGADOS)
+TAREAS::
+* Agregar gasto total en Becas, Reintegros y Compras en "Configuración RACT"
+* Generar Plantillas .DOCS (Notas nuestras)
 
 3.
 * Cuanto va gastado en Proyectos

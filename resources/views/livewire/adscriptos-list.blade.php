@@ -44,7 +44,7 @@
 
                 <tr x-show="openId === {{ $adscripto->id }}" x-transition class="bg-[#19213a]" style="border-bottom: 1px solid #ffffff1a;">
                     <td colspan="5" class="px-4 py-4 space-y-4" style="color: #8c9aaf;">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <span style="color: #6670c5; font-weight: 600;">Director del Adscripto:</span><br>
                                 {{ $adscripto->pivot->director?->apellido_nombre ?? '—' }}
