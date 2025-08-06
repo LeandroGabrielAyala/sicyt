@@ -25,14 +25,14 @@ return new class extends Migration
             $table->string('telefono', 20)->unique();
             
             // Solo para grado
-            $table->foreignId('carrera_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('carrera_id')->nullable()->constrained('carreras')->nullOnDelete();
+            $table->foreignId('titulo_id')->nullable()->constrained('carreras')->nullOnDelete();
 
             // Solo para posgrado
             $table->foreignId('nivel_academico_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('disciplina_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('campo_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('objetivo_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->string('titulo')->nullable();
 
             $table->timestamps();
         });

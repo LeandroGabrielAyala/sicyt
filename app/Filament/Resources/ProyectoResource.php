@@ -23,7 +23,6 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
@@ -58,19 +57,25 @@ class ProyectoResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['nro', 'nombre', 'actividad.nombre'];
+        return ['nro', 'nombre'];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Tipo de Actividad' => $record->actividad->nombre,
+            'N° PI' => $record->nro,
+            'Estado' => $record->estado ? 'Vigente' : 'No Vigente',
+            'Director' => $record->investigadorDirector->pluck('apellido_nombre')->implode(', '),
+            'Codirector' => $record->investigadorCodirector->isNotEmpty()
+                ? $record->investigadorCodirector->pluck('apellido_nombre')->implode(', ')
+                : '—',
         ];
     }
 
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        return parent::getGlobalSearchEloquentQuery()->with(['actividad']);
+        return parent::getGlobalSearchEloquentQuery()
+            ->with(['investigadorDirector', 'investigadorCodirector']);
     }
 
     public static function getNavigationBadge(): ?string
@@ -86,110 +91,110 @@ class ProyectoResource extends Resource
     }
 
     public static function form(Form $form): Form
-{
-    return $form
-        ->schema([
-            FormTabs::make('Proyecto')
-                ->tabs([
-                    FormTab::make('Datos del Proyecto')
-                        ->schema([
-                            TextInput::make('nro')
-                                ->label('Nro. de P.I.')
-                                ->required(),
-                            TextInput::make('duracion')
-                                ->required(),
-                            DatePicker::make('inicio')
-                                ->required(),
-                            DatePicker::make('fin')
-                                ->required(),
-                            TextInput::make('nombre')
-                                ->required()
-                                ->maxLength(255)
-                                ->columnSpanFull(),
-                            RichEditor::make('resumen')
-                                ->required()
-                                ->maxLength(4000)
-                                ->columnSpanFull(),
-                        ])->columns(2),
+    {
+        return $form
+            ->schema([
+                FormTabs::make('Proyecto')
+                    ->tabs([
+                        FormTab::make('Datos del Proyecto')
+                            ->schema([
+                                TextInput::make('nro')
+                                    ->label('Nro. de P.I.')
+                                    ->required(),
+                                TextInput::make('duracion')
+                                    ->required(),
+                                DatePicker::make('inicio')
+                                    ->required(),
+                                DatePicker::make('fin')
+                                    ->required(),
+                                TextInput::make('nombre')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpanFull(),
+                                RichEditor::make('resumen')
+                                    ->required()
+                                    ->maxLength(4000)
+                                    ->columnSpanFull(),
+                            ])->columns(2),
 
-                    FormTab::make('Información Adicional')
-                        ->schema([
-                            TextInput::make('presupuesto')
-                                ->helperText('Si coloca decimales, que sea con un punto "."')
-                                ->required(),
-                            Toggle::make('estado')
-                                ->label('No Vigente / Vigente')
-                                ->inline(false)
-                                ->required(),
-                            TextInput::make('resolucion')
-                                ->label('N° Resolución')
-                                ->required()
-                                ->maxLength(255)
-                                // Al cargar el formulario, modifico el valor para mostrar sólo la parte central
-                                ->afterStateHydrated(function ($state, callable $set) {
-                                    if (!$state) return;
+                        FormTab::make('Información Adicional')
+                            ->schema([
+                                TextInput::make('presupuesto')
+                                    ->helperText('Si coloca decimales, que sea con un punto "."')
+                                    ->required(),
+                                Toggle::make('estado')
+                                    ->label('No Vigente / Vigente')
+                                    ->inline(false)
+                                    ->required(),
+                                TextInput::make('resolucion')
+                                    ->label('N° Resolución')
+                                    ->required()
+                                    ->maxLength(255)
+                                    // Al cargar el formulario, modifico el valor para mostrar sólo la parte central
+                                    ->afterStateHydrated(function ($state, callable $set) {
+                                        if (!$state) return;
 
-                                    $parteCentral = preg_replace('/^RES-(.*)-C\.S\.$/', '$1', $state);
-                                    $set('resolucion', $parteCentral);
-                                })
-                                // Al guardar, agrego prefijo y sufijo
-                                ->dehydrateStateUsing(function ($state) {
-                                    return 'RES-' . $state . '-C.S.';
-                                }),
-                            TextInput::make('disposicion')
-                                ->label('N° Disposición')
-                                ->required()
-                                ->maxLength(255)
-                                // Al cargar el formulario, modifico el valor para mostrar sólo la parte central
-                                ->afterStateHydrated(function ($state, callable $set) {
-                                    if (!$state) return;
+                                        $parteCentral = preg_replace('/^RES-(.*)-C\.S\.$/', '$1', $state);
+                                        $set('resolucion', $parteCentral);
+                                    })
+                                    // Al guardar, agrego prefijo y sufijo
+                                    ->dehydrateStateUsing(function ($state) {
+                                        return 'RES-' . $state . '-C.S.';
+                                    }),
+                                TextInput::make('disposicion')
+                                    ->label('N° Disposición')
+                                    ->required()
+                                    ->maxLength(255)
+                                    // Al cargar el formulario, modifico el valor para mostrar sólo la parte central
+                                    ->afterStateHydrated(function ($state, callable $set) {
+                                        if (!$state) return;
 
-                                    $parteCentral = preg_replace('/^RES-(.*)-C\.S\.$/', '$1', $state);
-                                    $set('disposicion', $parteCentral);
-                                })
-                                // Al guardar, agrego prefijo y sufijo
-                                ->dehydrateStateUsing(function ($state) {
-                                    return 'RES-' . $state . '-C.S.';
-                                }),
-                            FileUpload::make('pdf_resolucion')
-                                ->label('Resolución en .PDF')
-                                ->multiple()
-                                ->required()
-                                ->disk('public')
-                                ->directory('resoluciones')
-                                ->preserveFilenames()
-                                ->reorderable()
-                                ->openable(),
-                            FileUpload::make('pdf_disposicion')
-                                ->label('Disposición en .PDF')
-                                ->multiple()
-                                ->required()
-                                ->disk('public')
-                                ->directory('disposiciones')
-                                ->preserveFilenames()
-                                ->reorderable()
-                                ->openable(),
-                        ])->columns(2),
+                                        $parteCentral = preg_replace('/^RES-(.*)-C\.S\.$/', '$1', $state);
+                                        $set('disposicion', $parteCentral);
+                                    })
+                                    // Al guardar, agrego prefijo y sufijo
+                                    ->dehydrateStateUsing(function ($state) {
+                                        return 'RES-' . $state . '-C.S.';
+                                    }),
+                                FileUpload::make('pdf_resolucion')
+                                    ->label('Resolución en .PDF')
+                                    ->multiple()
+                                    ->required()
+                                    ->disk('public')
+                                    ->directory('resoluciones')
+                                    ->preserveFilenames()
+                                    ->reorderable()
+                                    ->openable(),
+                                FileUpload::make('pdf_disposicion')
+                                    ->label('Disposición en .PDF')
+                                    ->multiple()
+                                    ->required()
+                                    ->disk('public')
+                                    ->directory('disposiciones')
+                                    ->preserveFilenames()
+                                    ->reorderable()
+                                    ->openable(),
+                            ])->columns(2),
 
-                    FormTab::make('Clasificación')
-                        ->schema([
-                            Select::make('carrera_id')->relationship('carrera', 'nombre')
-                                ->required(),
-                            Select::make('campo_id')
-                                ->relationship('campo', 'nombre')
-                                ->required(),
-                            Select::make('objetivo_id')
-                                ->relationship('objetivo', 'nombre')
-                                ->required()
-                                ->preload(),
-                            Select::make('actividad_id')
-                                ->relationship('actividad', 'nombre')
-                                ->required(),
-                        ])->columns(3),
-                ])
-                ->columnSpanFull(),
-        ]);
-}
+                        FormTab::make('Clasificación')
+                            ->schema([
+                                Select::make('carrera_id')->relationship('carrera', 'nombre')
+                                    ->required(),
+                                Select::make('campo_id')
+                                    ->relationship('campo', 'nombre')
+                                    ->required(),
+                                Select::make('objetivo_id')
+                                    ->relationship('objetivo', 'nombre')
+                                    ->required()
+                                    ->preload(),
+                                Select::make('actividad_id')
+                                    ->relationship('actividad', 'nombre')
+                                    ->required(),
+                            ])->columns(3),
+                    ])
+                    ->columnSpanFull(),
+            ]);
+    }
 
     public static function table(Table $table): Table
     {
@@ -267,15 +272,7 @@ class ProyectoResource extends Resource
                     }),
                 ]) /*, layout: FiltersLayout::AboveContent)->filtersFormColumns(2)*/
             ->actions([
-                MediaAction::make('ver_resolucion')
-                    ->label(fn ($record) => $record->resolucion ?? 'Sin Resolución')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->media(fn ($record) => $record->pdf_resolucion
-                        ? asset('storage/' . $record->pdf_resolucion[0])
-                        : null
-                    ),
-
-                ViewAction::make()->label('Ver')
+                ViewAction::make()->label('')->color('primary')
                     ->modalHeading(fn ($record) => 'Detalles del Proyecto de Investigación N° ' . $record->nro)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn () => null)
@@ -393,7 +390,14 @@ class ProyectoResource extends Resource
                                 ])
                         ])
                 ]),
-                EditAction::make()->label('Editar'),
+                EditAction::make()->label(''),
+                MediaAction::make('ver_resolucion')
+                    ->label(fn ($record) => $record->resolucion ? 'Res. ' . $record->resolucion : 'Sin Resolución')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->media(fn ($record) => $record->pdf_resolucion
+                        ? asset('storage/' . $record->pdf_resolucion[0])
+                        : null
+                    ),
             ])
             ->headerActions([
                 // ExportAction::make()->exporter(ProyectoExporter::class),

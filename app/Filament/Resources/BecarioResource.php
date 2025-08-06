@@ -27,9 +27,12 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Filament\Exports\BecarioExporter;
+use App\Models\Carrera;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class BecarioResource extends Resource
 {
@@ -41,6 +44,36 @@ class BecarioResource extends Resource
     protected static ?string $modelLabel = 'Becarios';
     protected static ?string $slug = 'becarios';
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $recordTitleAttribute = 'apellido_nombre';
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return "{$record->apellido}, {$record->nombre}";
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['apellido', 'nombre', 'dni', 'email', 'telefono'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'DNI' => $record->dni,
+            'Email' => $record->email,
+            'Teléfono' => $record->telefono,
+            'Carrera' => $record->carrera?->nombre ?? '—',
+            'Título' => $record->titulo ?? '—',
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()
+            ->with(['carrera']);
+    }
+
 
     public static function getNavigationBadge(): ?string
     {
@@ -79,12 +112,28 @@ class BecarioResource extends Resource
                             ->schema([
                                 Forms\Components\Grid::make(2)
                                     ->schema([
-                                        Select::make('carrera_id')->relationship('carrera', 'nombre'),
+                                        // Select::make('carrera_id')->relationship('carrera', 'nombre'),
+
+                                        Select::make('carrera_id')
+                                            ->label('Carrera')
+                                            ->relationship('carrera', 'nombre')
+                                            ->reactive()
+                                            ->afterStateUpdated(function ($state, callable $set) {
+                                                $tituloId = Carrera::find($state)?->id; // o ->titulo si es texto
+                                                $set('titulo_id', $tituloId);
+                                            })
+                                            ->required(),
+
+                                        Select::make('titulo_id')
+                                            ->label('Título')
+                                            ->relationship('titulo', 'titulo')
+                                            ->disabled()
+                                            ->required(),
+
                                         Select::make('nivel_academico_id')->relationship('nivelAcademico', 'nombre'),
                                         Select::make('disciplina_id')->relationship('disciplina', 'nombre'),
                                         Select::make('campo_id')->relationship('campo', 'nombre'),
                                         Select::make('objetivo_id')->relationship('objetivo', 'nombre'),
-                                        TextInput::make('titulo')->columnSpanFull(),
                                     ]),
                             ]),
                     ])->columnSpanFull(),
@@ -131,10 +180,11 @@ class BecarioResource extends Resource
             ])->defaultSort('apellido', 'asc') // 👈 Orden alfabético por defecto
             ->actions([
                 ViewAction::make()
-                    ->label('Ver')
+                    ->label('')
                     ->modalHeading(fn ($record) => 'Detalles del Becario ' . $record->nombre . ' ' . $record->apellido)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar')
+                    ->color('primary')
                     ->infolist(fn (ViewAction $action): array => [
                         InfoTabs::make('Tabs')->tabs([
 
@@ -197,7 +247,7 @@ class BecarioResource extends Resource
 
                         ])
                     ]),
-                EditAction::make(),
+                EditAction::make()->label('')->color('primary'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

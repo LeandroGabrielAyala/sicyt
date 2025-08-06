@@ -104,15 +104,9 @@ class ConvocatoriaAdscriptoResource extends Resource
                 IconColumn::make('estado')->label('Estado')->boolean(),
             ])
             ->actions([
-                MediaAction::make('ver_resolucion')
-                    ->label(fn ($record) => $record->resolucion ?? 'Sin Resolución')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->media(fn ($record) => $record->pdf_resolucion
-                        ? asset('storage/' . $record->pdf_resolucion[0])
-                        : null
-                    ),
                 ViewAction::make('view')
-                    ->label('Ver')
+                    ->label('')
+                    ->color('primary')
                     ->modalHeading(fn (ConvocatoriaAdscripto $record) => 'Detalles de Convocatoria ' . $record->anio)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn () => null)
@@ -158,7 +152,14 @@ class ConvocatoriaAdscriptoResource extends Resource
                                         ]),
                             ])
                     ]),
-                EditAction::make()
+                EditAction::make()->label(''),
+                MediaAction::make('ver_resolucion')
+                    ->label(fn ($record) => $record->resolucion ?? 'Sin Resolución')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->media(fn ($record) => $record->pdf_resolucion
+                        ? asset('storage/' . $record->pdf_resolucion[0])
+                        : null
+                    ),
             ])
             ->filters([
                 //

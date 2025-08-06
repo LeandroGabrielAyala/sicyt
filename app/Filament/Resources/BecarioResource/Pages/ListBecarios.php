@@ -54,8 +54,6 @@ class ListBecarios extends ListRecords
             ->select('becarios.*', 'becario_proyecto.tipo_beca');
     }
 
-
-
     public function getTabs(): array
     {
         return [

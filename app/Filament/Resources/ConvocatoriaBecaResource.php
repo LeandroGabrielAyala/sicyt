@@ -114,15 +114,9 @@ public static function table(Table $table): Table
             IconColumn::make('estado')->label('Estado')->boolean(),
         ])
         ->actions([
-            MediaAction::make('ver_resolucion')
-                ->label(fn ($record) => $record->resolucion ?? 'Sin Resolución')
-                ->icon('heroicon-o-document-arrow-down')
-                ->media(fn ($record) => $record->pdf_resolucion
-                    ? asset('storage/' . $record->pdf_resolucion[0])
-                    : null
-                ),
             ViewAction::make('view')
-                ->label('Ver')
+                ->label('')
+                ->color('primary')
                 ->modalHeading(fn (ConvocatoriaBeca $record) => 'Detalles de Convocatoria ' . $record->anio)
                 ->modalSubmitAction(false)
                 ->modalCancelAction(fn () => null)
@@ -171,7 +165,14 @@ public static function table(Table $table): Table
                                     ]),
                         ])
                 ]),
-            EditAction::make()
+            EditAction::make()->label(''),
+            MediaAction::make('ver_resolucion')
+                ->label(fn ($record) => $record->resolucion ?? 'Sin Resolución')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->media(fn ($record) => $record->pdf_resolucion
+                    ? asset('storage/' . $record->pdf_resolucion[0])
+                    : null
+                ),
         ])
         ->filters([
             //

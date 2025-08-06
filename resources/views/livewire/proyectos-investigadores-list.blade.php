@@ -9,7 +9,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($investigador->proyectos as $proyecto)
+            @forelse($investigador->proyectos as $proyecto)
                 <tr
                     class="cursor-pointer hover:bg-[#19213a] transition-colors duration-200"
                     style="border-bottom: 1px solid #ffffff1a; color: #8c9aaf;"
@@ -61,8 +61,11 @@
                             <div class="whitespace-pre-wrap">{{ $proyecto->pivot->plan_trabajo ?? 'Sin plan de trabajo registrado.' }}</div>
                         </div>
                     </td>
+            @empty
+                <tr>
+                    <td colspan="5" class="px-3 py-4 text-center text-gray-400">No tiene ningún proyecto asociado.</td>
                 </tr>
-            @endforeach
+            @endforelse
         </tbody>
     </table>
 </div>

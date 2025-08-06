@@ -34,7 +34,7 @@ use Filament\Infolists\Components\Tabs\Tab;
 
 class BecariosRelationManager extends RelationManager
 {
-    protected static string $relationship = 'Becarios';
+    protected static string $relationship = 'becarios';
 
     public function form(Form $form): Form
     {

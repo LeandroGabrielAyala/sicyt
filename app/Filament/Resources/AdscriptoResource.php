@@ -27,7 +27,8 @@ use App\Filament\Exports\AdscriptoExporter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
-
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class AdscriptoResource extends Resource
 {
@@ -39,6 +40,35 @@ class AdscriptoResource extends Resource
     protected static ?string $modelLabel = 'Adscriptos';
     protected static ?string $slug = 'adscriptos';
     protected static ?int $navigationSort = 3;
+
+    protected static ?string $recordTitleAttribute = 'apellido_nombre';
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return "{$record->apellido}, {$record->nombre}";
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['apellido', 'nombre', 'dni', 'email', 'telefono'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'DNI' => $record->dni,
+            'Email' => $record->email,
+            'Teléfono' => $record->telefono,
+            'Carrera' => optional($record->carrera)->nombre ?? '—',
+            'Título' => optional($record->titulo)->titulo ?? '—',
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()
+            ->with(['carrera', 'titulo']);
+    }
 
     public static function getNavigationBadge(): ?string
     {
@@ -74,27 +104,26 @@ class AdscriptoResource extends Resource
                                     ]),
                             ]),
 
-                        FormTab::make('Formación académica')
-                            ->schema([
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Select::make('carrera_id')
-                                            ->label('Carrera')
-                                            ->relationship('carrera', 'nombre')
-                                            ->reactive()
-                                            ->afterStateUpdated(function ($state, callable $set) {
-                                                $tituloId = Carrera::find($state)?->id; // o ->titulo si es texto
-                                                $set('titulo_id', $tituloId);
-                                            })
-                                            ->required(),
+                            FormTab::make('Formación académica')
+                                ->schema([
+                                    Forms\Components\Grid::make(2)
+                                        ->schema([
+                                            Select::make('carrera_id')
+                                                ->label('Carrera')
+                                                ->relationship('carrera', 'nombre')
+                                                ->reactive()
+                                                ->afterStateUpdated(function ($state, callable $set) {
+                                                    $titulo = \App\Models\Carrera::find($state)?->titulo;
+                                                    $set('titulo', $titulo); // Cargás el texto del título en el campo del modelo Becario
+                                                })
+                                                ->required(),
 
-                                        Select::make('titulo_id')
-                                            ->label('Título')
-                                            ->relationship('titulo', 'titulo')
-                                            ->disabled()
-                                            ->required(),
-                                    ]),
-                            ]),
+                                            TextInput::make('titulo')
+                                                ->label('Título profesional')
+                                                ->disabled()
+                                                ->required(),
+                                        ]),
+                                ]),
                     ])->columnSpanFull(),
             ]);
     }
@@ -107,17 +136,22 @@ class AdscriptoResource extends Resource
                 TextColumn::make('nombre')->label('Nombre(s)')->searchable()->limit(50),
                 TextColumn::make('dni')->label('DNI'),
                 TextColumn::make('email')->label('Email'),
-                TextColumn::make('telefono')->label('Teléfono')->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('telefono')->label('Teléfono'),
             ])->defaultSort('apellido', 'asc') // 👈 Orden alfabético por defecto
             ->filters([
                 //
             ])
             ->actions([
                 ViewAction::make()
-                    ->label('Ver')
+                    ->label('')
+                    ->color('primary')
                     ->modalHeading(fn ($record) => 'Detalles del Adscripto ' . $record->nombre . ' ' . $record->apellido)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar')
+
+                    // ✅ Aquí cargás relaciones necesarias
+                    ->record(fn ($record) => $record->load(['titulo', 'carrera', 'proyectos']))
+
                     ->infolist(fn (ViewAction $action): array => [
                         InfoTabs::make('Tabs')->tabs([
 
@@ -158,10 +192,11 @@ class AdscriptoResource extends Resource
                                     TextEntry::make('titulo.titulo')->label('Título')->color('gray'),
                                 ])->columns(2),
                             ]),
-                        ])
+                        ]),
                     ]),
 
-                Tables\Actions\EditAction::make(),
+
+                Tables\Actions\EditAction::make()->label('')->color('primary'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

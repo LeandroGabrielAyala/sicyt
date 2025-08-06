@@ -31,11 +31,14 @@ class Becario extends Model
             ->withTimestamps();
     }
 
-
-
     public function carrera(): BelongsTo
     {
         return $this->belongsTo(Carrera::class);
+    }
+
+    public function titulo()
+    {
+        return $this->belongsTo(Carrera::class, 'titulo_id');
     }
 
     public function nivelAcademico(): BelongsTo

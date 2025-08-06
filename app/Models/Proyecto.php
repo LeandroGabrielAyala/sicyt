@@ -82,7 +82,6 @@ class Proyecto extends Model
             ->withTimestamps();
     }
 
-
     public function campo(): BelongsTo
     {
         return $this->belongsTo(Campo::class);

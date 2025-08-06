@@ -3,27 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PagoBecaResource\Pages;
-use App\Filament\Resources\PagoBecaResource\RelationManagers;
 use App\Models\PagoBeca;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\{Section, TextEntry, ViewEntry, Entry, Tabs};
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\Action;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
+use Filament\Notifications\Notification;
 
 class PagoBecaResource extends Resource
 {
@@ -204,29 +199,37 @@ Select::make('becario_id')
                             echo $pdf->output();
                         }, $fileName);
                     }),
-                    Action::make('duplicar')
-                        ->label('')
-                        ->icon('heroicon-o-document-duplicate')
-                        ->color('primary')
-                        ->requiresConfirmation()
-                        ->action(function (PagoBeca $record, $livewire) {
-                            // Clonar el PagoBeca
-                            $nuevoPago = $record->replicate();
-                            $nuevoPago->created_at = now();
-                            $nuevoPago->updated_at = now();
-                            $nuevoPago->save();
+                
+                Action::make('duplicar')
+                    ->label('')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('primary')
+                    ->requiresConfirmation()
+                    ->modalHeading('¿Estás seguro de querer duplicar este pago?')
+                    ->modalSubheading('Se creará un nuevo pago con los mismos datos y becarios.')
+                    ->modalButton('Sí, duplicar')
+                    ->modalIcon('heroicon-o-document-duplicate')
+                    ->action(function (PagoBeca $record, $livewire) {
+                        $nuevoPago = $record->replicate();
+                        $nuevoPago->created_at = now();
+                        $nuevoPago->updated_at = now();
+                        $nuevoPago->save();
 
-                            // Clonar los registros relacionados en becariosPivot
-                            foreach ($record->becariosPivot as $pivot) {
-                                $nuevoPago->becariosPivot()->create([
-                                    'becario_id' => $pivot->becario_id,
-                                    'monto' => $pivot->monto,
-                                ]);
-                            }
+                        foreach ($record->becariosPivot as $pivot) {
+                            $nuevoPago->becariosPivot()->create([
+                                'becario_id' => $pivot->becario_id,
+                                'monto' => $pivot->monto,
+                            ]);
+                        }
 
-                            // Redirigir al formulario de edición del nuevo
-                            $livewire->redirect(Pages\EditPagoBeca::getUrl(['record' => $nuevoPago]));
-                        }),
+                        Notification::make()
+                            ->title('Lista de Pago duplicada.')
+                            ->success()
+                            ->send();
+
+                        $livewire->redirect(Pages\EditPagoBeca::getUrl(['record' => $nuevoPago]));
+                    }),
+
 
             ])
 

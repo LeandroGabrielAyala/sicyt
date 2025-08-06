@@ -5,9 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InvestigadorResource\RelationManagers\ProyectoRelationManager;
 use App\Filament\Resources\InvestigadorResource\RelationManagers\BecariosRelationManager;
 use App\Filament\Resources\InvestigadorResource\RelationManagers\AdscriptosRelationManager;
-use Illuminate\Support\Facades\Storage;
 use App\Filament\Resources\InvestigadorResource\Pages;
-use App\Filament\Resources\InvestigadorResource\RelationManagers;
 use App\Models\Disciplina;
 use App\Models\Investigador;
 use Filament\Tables\Actions\EditAction;
@@ -27,7 +25,6 @@ use Filament\Infolists\Components\Tabs\Tab as InfoTab;
 use Filament\Forms\Components\Tabs as FormTabs;
 use Filament\Forms\Components\Tabs\Tab as FormTab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -37,6 +34,9 @@ use App\Filament\Exports\InvestigadorExporter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 
 class InvestigadorResource extends Resource
 {
@@ -48,6 +48,36 @@ class InvestigadorResource extends Resource
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $slug = 'investigadores-pi';
     protected static ?int $navigationSort = 2;
+
+    // Busqueda Global
+    protected static ?string $recordTitleAttribute = 'apellido_nombre';
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return "{$record->apellido}, {$record->nombre}";
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['apellido', 'nombre', 'dni', 'email', 'telefono'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'DNI' => $record->dni,
+            'Email' => $record->email,
+            'Teléfono' => $record->telefono,
+            'Título' => $record->titulo,
+            'Cargo' => optional($record->cargo)->nombre ?? '—',
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()
+            ->with(['cargo']);
+    }
 
     public static function getNavigationBadge(): ?string
     {
@@ -197,7 +227,7 @@ class InvestigadorResource extends Resource
                 //
             ])
             ->actions([
-                ViewAction::make()->label('Ver')
+                ViewAction::make()->label('')->color('primary')
                 ->modalHeading(fn ($record) => 'Detalles del Investigador ' . $record->apellido . ', ' . $record->nombre)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn () => null)
@@ -325,7 +355,7 @@ class InvestigadorResource extends Resource
                         ])
                 ,
                 EditAction::make()
-                    ->label('Editar'),
+                    ->label(''),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
