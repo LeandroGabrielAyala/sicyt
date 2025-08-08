@@ -25,6 +25,8 @@ use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
 use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ConvocatoriaAdscriptoResource extends Resource
 {
@@ -36,6 +38,33 @@ class ConvocatoriaAdscriptoResource extends Resource
     protected static ?string $navigationGroup = 'Configuración Proyectos';
     protected static ?string $slug = 'convocatoria-adscripto';
     protected static ?int $navigationSort = 1;
+
+protected static ?string $recordTitleAttribute = 'anio';
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return "Convocatoria " . $record->anio;
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'anio',
+        ];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Año' => $record->anio,
+            'Estado' => $record->estado ? 'Vigente' : 'No Vigente',
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery();
+    }
 
     public static function getNavigationBadge(): ?string
     {

@@ -19,6 +19,8 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\Action;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class PagoBecaResource extends Resource
 {
@@ -30,6 +32,37 @@ class PagoBecaResource extends Resource
     protected static ?string $modelLabel = 'Pago Becas';
     protected static ?string $slug = 'pago-becarios';
     protected static ?int $navigationSort = 2;
+
+
+    protected static ?string $recordTitleAttribute = 'convocatoriaBeca.descripcion';
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->convocatoriaBeca->descripcion ?? '—';
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['anio', 'mes', 'tipo_beca'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            // 'Convocatoria' => $record->convocatoriaBeca->descripcion ?? '—',
+            'Año' => $record->anio,
+            'Mes' => $record->mes,
+            'Tipo de Beca' => $record->tipo_beca ?? '—',
+            'Monto Total' => '$ ' . number_format($record->becarios_sum_monto ?? 0, 2, ',', '.'),
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()
+            ->with('convocatoriaBeca');
+    }
+
 
     public static function getNavigationBadge(): ?string
     {

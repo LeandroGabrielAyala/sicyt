@@ -249,12 +249,33 @@ class ProyectoResource extends Resource
                 SelectFilter::make('campo_id')
                     ->label('Campo de Aplicación')
                     ->relationship('campo', 'nombre'),
+
                 SelectFilter::make('objetivo_id')
                     ->label('Objetivo Socioeconomico')
                     ->relationship('objetivo', 'nombre'),
+
                 SelectFilter::make('actividad_id')
                     ->label('Tipo de Actividad')
                     ->relationship('actividad', 'nombre'),
+
+                SelectFilter::make('carrera_id')
+                    ->label('Carrera')
+                    ->relationship('carrera', 'nombre'),
+
+                SelectFilter::make('duracion')
+                    ->label('Duración')
+                    ->options([
+                        24 => '24 meses',
+                        48 => '48 meses',
+                    ]),
+
+                SelectFilter::make('estado')
+                    ->label('Estado')
+                    ->options([
+                        1 => 'Vigente',
+                        0 => 'No Vigente',
+                    ]),
+
                 Filter::make('rango_completo')
                     ->label('Rango completo del proyecto')
                     ->form([
@@ -270,7 +291,7 @@ class ProyectoResource extends Resource
                                     ->where('fin', '<=', $data['hasta']),
                             );
                     }),
-                ]) /*, layout: FiltersLayout::AboveContent)->filtersFormColumns(2)*/
+            ])
             ->actions([
                 ViewAction::make()->label('')->color('primary')
                     ->modalHeading(fn ($record) => 'Detalles del Proyecto de Investigación N° ' . $record->nro)

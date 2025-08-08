@@ -55,8 +55,8 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <span style="color: #6670c5; font-weight: 600;">Plan de Trabajo:</span><br>
-                            {{ $becario->plan_trabajo ? strip_tags(html_entity_decode($becario->plan_trabajo)) : '—' }}
+                            <span style="color: #6670c5; font-weight: 600;">Plan de trabajo de la Beca:</span><br>
+                            {{ $proyecto->pivot->plan_trabajo ? strip_tags(html_entity_decode($proyecto->pivot->plan_trabajo)) : '—' }}
                         </div>
                     </td>
                 </tr>

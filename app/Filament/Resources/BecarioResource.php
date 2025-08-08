@@ -219,13 +219,14 @@ class BecarioResource extends Resource
 
                             InfoTab::make('Datos Académicos')->schema([
                                 Section::make('Formación del Becario')->schema([
-                                    TextEntry::make('titulo')->label('Título profesional')
+                                    TextEntry::make('carrera.titulo')->label('Título profesional')
                                         ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')
                                         ->color('customgray'),
 
-                                    TextEntry::make('carrera.nombre')->label('Carrera')
-                                        ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Grado')
+                                    TextEntry::make('carrera.nombre')
+                                        ->label('Carrera')
                                         ->color('customgray'),
+
 
                                     TextEntry::make('nivelAcademico.nombre')->label('Nivel Académico')
                                         ->visible(fn ($record) => $record->proyectos->first()?->pivot?->tipo_beca === 'Posgrado')

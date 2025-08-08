@@ -20,7 +20,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
@@ -30,6 +29,8 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Tabs\Tab;
 use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class ConvocatoriaBecaResource extends Resource
 {
@@ -41,6 +42,35 @@ class ConvocatoriaBecaResource extends Resource
     protected static ?string $navigationGroup = 'Configuración Becas';
     protected static ?string $slug = 'convocatoria-beca';
     protected static ?int $navigationSort = 1;
+
+protected static ?string $recordTitleAttribute = 'anio';
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return "Convocatoria " . $record->anio;
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'anio',
+        ];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Tipo de Beca' => $record->tipoBeca->nombre ?? '—',
+            'Año' => $record->anio,
+            'Estado' => $record->estado ? 'Vigente' : 'No Vigente',
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()
+            ->with('tipoBeca');
+    }
 
     public static function getNavigationBadge(): ?string
     {

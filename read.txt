@@ -7,9 +7,10 @@ TAREAS::
 
 4.
 * Agregar a todos:
-    ** BUSQUEDA GLOBAL
+    ** Agregar los Relation Manager en Convocatorias (ads y becas) para mostrar los becarios o ads relacionados
     ** FILTRO (corregir lo que ya tiene)
     ** SEARCHEABLE
+    ** Idioma español para todas las vistas (New, Edit, etc..)
 
 5.
 * Solucionar o averiguar para que Panel Notificación

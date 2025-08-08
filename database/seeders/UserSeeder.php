@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -13,17 +14,25 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        // Crear rol Admin si no existe
+        $role = Role::firstOrCreate(['name' => 'Admin']);
+
+        // Crear usuario Admin
+        $user1 = User::create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
-            'password' => 'admin123',
+            'password' => Hash::make('admin123'), // Hashear contraseña
             'is_admin' => 1,
         ]);
 
+        // Asignar rol Admin al usuario
+        $user1->assignRole($role);
+
+        // Crear otro usuario
         User::create([
             'name' => 'Lean',
             'email' => 'lean@gmail.com',
-            'password' => 'lean1234',
+            'password' => Hash::make('lean1234'), // Hashear contraseña
             'is_admin' => 0,
         ]);
     }
