@@ -35,7 +35,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 
 class InvestigadorResource extends Resource
@@ -359,9 +359,23 @@ class InvestigadorResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    ExportBulkAction::make()->exporter(InvestigadorExporter::class), // Solo seleccionados
-                    DeleteBulkAction::make(),
-                ])
+                    ExportBulkAction::make()
+                        ->exporter(InvestigadorExporter::class)
+                        ->label('Exportar investigadores'), // Solo seleccionados
+                    DeleteBulkAction::make()
+                        ->label('Eliminar seleccionados')
+                        ->requiresConfirmation()
+                        ->modalHeading('¿Estás seguro de querer elminar los registros?')
+                        ->modalSubheading('Se eliminará completamente y no podrás recuperarlo.')
+                        ->modalButton('Sí, eliminar')
+                        ->modalIcon('heroicon-o-trash')
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Investigador Eliminado')
+                                ->body('El investigador fue eliminado correctamente')
+                        ),
+                ])->label('Acciones')
             ]);
     }
 

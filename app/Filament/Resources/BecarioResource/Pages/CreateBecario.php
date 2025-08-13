@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\BecarioResource\Pages;
 
 use App\Filament\Resources\BecarioResource;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Notifications\Notification;
@@ -12,7 +11,7 @@ class CreateBecario extends CreateRecord
 {
     protected static string $resource = BecarioResource::class;
 
-protected function getCreatedNotification(): ?Notification
+    protected function getCreatedNotification(): ?Notification
     {
         return Notification::make()
             ->success()

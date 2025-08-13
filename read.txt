@@ -1,4 +1,8 @@
 TAREAS::
+* Agregar a todos:
+    ** Notificación y Confirmación de cada acción.
+    ** Formulario en CARD
+    ** Idioma, breadcrum y botones
 * Agregar gasto total en Becas, Reintegros y Compras en "Configuración RACT"
 * Generar Plantillas .DOCS (Notas nuestras)
 
