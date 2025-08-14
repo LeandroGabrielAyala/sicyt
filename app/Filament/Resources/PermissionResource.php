@@ -26,11 +26,11 @@ class PermissionResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
-                ->label('Nombre')
-                ->minLength(2)
-                ->maxLength(255)
-                ->required()
-                ->unique()
+                    ->label('Nombre')
+                    ->minLength(2)
+                    ->maxLength(255)
+                    ->required()
+                    ->unique(ignoreRecord: true)
             ]);
     }
 
@@ -38,13 +38,19 @@ class PermissionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nombre')
+                TextColumn::make('name')
+                    ->label('Nombre'),
+                TextColumn::make('created_at')
+                    ->label('Creado el')
+                    ->dateTime('d-M-Y')
+                    ->sortable()
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Editar'),
+                Tables\Actions\DeleteAction::make()->label('Borrar'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
