@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Permission;
+use App\Models\ConvocatoriaAdscripto;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PermissionPolicy
+class ConvocatoriaAdscriptoPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class PermissionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_permission');
+        return $user->can('view_any_convocatoria::adscripto');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Permission $permission): bool
+    public function view(User $user, ConvocatoriaAdscripto $convocatoriaAdscripto): bool
     {
-        return $user->can('view_permission');
+        return $user->can('view_convocatoria::adscripto');
     }
 
     /**
@@ -31,23 +31,23 @@ class PermissionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_permission');
+        return $user->can('create_convocatoria::adscripto');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Permission $permission): bool
+    public function update(User $user, ConvocatoriaAdscripto $convocatoriaAdscripto): bool
     {
-        return $user->can('update_permission');
+        return $user->can('update_convocatoria::adscripto');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Permission $permission): bool
+    public function delete(User $user, ConvocatoriaAdscripto $convocatoriaAdscripto): bool
     {
-        return $user->can('delete_permission');
+        return $user->can('delete_convocatoria::adscripto');
     }
 
     /**
@@ -55,15 +55,15 @@ class PermissionPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_permission');
+        return $user->can('delete_any_convocatoria::adscripto');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Permission $permission): bool
+    public function forceDelete(User $user, ConvocatoriaAdscripto $convocatoriaAdscripto): bool
     {
-        return $user->can('force_delete_permission');
+        return $user->can('force_delete_convocatoria::adscripto');
     }
 
     /**
@@ -71,15 +71,15 @@ class PermissionPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_permission');
+        return $user->can('force_delete_any_convocatoria::adscripto');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Permission $permission): bool
+    public function restore(User $user, ConvocatoriaAdscripto $convocatoriaAdscripto): bool
     {
-        return $user->can('restore_permission');
+        return $user->can('restore_convocatoria::adscripto');
     }
 
     /**
@@ -87,15 +87,15 @@ class PermissionPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_permission');
+        return $user->can('restore_any_convocatoria::adscripto');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Permission $permission): bool
+    public function replicate(User $user, ConvocatoriaAdscripto $convocatoriaAdscripto): bool
     {
-        return $user->can('replicate_permission');
+        return $user->can('replicate_convocatoria::adscripto');
     }
 
     /**
@@ -103,6 +103,6 @@ class PermissionPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_permission');
+        return $user->can('reorder_convocatoria::adscripto');
     }
 }

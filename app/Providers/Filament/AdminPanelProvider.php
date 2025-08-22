@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Tenancy\EditTeamProfile;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use App\Filament\Pages\Tenancy\RegisterTeam;
 use App\Http\Middleware\VerifyIsAdmin;
 use Filament\Http\Middleware\Authenticate;
@@ -86,6 +87,9 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 VerifyIsAdmin::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make(),
             ])
             ->databaseNotifications();
     }
