@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\TipoBecaResource\Pages;
 
 use App\Filament\Resources\TipoBecaResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListTipoBecas extends ListRecords
@@ -13,7 +13,21 @@ class ListTipoBecas extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make()
+                ->label('Nuevo Tipo'),
         ];
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            route('filament.admin.resources.tipo-beca.index') => 'Tipo de Becas',
+            'Todos',
+        ];
+    }
+
+    public function getTitle(): string
+    {
+        return 'Lista de Tipo de Becas';
     }
 }

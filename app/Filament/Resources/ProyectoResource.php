@@ -25,7 +25,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadorRelationManager;
@@ -41,25 +40,32 @@ class ProyectoResource extends Resource
 {
     protected static ?string $model = Proyecto::class;
 
+    // Datos para el menu (icono, carpeta, orden, slug, etc..)
     protected static ?string $navigationIcon = 'heroicon-o-folder';
     protected static ?string $navigationLabel = 'Proyectos';
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $modelLabel = 'Proyectos';
     protected static ?string $slug = 'proyectos-de-investigacion';
     protected static ?int $navigationSort = 1;
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary'; //return static::getModel()::count() > 5 ? 'primary' : 'warning';
+    }
     
+    // Datos para la busqueda Global
     protected static ?string $recordTitleAttribute = 'nombre';
-
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->nombre;
     }
-
     public static function getGloballySearchableAttributes(): array
     {
         return ['nro', 'nombre'];
     }
-
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -71,25 +77,13 @@ class ProyectoResource extends Resource
                 : '—',
         ];
     }
-
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()
             ->with(['investigadorDirector', 'investigadorCodirector']);
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
-
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return 'primary';
-
-        //return static::getModel()::count() > 5 ? 'primary' : 'warning';
-    }
-
+    // Formulario para un nuevo proyecto
     public static function form(Form $form): Form
     {
         return $form
@@ -196,21 +190,25 @@ class ProyectoResource extends Resource
             ]);
     }
 
+    // Tabla de la lista de proyectos
     public static function table(Table $table): Table
     {
         return $table
+            // TABLA
             ->columns([
                 TextColumn::make('nro')
                     ->label('Nro.')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('nombre')
                     ->label('Nombre')
-                    ->searchable()
-                    ->limit(40),
+                    ->limit(40)
+                    ->searchable(),
                 IconColumn::make('estado')
                     ->label('Estado')
-                    ->boolean(),
+                    ->boolean()
+                    ->searchable(),
                 TextColumn::make('inicio')
                     ->date()
                     ->sortable()
@@ -219,6 +217,8 @@ class ProyectoResource extends Resource
                     ->date()
                     ->sortable()
                     ->searchable(),
+                
+                // Estas columnas están ocultas
                 TextColumn::make('disposicion')
                     ->label('Disposición')
                     ->searchable()
@@ -245,6 +245,8 @@ class ProyectoResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+
+            // FILTROS
             ->filters([
                 SelectFilter::make('campo_id')
                     ->label('Campo de Aplicación')
@@ -275,23 +277,9 @@ class ProyectoResource extends Resource
                         1 => 'Vigente',
                         0 => 'No Vigente',
                     ]),
-
-                Filter::make('rango_completo')
-                    ->label('Rango completo del proyecto')
-                    ->form([
-                        DatePicker::make('desde')->label('Desde'),
-                        DatePicker::make('hasta')->label('Hasta'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['desde'] && $data['hasta'],
-                                fn (Builder $query): Builder => $query
-                                    ->where('inicio', '>=', $data['desde'])
-                                    ->where('fin', '<=', $data['hasta']),
-                            );
-                    }),
             ])
+
+            // ACCIONES
             ->actions([
                 ViewAction::make()->label('')->color('primary')
                     ->modalHeading(fn ($record) => 'Detalles del Proyecto de Investigación N° ' . $record->nro)
@@ -420,11 +408,14 @@ class ProyectoResource extends Resource
                         : null
                     ),
             ])
+
+            // ACCIONES DE EXPOR & IMPORT
             ->headerActions([
                 // ExportAction::make()->exporter(ProyectoExporter::class),
                 // ImportAction::make()->importer(ProyectoImporter::class),
             ])
-
+            
+            // ACCIONES EN GRUPO
             ->bulkActions([
                 BulkActionGroup::make([
                     ExportBulkAction::make()->exporter(ProyectoExporter::class), // Solo seleccionados
@@ -433,6 +424,7 @@ class ProyectoResource extends Resource
             ]);
     }
 
+    // Relaciones con Investigadores, Becarios y Adscriptos
     public static function getRelations(): array
     {
         return [
@@ -442,12 +434,12 @@ class ProyectoResource extends Resource
         ];
     }
 
+    // Redirección a otras páginas
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListProyectos::route('/'),
             'create' => Pages\CreateProyecto::route('/create'),
-            /*'view' => Pages\ViewProyecto::route('/{record}'),*/
             'edit' => Pages\EditProyecto::route('/{record}/edit'),
         ];
     }

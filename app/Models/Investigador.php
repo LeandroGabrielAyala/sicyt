@@ -65,6 +65,11 @@ class Investigador extends Model
         return $this->belongsTo(Disciplina::class);
     }
 
+    public function carrera(): BelongsTo
+    {
+        return $this->belongsTo(Carrera::class);
+    }
+
     public function incentivo(): BelongsTo
     {
         return $this->belongsTo(Incentivo::class);

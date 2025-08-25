@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\BecarioResource\Pages;
-use App\Filament\Resources\BecarioResource\RelationManagers;
 use App\Filament\Resources\BecarioResource\RelationManagers\ConvocatoriasRelationManager;
 use App\Filament\Resources\BecarioResource\RelationManagers\ProyectosRelationManager;
 use App\Models\Becario;
@@ -11,7 +10,6 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -23,14 +21,15 @@ use Filament\Forms\Components\Tabs\Tab as FormTab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Entry;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Filament\Exports\BecarioExporter;
 use App\Models\Carrera;
+use Filament\Forms\Components\Grid;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -38,25 +37,32 @@ class BecarioResource extends Resource
 {
     protected static ?string $model = Becario::class;
 
+    // Datos para el menu (icono, carpeta, orden, slug, etc..)
     protected static ?string $navigationIcon = 'heroicon-o-folder';
     protected static ?string $navigationLabel = 'Becarios';
     protected static ?string $navigationGroup = 'Becas';
     protected static ?string $modelLabel = 'Becarios';
     protected static ?string $slug = 'becarios';
     protected static ?int $navigationSort = 1;
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary';
+    }
 
+    // Datos para la busqueda Global
     protected static ?string $recordTitleAttribute = 'apellido_nombre';
-
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return "{$record->apellido}, {$record->nombre}";
     }
-
     public static function getGloballySearchableAttributes(): array
     {
         return ['apellido', 'nombre', 'dni', 'email', 'telefono'];
     }
-
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -67,24 +73,13 @@ class BecarioResource extends Resource
             'Título' => $record->titulo ?? '—',
         ];
     }
-
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()
             ->with(['carrera']);
     }
 
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
-
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return 'primary';
-    }
-
+    // Formulario para un nuevo becario
     public static function form(Form $form): Form
     {
         return $form
@@ -93,7 +88,7 @@ class BecarioResource extends Resource
                     ->tabs([
                         FormTab::make('Datos personales')
                             ->schema([
-                                Forms\Components\Grid::make(2)
+                                Grid::make(2)
                                     ->schema([
                                         TextInput::make('nombre')->required()->label('Nombre(s)'),
                                         TextInput::make('apellido')->required()->label('Apellido(s)'),
@@ -110,24 +105,19 @@ class BecarioResource extends Resource
 
                         FormTab::make('Formación académica')
                             ->schema([
-                                Forms\Components\Grid::make(2)
+                                Grid::make(2)
                                     ->schema([
                                         // Select::make('carrera_id')->relationship('carrera', 'nombre'),
-
+                                        
                                         Select::make('carrera_id')
                                             ->label('Carrera')
                                             ->relationship('carrera', 'nombre')
-                                            ->reactive()
+                                            ->reactive() // importante para que detecte cambios
                                             ->afterStateUpdated(function ($state, callable $set) {
-                                                $tituloId = Carrera::find($state)?->id; // o ->titulo si es texto
-                                                $set('titulo_id', $tituloId);
+                                                // Al cambiar la carrera, seteamos el título automáticamente
+                                                $titulo = \App\Models\Carrera::find($state)?->titulo;
+                                                $set('titulo_id', $titulo);
                                             })
-                                            ->required(),
-
-                                        Select::make('titulo_id')
-                                            ->label('Título')
-                                            ->relationship('titulo', 'titulo')
-                                            ->disabled()
                                             ->required(),
 
                                         Select::make('nivel_academico_id')->relationship('nivelAcademico', 'nombre'),
@@ -140,15 +130,18 @@ class BecarioResource extends Resource
             ]);
     }
 
-
+    // Tabla de la lista de becarios
     public static function table(Table $table): Table
     {
         return $table
+
+            // TABLA
             ->columns([
                 TextColumn::make('apellido')->label('Apellido(s)')->searchable()->limit(50),
                 TextColumn::make('nombre')->label('Nombre(s)')->searchable()->limit(50),
-                TextColumn::make('dni')->label('DNI'),
+                TextColumn::make('dni')->label('DNI')->searchable(),
                 TextColumn::make('tipo_beca')
+                    ->searchable()
                     ->label('Tipo de Beca')
                     ->getStateUsing(fn ($record) => $record->tipo_beca)
                     ->badge()
@@ -175,9 +168,27 @@ class BecarioResource extends Resource
                     ->formatStateUsing(fn ($state) => $state ?: '—')
                     ->badge()
                     ->color('gray'),
-                TextColumn::make('email')->label('Email'),
-                TextColumn::make('telefono')->label('Teléfono')->toggleable(isToggledHiddenByDefault: true),
-            ])->defaultSort('apellido', 'asc') // 👈 Orden alfabético por defecto
+                TextColumn::make('email')->label('Email')->searchable(),
+                TextColumn::make('telefono')->label('Teléfono')->searchable()->toggleable(isToggledHiddenByDefault: true),
+            ])->defaultSort('apellido', 'asc')
+            
+            // FILTROS
+            ->filters([
+                SelectFilter::make('campo_id')
+                    ->label('Campo de Aplicación')
+                    ->relationship('campo', 'nombre'),
+                SelectFilter::make('objetivo_id')
+                    ->label('Objetivo Socioeconomico')
+                    ->relationship('objetivo', 'nombre'),
+                SelectFilter::make('disciplina_id')
+                    ->label('Disciplina')
+                    ->relationship('disciplina', 'nombre'),
+                SelectFilter::make('carrera_id')
+                    ->label('Título')
+                    ->relationship('carrera', 'titulo'),
+            ])
+            
+            // ACCIONES
             ->actions([
                 ViewAction::make()
                     ->label('')
@@ -250,6 +261,8 @@ class BecarioResource extends Resource
                     ]),
                 EditAction::make()->label('')->color('primary'),
             ])
+
+            // ACCIONES EN GRUPOS
             ->bulkActions([
                 BulkActionGroup::make([
                     ExportBulkAction::make()->exporter(BecarioExporter::class), // Solo seleccionados

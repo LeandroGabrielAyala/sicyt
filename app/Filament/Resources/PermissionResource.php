@@ -8,15 +8,22 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
-// use Spatie\Permission\Models\Permission;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
+    protected static ?string $navigationLabel = 'Permisos';
+    protected static ?string $navigationGroup = 'Personal';
+    protected static ?string $modelLabel = 'Permisos';
+    protected static ?string $slug = 'permisos';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -46,12 +53,12 @@ class PermissionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label('Editar'),
-                Tables\Actions\DeleteAction::make()->label('Borrar'),
+                EditAction::make()->label('Editar'),
+                DeleteAction::make()->label('Borrar'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

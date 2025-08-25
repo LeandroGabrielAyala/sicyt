@@ -45,9 +45,4 @@ class CreateBecario extends CreateRecord
                 ->color('gray'),
         ];
     }
-
-    /*protected function getCreatedNotificationTitle(): ?string
-    {
-        return 'Becario Creado';
-    }*/
 }

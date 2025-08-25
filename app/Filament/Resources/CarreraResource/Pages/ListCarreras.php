@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\CarreraResource\Pages;
 
 use App\Filament\Resources\CarreraResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Actions\CreateAction;
 
 class ListCarreras extends ListRecords
 {
@@ -13,7 +13,21 @@ class ListCarreras extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make()
+                ->label('Nueva Carrera'),
         ];
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            route('filament.admin.resources.carreras.index') => 'Carreras',
+            'Todos',
+        ];
+    }
+
+    public function getTitle(): string
+    {
+        return 'Lista de Carreras';
     }
 }

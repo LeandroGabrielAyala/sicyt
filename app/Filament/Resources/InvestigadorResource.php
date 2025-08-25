@@ -11,12 +11,9 @@ use App\Models\Investigador;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Forms\Components\Section as FormSection;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Section as InfoSection;
@@ -36,32 +33,41 @@ use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 
 class InvestigadorResource extends Resource
 {
     protected static ?string $model = Investigador::class;
 
+    // Datos para el menu (icono, carpeta, orden, slug, etc..)
     protected static ?string $navigationIcon = 'heroicon-o-folder';
     protected static ?string $navigationLabel = 'Investigadores';
     protected static ?string $modelLabel = 'Investigadores';
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $slug = 'investigadores-pi';
     protected static ?int $navigationSort = 2;
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary';
 
-    // Busqueda Global
+        //return static::getModel()::count() > 5 ? 'primary' : 'warning';
+    }
+
+    // Datos para la busqueda Global
     protected static ?string $recordTitleAttribute = 'apellido_nombre';
-
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return "{$record->apellido}, {$record->nombre}";
     }
-
     public static function getGloballySearchableAttributes(): array
     {
         return ['apellido', 'nombre', 'dni', 'email', 'telefono'];
     }
-
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -72,25 +78,13 @@ class InvestigadorResource extends Resource
             'Cargo' => optional($record->cargo)->nombre ?? '—',
         ];
     }
-
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()
             ->with(['cargo']);
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
-
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return 'primary';
-
-        //return static::getModel()::count() > 5 ? 'primary' : 'warning';
-    }
-
+    // Formulario para un nuevo investigador
     public static function form(Form $form): Form
     {
         return $form
@@ -169,10 +163,9 @@ class InvestigadorResource extends Resource
                                             ->required()
                                             ->preload(),
 
-                                        TextInput::make('titulo')
-                                            ->label('Título del Investigador')
-                                            ->required()
-                                            ->maxLength(255),
+                                        Select::make('carrera_id')->relationship('carrera', 'titulo')
+                                            ->label('Título')
+                                            ->required(),                                           
 
                                         TextInput::make('titulo_posgrado')
                                             ->label('Título de posgrado')
@@ -204,28 +197,54 @@ class InvestigadorResource extends Resource
             ]);
     }
 
+    // Tabla de la lista de investigadores
     public static function table(Table $table): Table
     {
         return $table
+            // TABLA
             ->columns([
                 TextColumn::make('apellido')
-                    ->label('Apellido'),
+                    ->label('Apellido')->searchable(),
                 TextColumn::make('nombre')
-                    ->label('Nombre'),
+                    ->label('Nombre')->searchable(),
                 TextColumn::make('dni')
-                    ->label('DNI'),
+                    ->label('DNI')->searchable(),
                 TextColumn::make('email')
-                    ->label('Email'),
+                    ->label('Email')->searchable(),
                 TextColumn::make('telefono')
-                    ->label('Teléfono'),
+                    ->label('Teléfono')->searchable(),
                 TextColumn::make('disposicion')
                     ->label('Disposición')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])->defaultSort('apellido', 'asc') // 👈 Orden alfabético por defecto
+            ])->defaultSort('apellido', 'asc')
+            
+            // FILTROS
             ->filters([
-                //
+                SelectFilter::make('campo_id')
+                    ->label('Campo de Aplicación')
+                    ->relationship('campo', 'nombre'),
+                SelectFilter::make('objetivo_id')
+                    ->label('Objetivo Socioeconomico')
+                    ->relationship('objetivo', 'nombre'),
+                SelectFilter::make('disciplina_id')
+                    ->label('Disciplina')
+                    ->relationship('disciplina', 'nombre'),
+                SelectFilter::make('carrera_id')
+                    ->label('Título del Investigador')
+                    ->relationship('carrera', 'titulo'),
+                SelectFilter::make('cargo_id')
+                    ->label('Cargo docente')
+                    ->relationship('cargo', 'nombre'),
+                SelectFilter::make('categoria_interna_id')
+                    ->label('Categoría Interna UNCAUS')
+                    ->relationship('categoriaInterna', 'categoria'),
+                SelectFilter::make('incentivo_id')
+                    ->label('Categoría del Incentivo')
+                    ->relationship('incentivo', 'categoria'),
             ])
+
+            // ACCIONES
             ->actions([
                 ViewAction::make()->label('')->color('primary')
                 ->modalHeading(fn ($record) => 'Detalles del Investigador ' . $record->apellido . ', ' . $record->nombre)
@@ -252,7 +271,7 @@ class InvestigadorResource extends Resource
                                         TextEntry::make('incentivo.categoria')
                                             ->label('Categoría de Incentivo')
                                             ->color('customgray'),
-                                        TextEntry::make('titulo')
+                                        TextEntry::make('carrera.titulo')
                                             ->label('Título profesional')
                                             ->color('customgray'),
                                         TextEntry::make('titulo_posgrado')
@@ -357,6 +376,8 @@ class InvestigadorResource extends Resource
                 EditAction::make()
                     ->label(''),
             ])
+
+            // ACCIONES EN GRUPO
             ->bulkActions([
                 BulkActionGroup::make([
                     ExportBulkAction::make()
@@ -379,6 +400,7 @@ class InvestigadorResource extends Resource
             ]);
     }
 
+    // Relaciones con Proyectos, Becarios y Adscriptos
     public static function getRelations(): array
     {
         return [
@@ -388,7 +410,7 @@ class InvestigadorResource extends Resource
         ];
     }
 
-
+    // Redirección a otras páginas
     public static function getPages(): array
     {
         return [

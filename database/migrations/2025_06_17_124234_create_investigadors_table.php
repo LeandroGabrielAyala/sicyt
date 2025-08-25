@@ -23,11 +23,11 @@ return new class extends Migration
             $table->string('provincia');
             $table->string('email')->unique();
             $table->string('telefono', 20)->unique();
+            $table->foreignId('carrera_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('nivel_academico_id')->constrained()->cascadeOnDelete();
             $table->foreignId('disciplina_id')->constrained()->cascadeOnDelete();
             $table->foreignId('campo_id')->constrained()->cascadeOnDelete();
             $table->foreignId('objetivo_id')->constrained()->cascadeOnDelete();
-            $table->string('titulo');
             $table->string('titulo_posgrado');
             $table->foreignId('cargo_id')->constrained()->cascadeOnDelete();
             $table->foreignId('categoria_interna_id')->constrained()->cascadeOnDelete();

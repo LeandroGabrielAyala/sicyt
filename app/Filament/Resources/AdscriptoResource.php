@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Models\Carrera;
 use App\Filament\Resources\AdscriptoResource\Pages;
-use App\Filament\Resources\AdscriptoResource\RelationManagers;
 use App\Models\Adscripto;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -27,6 +26,7 @@ use App\Filament\Exports\AdscriptoExporter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -34,42 +34,13 @@ class AdscriptoResource extends Resource
 {
     protected static ?string $model = Adscripto::class;
 
+    // Datos para el menu (icono, carpeta, orden, slug, etc..)
     protected static ?string $navigationIcon = 'heroicon-o-folder';
     protected static ?string $navigationLabel = 'Adscriptos';
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $modelLabel = 'Adscriptos';
     protected static ?string $slug = 'adscriptos';
     protected static ?int $navigationSort = 3;
-
-    protected static ?string $recordTitleAttribute = 'apellido_nombre';
-
-    public static function getGlobalSearchResultTitle(Model $record): string
-    {
-        return "{$record->apellido}, {$record->nombre}";
-    }
-
-    public static function getGloballySearchableAttributes(): array
-    {
-        return ['apellido', 'nombre', 'dni', 'email', 'telefono'];
-    }
-
-    public static function getGlobalSearchResultDetails(Model $record): array
-    {
-        return [
-            'DNI' => $record->dni,
-            'Email' => $record->email,
-            'Teléfono' => $record->telefono,
-            'Carrera' => optional($record->carrera)->nombre ?? '—',
-            'Título' => optional($record->titulo)->titulo ?? '—',
-        ];
-    }
-
-    public static function getGlobalSearchEloquentQuery(): Builder
-    {
-        return parent::getGlobalSearchEloquentQuery()
-            ->with(['carrera', 'titulo']);
-    }
-
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -80,6 +51,33 @@ class AdscriptoResource extends Resource
         return 'primary';
     }
 
+    // Datos para la busqueda Global
+    protected static ?string $recordTitleAttribute = 'apellido_nombre';
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return "{$record->apellido}, {$record->nombre}";
+    }
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['apellido', 'nombre', 'dni', 'email', 'telefono'];
+    }
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'DNI' => $record->dni,
+            'Email' => $record->email,
+            'Teléfono' => $record->telefono,
+            'Carrera' => optional($record->carrera)->nombre ?? '—',
+            'Título' => optional($record->titulo)->titulo ?? '—',
+        ];
+    }
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()
+            ->with(['carrera', 'titulo']);
+    }
+
+    // Formulario para un nuevo adscripto
     public static function form(Form $form): Form
     {
         return $form
@@ -128,19 +126,27 @@ class AdscriptoResource extends Resource
             ]);
     }
 
+    // Tabla de la lista de adscriptos
     public static function table(Table $table): Table
     {
         return $table
+            // TABLA
             ->columns([
                 TextColumn::make('apellido')->label('Apellido(s)')->searchable()->limit(50),
                 TextColumn::make('nombre')->label('Nombre(s)')->searchable()->limit(50),
-                TextColumn::make('dni')->label('DNI'),
-                TextColumn::make('email')->label('Email'),
-                TextColumn::make('telefono')->label('Teléfono'),
-            ])->defaultSort('apellido', 'asc') // 👈 Orden alfabético por defecto
+                TextColumn::make('dni')->searchable()->label('DNI'),
+                TextColumn::make('email')->searchable()->label('Email'),
+                TextColumn::make('telefono')->searchable()->label('Teléfono'),
+            ])->defaultSort('apellido', 'asc')
+            
+            // FILTROS
             ->filters([
-                //
+                SelectFilter::make('carrera_id')
+                    ->label('Título')
+                    ->relationship('carrera', 'titulo'),
             ])
+
+            // ACCIONES
             ->actions([
                 ViewAction::make()
                     ->label('')
@@ -198,6 +204,8 @@ class AdscriptoResource extends Resource
 
                 Tables\Actions\EditAction::make()->label('')->color('primary'),
             ])
+
+            // ACCIONES EN GRUPOS
             ->bulkActions([
                 BulkActionGroup::make([
                     ExportBulkAction::make()->exporter(AdscriptoExporter::class), // Solo seleccionados
@@ -206,6 +214,7 @@ class AdscriptoResource extends Resource
             ]);
     }
 
+    // Relaciones
     public static function getRelations(): array
     {
         return [
@@ -213,6 +222,7 @@ class AdscriptoResource extends Resource
         ];
     }
 
+    // Redirección a otras páginas
     public static function getPages(): array
     {
         return [

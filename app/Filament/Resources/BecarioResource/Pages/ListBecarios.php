@@ -9,12 +9,8 @@ use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Filament\Resources\Pages\Page;
 use Filament\Actions\ImportAction;
-use Filament\Actions;
 use App\Filament\Imports\BecarioImporter;
-
-
 
 class ListBecarios extends ListRecords
 {

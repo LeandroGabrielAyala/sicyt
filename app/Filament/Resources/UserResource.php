@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\DateTimePicker;
@@ -11,7 +10,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -21,6 +24,11 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationLabel = 'Usuarios';
+    protected static ?string $navigationGroup = 'Personal';
+    protected static ?string $modelLabel = 'Usuarios';
+    protected static ?string $slug = 'usuarios';
+    protected static ?int $navigationSort = 1;
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -60,10 +68,6 @@ class UserResource extends Resource
                     ->relationship('roles', 'name')
                     ->multiple()
                     ->preload(),
-                // Select::make('permissions')
-                //     ->relationship('permissions', 'name')
-                //     ->multiple()
-                //     ->preload()
             ]);
     }
 
@@ -93,12 +97,13 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->label('Ver'),
-                Tables\Actions\EditAction::make()->label('Editar'),
+                ViewAction::make()->label('Ver'),
+                EditAction::make()->label('Editar'),
+                DeleteAction::make()->label('Eliminar'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

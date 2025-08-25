@@ -47,9 +47,4 @@ class CreateProyecto extends CreateRecord
                 ->color('gray'),
         ];
     }
-
-    /*protected function getCreatedNotificationTitle(): ?string
-    {
-        return 'Proyecto Creado';
-    }*/
 }
