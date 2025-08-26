@@ -20,10 +20,10 @@ class PermissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-information-circle';
     protected static ?string $navigationLabel = 'Permisos';
-    protected static ?string $navigationGroup = 'Personal';
     protected static ?string $modelLabel = 'Permisos';
     protected static ?string $slug = 'permisos';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Personal';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

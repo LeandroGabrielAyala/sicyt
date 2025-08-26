@@ -1,0 +1,72 @@
+
+        Schema::create('proyectos', function (Blueprint $table) {
+            $table->id();
+            $table->integer('nro_exp');
+            $table->json('pdf_exp')->nullable();
+            $table->date('fecha_pase');
+            $table->foreignId('asignacion_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('rol_id')->nullable()->constrained()->cascadeOnDelete();
+            // Director
+            $table->foreignId('investigador_id')->nullable()->constrained()->cascadeOnDelete();
+            // PI
+            $table->foreignId('proyecto_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('rubro_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->text('descripcion');
+            $table->decimal('presupuesto', 8, 2);
+            $table->decimal('pago_real', 8, 2);
+
+            // ZONA REINTEGRO
+            $table->foreignId('comprobante_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->integer('nro_comprobante');
+            $table->json('pdf_comprobante')->nullable();
+            $table->string('cae');
+            $table->date('fecha_reintegro');            
+            $table->integer('nro_transferencia');
+            // Receptor
+            $table->foreignId('investigador_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->integer('rendicion');
+
+            $table->integer('nro_sicyt');
+            $table->json('pdf_sicyt')->nullable();
+            $table->integer('nro_sbs');
+            $table->json('pdf_sbs')->nullable();
+            $table->enum('estado', ['Descartado', 'Comprado', 'Pagado', 'Compra directa']);
+            $table->text('justificacion');
+            $table->date('fecha_pago');
+            // Seleccionar opciones multiples (controlar si es boolean o no) (o cargar directamente el PDF)
+            $table->boolean('exp_escaneado');
+            $table->integer('dias'); // calculo matematico
+            $table->enum('estado_adm', ['Pagado', 'No Pagado', 'Repetido']);
+            $table->date('fecha_actualizacion');
+            
+            $table->timestamps();
+        });
+
+
+
+N°Expediente: 01-2024-02583 (elegir los tres numeros)
+Expediente: PDF
+Fecha de pase: 20-mayo-2025
+Asignación de Gasto: Interno/Externo (PREVIA CARGA)
+Rol: Director (PREVIA CARGA)
+Director: Acevedo, Mauro (Investigadores)
+PI: 126 (Proyectos, PE, Posgrado-ByS, PFI, etc..)
+Rubro: Bien de Consumo (PREVIA CARGA)
+Descripción: Combustible (PREVIA CARGA)
+Presupuesto: $..
+Pago Realizado: $...
+Reintegro:
+	Comprobante: Elegir Factura (PREVIA CARGA)
+	CAE: NO/ N°45645656456
+	Fecha de Reintegro: 13-junio-2025
+	Nro. Transferencia: 111958790
+	Receptor: (Investigador)
+	Rendición: N°
+Nota SICyT: .PDF
+Nro. SBS: .PDF
+Estado: (PREVIA CARGA)
+Fecha Pago: 14-octubre-2025
+Expediente Escaneado: (PREVIA CARGA con opciones)
+Días: Calculo de dias restantes
+Estado: (PREVIA CARGA)
+Fecha Actualización: 06-enero-2025

@@ -60,9 +60,12 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Proyectos',
                 'Becas',
+                'Reintegros/Compras',
                 'Configuración Proyectos',
                 'Configuración Becas',
+                'Configuración CyR',
                 'Configuración RACT',
+                'Personal'
             ])
             ->brandLogo(asset('images/logo-sicyt.png'))
             ->favicon(asset('images/logo-sicyt.png'))

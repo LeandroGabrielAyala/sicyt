@@ -1,15 +1,23 @@
 TAREAS::
-
-* Agregar gasto total en Becas, Reintegros y Compras en "Configuración RACT"
-* Generar Plantillas .DOCS (Notas nuestras)
+* Opción de saber si es el Proyecto tiene número o es PE/PFI, etc..
 * Cuanto va gastado en Proyectos
-* Controlar todos los RELATION MANAGER
---------------------------------------------------------------------------------------
-* Solucionar o averiguar para que Panel Notificación
+    - Crear Compras Resources
+        -- 
+    - Relation Manager entre Compras/Proyectos
 * Crear los Usuarios con sus Roles Correspondientes
+    - Super Admin: Leandro
+    - Admin: Vanina/Mara/Ricarado
+    - Compra/Reintegro: Fabiola/Fabiana
+    - Becario: Becarios
+    - Investigador: Investigadores
 * Agregar todo lo mismo a vista usuario (APP)
 * Ir creando los .CSV para importar datos reales
 * Grafico de estadísticas
+--------------------------------------------------------------------------------------
+* Agregar gasto total en Becas, Reintegros y Compras en "Configuración RACT"
+* Generar Plantillas .DOCS (Notas nuestras)
+* Controlar todos los RELATION MANAGER
+* Solucionar o averiguar para que Panel Notificación
 
 Necesito tu ayuda para hacer una migración, resource y todo el resto.
 Quiero una migración de pago a becarios que me guarade el año, mes, tipo de convocatoria, año de convocatoria y tipo de beca, es decir eso mostrarlo en una tabla, pero que al agregar un nuevo pago, me deje seleccionar jsutamenteel año, mes, tipo de convocatoria, año de convocatoria y tipo de beca, y de ahi los becarios, que para ser mas optimo, seria ideal tomar la lista de becarios asociados ya a una convocatoria con el estado "vigente" obviamente dentro de esa convocatoria, es decir que me figure una lista con los mismos, y que al lado, poder ponerle el monto que se le pagara este mes a cada uno y ahi guardarlo.

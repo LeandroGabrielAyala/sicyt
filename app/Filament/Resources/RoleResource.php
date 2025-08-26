@@ -32,9 +32,9 @@ class RoleResource extends Resource implements HasShieldPermissions
     use HasShieldFormComponents;
 
     protected static ?string $navigationLabel = 'Roles';
-    protected static ?string $navigationGroup = 'Personal';
     protected static ?string $modelLabel = 'Roles';
     protected static ?string $slug = 'roles';
+    protected static ?string $navigationGroup = 'Personal';
     protected static ?int $navigationSort = 2;
 
     public static function getCluster(): ?string
@@ -72,10 +72,10 @@ class RoleResource extends Resource implements HasShieldPermissions
         return __('filament-shield::filament-shield.nav.role.icon');
     }
 
-    public static function getNavigationSort(): ?int
-    {
-        return Utils::getResourceNavigationSort();
-    }
+    // public static function getNavigationSort(): ?int
+    // {
+    //     return Utils::getResourceNavigationSort();
+    // }
 
     public static function getSubNavigationPosition(): SubNavigationPosition
     {
