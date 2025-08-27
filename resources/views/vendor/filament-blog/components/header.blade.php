@@ -8,9 +8,9 @@
                         @if($logo)
                         <img src="{{ $logo }}" alt="{{ $title }}" class="max-h-[60px]" />
                         @else
-                        <strong class="text-2xl  text-primary-600">
-                            {{ $title ?: 'Firefly Blog' }}
-                        </strong>
+                            <strong class="text-2xl text-primary-600">
+                                <img src="{{ asset('images/logo-sicyt.png') }}" alt="Logo SICYT" class="h-12 inline">
+                            </strong>
                         @endif
                     </a>
                     <div class="hidden gap-x-10 sm:flex">

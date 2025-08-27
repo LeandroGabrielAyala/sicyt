@@ -69,9 +69,9 @@ class User extends Authenticatable implements HasTenants
         //     return $this->email == 'admin@gmail.com';
         // }
 
-    public function canComment(): bool
-    {
-        // your conditional logic here
-        return true;
-    }
+        public function canComment(): bool
+        {
+            // your conditional logic here
+            return true;
+        }
 }
