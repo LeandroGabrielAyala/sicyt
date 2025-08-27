@@ -12,6 +12,7 @@
         "filament/filament": "^3.3",
         "filament/infolists": "^3.3",
         "filament/tables": "^3.3",
+        "firefly/filament-blog": "^2.0",
         "flowframe/laravel-trend": "*",
         "hugomyb/filament-media-action": "^3.1",
         "laravel/framework": "^12.0",

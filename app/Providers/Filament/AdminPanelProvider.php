@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Tenancy\EditTeamProfile;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Firefly\FilamentBlog\Blog;
 use App\Filament\Pages\Tenancy\RegisterTeam;
 use App\Http\Middleware\VerifyIsAdmin;
 use Filament\Http\Middleware\Authenticate;
@@ -61,6 +62,7 @@ class AdminPanelProvider extends PanelProvider
                 'Proyectos',
                 'Becas',
                 'Reintegros/Compras',
+                'Documentación',
                 'Configuración Proyectos',
                 'Configuración Becas',
                 'Configuración CyR',
@@ -93,6 +95,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),
+                Blog::make()
             ])
             ->databaseNotifications();
     }

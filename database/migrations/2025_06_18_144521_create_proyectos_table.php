@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('proyectos', function (Blueprint $table) {
             $table->id();
-            $table->integer('nro');
+            $table->string('nro');
             $table->string('nombre');
             $table->text('resumen');
             $table->foreignId('carrera_id')->nullable()->constrained()->cascadeOnDelete();

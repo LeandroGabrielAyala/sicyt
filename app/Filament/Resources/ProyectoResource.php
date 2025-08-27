@@ -31,6 +31,8 @@ use App\Filament\Resources\ProyectoResource\RelationManagers\InvestigadorRelatio
 use Filament\Forms\Components\Tabs as FormTabs;
 use Filament\Forms\Components\Tabs\Tab as FormTab;
 use App\Filament\Exports\ProyectoExporter;
+use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -281,132 +283,134 @@ class ProyectoResource extends Resource
 
             // ACCIONES
             ->actions([
-                ViewAction::make()->label('')->color('primary')
-                    ->modalHeading(fn ($record) => 'Detalles del Proyecto de Investigación N° ' . $record->nro)
-                    ->modalSubmitAction(false)
-                    ->modalCancelAction(fn () => null)
-                    ->modalCancelActionLabel('Cerrar')
-                    ->infolist(fn (ViewAction $action): array => [
-                        InfoTabs::make('Tabs')
-                        ->tabs([
-                            InfoTab::make('Datos Generales')
-                                ->schema([
-                                InfoSection::make('')
-                                    ->description(fn ($record) => 'Proyecto de Investigación N° ' . $record->nro)
-                                    ->schema([
-                                        TextEntry::make('investigadorDirector')
-                                            ->label('Director del Proyecto')
-                                            ->color('customgray')
-                                            ->getStateUsing(fn ($record) =>
-                                                $record->investigadorDirector->pluck('apellido_nombre')->implode(', ')
-                                            ),
-                                        TextEntry::make('investigadorCodirector')
-                                            ->label('Co-director del Proyecto')
-                                            ->color('customgray')
-                                            ->getStateUsing(fn ($record) => 
-                                                $record->investigadorCodirector->isNotEmpty()
-                                                    ? $record->investigadorCodirector->pluck('apellido_nombre')->implode(', ')
-                                                    : '-'
-                                            ),
-                                        TextEntry::make('nombre')
-                                            ->label('Denominación del Proyecto')
-                                            ->columnSpanFull()
-                                            ->color('customgray'),
-                                        TextEntry::make('resumen')
-                                            ->label('Resumen del Proyecto')
-                                            ->columnSpanFull()
-                                            ->color('customgray')
-                                            ->html(),
-                                    ])->columns(2),
-                                InfoSection::make('')
-                                    ->description('Duración del Proyecto')
-                                    ->schema([
-                                        TextEntry::make('duracion')->label('Duración en meses')
-                                            ->color('customgray'),
-                                        TextEntry::make('inicio')->label('Inicio de actividad')
-                                            ->color('customgray'),
-                                        TextEntry::make('fin')->label('Fin de actividad')
-                                            ->color('customgray'),
-                                    ])->columns(3),
-                                ]),
-                            InfoTab::make('Investigadores')
-                                ->schema([
-                                    Entry::make('investigadores')
-                                        ->label('Investigadores Asociados')
-                                        ->columnSpanFull()
-                                        ->view('livewire.investigadores-list', [
-                                            'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
-                                        ]),
-                                ])->columns(2),
-                            InfoTab::make('Becarios')
-                                ->schema([
-                                    Entry::make('becarios')
-                                        ->label('Becarios Asociados')
-                                        ->columnSpanFull()
-                                        ->view('livewire.becarios-list', [
-                                            'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
-                                        ]),
-                                ])->columns(2),
-                            InfoTab::make('Adscriptos')
-                                ->schema([
-                                    Entry::make('adscriptos')
-                                        ->label('Adscriptos Asociados')
-                                        ->columnSpanFull()
-                                        ->view('livewire.adscriptos-list', [
-                                            'proyecto' => $action->getRecord(),
-                                        ]),
-                                    ]),
-                            InfoTab::make('Estado')
-                                ->schema([
-                                InfoSection::make('')
-                                    ->description('Resolución y Estado del Proyecto')
-                                    ->schema([
-                                        TextEntry::make('estado')
-                                            ->label('Estado')
-                                            ->badge()
-                                            ->color(fn (bool $state) => $state ? 'success' : 'danger')
-                                            ->formatStateUsing(fn (bool $state) => $state ? 'Vigente' : 'No Vigente'),
-                                        TextEntry::make('presupuesto')->label('Presupuesto')
-                                            ->formatStateUsing(fn ($state) => '$' . number_format($state, 2, ',', '.'))
-                                            ->color('customgray'),
-                                        TextEntry::make('disposicion')->label('Nro. de Disposición')
-                                            ->color('customgray'),
-                                        TextEntry::make('resolucion')->label('Nro. de Resolución')
-                                            ->color('customgray'),
-                                        Entry::make('pdf_disposicion')
-                                            ->label('Disposiciones en PDF')
-                                            ->view('filament.infolists.custom-file-entry-dispo'),
-                                        Entry::make('pdf_resolucion')
-                                            ->label('Resoluciones en PDF')
-                                            ->view('filament.infolists.custom-file-entry-reso'),
-                                    ])->columns(2),
-                                ]),
-                            InfoTab::make('Clasificación')
-                                ->schema([
-                                InfoSection::make('')
-                                    ->description('Datos relevante para el RACT')
-                                    ->schema([
-                                    TextEntry::make('carrera.nombre')
-                                        ->label('Carrera')
-                                        ->color('customgray'),
-                                        TextEntry::make('campo.nombre')->label('Campo de Aplicación')
-                                            ->color('customgray'),
-                                        TextEntry::make('objetivo.nombre')->label('Objetivo Socioeconómico')
-                                            ->color('customgray'),
-                                        TextEntry::make('actividad.nombre')->label('Tipo Actividad')
-                                            ->color('customgray'),
-                                    ])->columns(3),
-                                ])
-                        ])
-                ]),
-                EditAction::make()->label(''),
                 MediaAction::make('ver_resolucion')
-                    ->label(fn ($record) => $record->resolucion ? 'Res. ' . $record->resolucion : 'Sin Resolución')
+                    ->label(fn ($record) => $record->resolucion ? $record->resolucion : 'Sin Resolución')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->media(fn ($record) => $record->pdf_resolucion
                         ? asset('storage/' . $record->pdf_resolucion[0])
                         : null
                     ),
+                ActionGroup::make([
+                    ViewAction::make()->label('Ver')->color('primary')
+                        ->modalHeading(fn ($record) => 'Detalles del Proyecto de Investigación N° ' . $record->nro)
+                        ->modalSubmitAction(false)
+                        ->modalCancelAction(fn () => null)
+                        ->modalCancelActionLabel('Cerrar')
+                        ->infolist(fn (ViewAction $action): array => [
+                            InfoTabs::make('Tabs')
+                            ->tabs([
+                                InfoTab::make('Datos Generales')
+                                    ->schema([
+                                    InfoSection::make('')
+                                        ->description(fn ($record) => 'Proyecto de Investigación N° ' . $record->nro)
+                                        ->schema([
+                                            TextEntry::make('investigadorDirector')
+                                                ->label('Director del Proyecto')
+                                                ->color('customgray')
+                                                ->getStateUsing(fn ($record) =>
+                                                    $record->investigadorDirector->pluck('apellido_nombre')->implode(', ')
+                                                ),
+                                            TextEntry::make('investigadorCodirector')
+                                                ->label('Co-director del Proyecto')
+                                                ->color('customgray')
+                                                ->getStateUsing(fn ($record) => 
+                                                    $record->investigadorCodirector->isNotEmpty()
+                                                        ? $record->investigadorCodirector->pluck('apellido_nombre')->implode(', ')
+                                                        : '-'
+                                                ),
+                                            TextEntry::make('nombre')
+                                                ->label('Denominación del Proyecto')
+                                                ->columnSpanFull()
+                                                ->color('customgray'),
+                                            TextEntry::make('resumen')
+                                                ->label('Resumen del Proyecto')
+                                                ->columnSpanFull()
+                                                ->color('customgray')
+                                                ->html(),
+                                        ])->columns(2),
+                                    InfoSection::make('')
+                                        ->description('Duración del Proyecto')
+                                        ->schema([
+                                            TextEntry::make('duracion')->label('Duración en meses')
+                                                ->color('customgray'),
+                                            TextEntry::make('inicio')->label('Inicio de actividad')
+                                                ->color('customgray'),
+                                            TextEntry::make('fin')->label('Fin de actividad')
+                                                ->color('customgray'),
+                                        ])->columns(3),
+                                    ]),
+                                InfoTab::make('Investigadores')
+                                    ->schema([
+                                        Entry::make('investigadores')
+                                            ->label('Investigadores Asociados')
+                                            ->columnSpanFull()
+                                            ->view('livewire.investigadores-list', [
+                                                'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
+                                            ]),
+                                    ])->columns(2),
+                                InfoTab::make('Becarios')
+                                    ->schema([
+                                        Entry::make('becarios')
+                                            ->label('Becarios Asociados')
+                                            ->columnSpanFull()
+                                            ->view('livewire.becarios-list', [
+                                                'proyecto' => $action->getRecord(), // PASAR el proyecto aquí
+                                            ]),
+                                    ])->columns(2),
+                                InfoTab::make('Adscriptos')
+                                    ->schema([
+                                        Entry::make('adscriptos')
+                                            ->label('Adscriptos Asociados')
+                                            ->columnSpanFull()
+                                            ->view('livewire.adscriptos-list', [
+                                                'proyecto' => $action->getRecord(),
+                                            ]),
+                                        ]),
+                                InfoTab::make('Estado')
+                                    ->schema([
+                                    InfoSection::make('')
+                                        ->description('Resolución y Estado del Proyecto')
+                                        ->schema([
+                                            TextEntry::make('estado')
+                                                ->label('Estado')
+                                                ->badge()
+                                                ->color(fn (bool $state) => $state ? 'success' : 'danger')
+                                                ->formatStateUsing(fn (bool $state) => $state ? 'Vigente' : 'No Vigente'),
+                                            TextEntry::make('presupuesto')->label('Presupuesto')
+                                                ->formatStateUsing(fn ($state) => '$' . number_format($state, 2, ',', '.'))
+                                                ->color('customgray'),
+                                            TextEntry::make('disposicion')->label('Nro. de Disposición')
+                                                ->color('customgray'),
+                                            TextEntry::make('resolucion')->label('Nro. de Resolución')
+                                                ->color('customgray'),
+                                            Entry::make('pdf_disposicion')
+                                                ->label('Disposiciones en PDF')
+                                                ->view('filament.infolists.custom-file-entry-dispo'),
+                                            Entry::make('pdf_resolucion')
+                                                ->label('Resoluciones en PDF')
+                                                ->view('filament.infolists.custom-file-entry-reso'),
+                                        ])->columns(2),
+                                    ]),
+                                InfoTab::make('Clasificación')
+                                    ->schema([
+                                    InfoSection::make('')
+                                        ->description('Datos relevante para el RACT')
+                                        ->schema([
+                                        TextEntry::make('carrera.nombre')
+                                            ->label('Carrera')
+                                            ->color('customgray'),
+                                            TextEntry::make('campo.nombre')->label('Campo de Aplicación')
+                                                ->color('customgray'),
+                                            TextEntry::make('objetivo.nombre')->label('Objetivo Socioeconómico')
+                                                ->color('customgray'),
+                                            TextEntry::make('actividad.nombre')->label('Tipo Actividad')
+                                                ->color('customgray'),
+                                        ])->columns(3),
+                                    ])
+                            ])
+                    ]),
+                    EditAction::make()->label('Editar')->color('primary'),
+                ]),
             ])
 
             // ACCIONES DE EXPOR & IMPORT

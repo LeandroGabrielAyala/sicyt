@@ -18,31 +18,14 @@ TAREAS::
 * Generar Plantillas .DOCS (Notas nuestras)
 * Controlar todos los RELATION MANAGER
 * Solucionar o averiguar para que Panel Notificación
-
-Necesito tu ayuda para hacer una migración, resource y todo el resto.
-Quiero una migración de pago a becarios que me guarade el año, mes, tipo de convocatoria, año de convocatoria y tipo de beca, es decir eso mostrarlo en una tabla, pero que al agregar un nuevo pago, me deje seleccionar jsutamenteel año, mes, tipo de convocatoria, año de convocatoria y tipo de beca, y de ahi los becarios, que para ser mas optimo, seria ideal tomar la lista de becarios asociados ya a una convocatoria con el estado "vigente" obviamente dentro de esa convocatoria, es decir que me figure una lista con los mismos, y que al lado, poder ponerle el monto que se le pagara este mes a cada uno y ahi guardarlo.
-Asi que cuando seleccione un pago de esa tabla me muestre en un Infolist la lista de los becarios con sus datos de convocatoria y el monto que se le pago a cada uno. Y que en esa tabla tambien me muestre el total de la suma del pago de cada uno de ese mes.
-Mes/Año - Convocatoria(Tipo y Año) - TipoBeca - Total
-Becarios(multiples) - Monto
-Nota en PDF
-
-$table->date('mes');
-$table->integer('anio');
-(foreign) convocatoria (concatenada)
-$table->foreignId('convocatoria_beca_id')->constrained('convocatoria_becas')->cascadeOnDelete();
-$table->enum('tipo_beca', ['Grado', 'Posgrado', 'CIN']);
-$table->boolean('estado')->default(true);
-(foreign) becarios
-$table->foreignId('becario_id')->constrained()->cascadeOnDelete();
-(enum) monto
-$table->decimal('monto', 8, 2);
-
-ESte seria otra pagina adicional mas ordenada:
-* Becario (Convocatoria concatenada) y Tipo y ultimo mes pagado
-* Mostrar cuanto se le va pagando a cada Becario
-* Mostrar cuantos meses se le va pagando a cada Becario
-* Lista precargadas o duplicar
-* Monto automaicamente y modificable
+--------------------------------------------------------------------------------------
+* DOCUMENTOS:
+    - Informes
+    - Notas SICYT
+    - Disposición SICYT
+    - Resolución SICYT
+--------------------------------------------------------------------------------------
+Practicar las Convocatorias de PI, Becas, testear...
 
 - Ciencias exactas y naturales
 Biología	
