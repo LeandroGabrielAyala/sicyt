@@ -1,83 +1,52 @@
-TAREAS::
-* Opción de saber si es el Proyecto tiene número o es PE/PFI, etc..
-* Cuanto va gastado en Proyectos
+::: TAREAS :::
+
+GENERAL
+    - Controlar todas las vistas Blade para unificar
+
+PAGINA PRINCIPAL:
+    - Corregir que quede lindo
+    - Agregarle Documentación
+    - Corregir los Newsletter
+
+PROYECTOS:
+    - Preguntara como identificar los "PIE"
+    - Cuanto va gastado en Proyectos
+    - Conectar los informes
+    - Crear Convocatorias y Relation Manager
+    - Hacer pruebas de editar estado en tabla en vivo
+    - Cierre de Convocatoria
+    - Tabla y relacion de Compras/Reintegros con Proyectos
+
+COMPRAS/REINTEGROS:
     - Crear Compras Resources
-        -- 
-    - Relation Manager entre Compras/Proyectos
-* Crear los Usuarios con sus Roles Correspondientes
+    - Crear Reintegros Resources
+        
+BECARIOS:
+    - Conectar los informes
+    - Hacer pruebas de editar estado en tabla en vivo
+    - Cierre de Convocatoria
+    - ROL Director/Co-director: Dar "OK" Certifiacación Becario
+    - Notificar semanalmente por mail (probar)
+
+USUARIOS
     - Super Admin: Leandro
     - Admin: Vanina/Mara/Ricarado
     - Compra/Reintegro: Fabiola/Fabiana
     - Becario: Becarios
     - Investigador: Investigadores
-* Agregar todo lo mismo a vista usuario (APP)
-* Ir creando los .CSV para importar datos reales
-* Grafico de estadísticas
+
+DOCUMENTOS (Ascendente):
+    - Colocar con TABS
+    - Toggle para si es Publicado o No en el sitio web general
+        - Informes
+        - Notas SICYT
+        - Disposición SICYT
+        - Resolución SICYT
+
 --------------------------------------------------------------------------------------
+* Agregar Todo a la APP Usuario
 * Agregar gasto total en Becas, Reintegros y Compras en "Configuración RACT"
 * Generar Plantillas .DOCS (Notas nuestras)
-* Controlar todos los RELATION MANAGER
-* Solucionar o averiguar para que Panel Notificación
---------------------------------------------------------------------------------------
-* DOCUMENTOS:
-    - Informes
-    - Notas SICYT
-    - Disposición SICYT
-    - Resolución SICYT
---------------------------------------------------------------------------------------
-Practicar las Convocatorias de PI, Becas, testear...
-
-- Ciencias exactas y naturales
-Biología	
-Física	
-Genética	
-Geografía	
-Geología	
-Matemática	
-Química	
-Otras
-
--Ingeniería y tecnología
-Alimentos	
-Arquitectura	
-Bioingeniería	
-Informática	
-Ingeniería Civil	
-Ingeniería Electrónica	
-Ingeniería Mecánica	
-Ingeniería Química	
-Otras
-
--Ciencias médicas
-Bioquímica	
-Biotecnología	
-Farmarcia	
-Medicina	
-Otras
-
--Ciencias agrícolas y veterinarias
-Agronomía	
-Veterinaria	
-Ciencias ambientales	
-Otras
-
--Ciencias sociales
-Abogacía	
-Administración de Empresas	
-Antropología	
-Economía	
-Ciencias de la Comunicación	
-Ciencias de la Educación	
-Ciencias Políticas	
-Psicología	
-Sociología	
-Otras
-
--Humanidades y artes
-Arte	
-Diseño gráfico	
-Filosofía	
-Historia	
-Lingüistica	
-Literatura	
-Otras
+* Panel de Notificación: VER PLUGINS
+* Ir creando los .CSV para importar datos reales
+* Grafico de estadísticas
