@@ -1,7 +1,26 @@
+INVESTIGADOR:
+    Fecha de solicitud (Automatico)
+    Justificación
+    Referencia -> Solicitante (Elegir de los integrantes segun Referencia)
+    Items:
+        - Cantidad
+        - Descripción
+        - Precio unitario
+        - Imagen
+    Proveedores:
+        - Razón social
+        - CUIT
+        - Número teléfono
+        - Email
+    Cotización
+    Estados
+
+ADMINSITRADOR:
+    - Ver, cambiar estado, aprobar, fecha actualizada.
 
         Schema::create('proyectos', function (Blueprint $table) {
             $table->id();
-            $table->integer('nro_exp');
+            $table->integer('nro_exp'); // Como hacer para guiones automaticos
             $table->json('pdf_exp')->nullable();
             $table->date('fecha_pase');
             $table->foreignId('asignacion_id')->nullable()->constrained()->cascadeOnDelete();

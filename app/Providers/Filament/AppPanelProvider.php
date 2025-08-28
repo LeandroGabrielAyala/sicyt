@@ -58,6 +58,11 @@ class AppPanelProvider extends PanelProvider
                 ],
             ])
             ->font('Montserrat')
+            ->navigationGroups([
+                'Proyectos',
+                'Becas',
+                'Reintegros/Compras',
+            ])
             ->brandLogo(asset('images/logo-sicyt.png'))
             ->favicon(asset('images/logo-sicyt.png'))
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')

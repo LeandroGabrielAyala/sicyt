@@ -1,7 +1,25 @@
 ::: TAREAS :::
 
 GENERAL
-    - Controlar todas las vistas Blade para unificar
+    - USUARIO: Poder subir .PDF
+    - ADMINISTRADOR:
+        - Subir en Documentación
+        - Luego seleccionar el archivo
+        - Y muestre en todos lados
+        -- O TOGGLE para subir o seleccionar
+            --- Si subis que pueda escribir numero, año y emisor
+            --- No subis, cuando seleccionas te tire ya todos los datos
+
+DOCUMENTOS (Ascendente):
+    - Escribir el Numero / Año / Emisor
+    - Subir .PDF / .DOCX
+    - Seleccionar destino
+    - Colocar con TABS
+    - Toggle para si es Publicado o No en el sitio web general
+        - Informes
+        - Notas SICYT
+        - Disposición SICYT
+        - Resolución SICYT
 
 PAGINA PRINCIPAL:
     - Corregir que quede lindo
@@ -28,20 +46,17 @@ BECARIOS:
     - ROL Director/Co-director: Dar "OK" Certifiacación Becario
     - Notificar semanalmente por mail (probar)
 
+ADSCRIPTO:
+    - Conectar los informes
+    - Hacer pruebas de editar estado en tabla en vivo
+    - Cierre de Convocatoria
+
 USUARIOS
     - Super Admin: Leandro
     - Admin: Vanina/Mara/Ricarado
     - Compra/Reintegro: Fabiola/Fabiana
     - Becario: Becarios
     - Investigador: Investigadores
-
-DOCUMENTOS (Ascendente):
-    - Colocar con TABS
-    - Toggle para si es Publicado o No en el sitio web general
-        - Informes
-        - Notas SICYT
-        - Disposición SICYT
-        - Resolución SICYT
 
 --------------------------------------------------------------------------------------
 * Agregar Todo a la APP Usuario

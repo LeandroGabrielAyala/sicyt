@@ -79,14 +79,22 @@ class UserResource extends Resource
                     ->searchable(),
                 TextColumn::make('email')->label('Email')
                     ->searchable(),
+                TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->badge() // lo muestra como "pill"
+                    ->separator(', ') // separa por coma si hay varios roles
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('email_verified_at')->label('Creado el')
                     ->dateTime()
                     ->sortable()
-                    ->dateTime('d-M-Y'),
+                    ->dateTime('d-M-Y')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->dateTime('d-M-Y'),
+                    ->dateTime('d-M-Y')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()

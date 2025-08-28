@@ -33,6 +33,30 @@ class UserSeeder extends Seeder
             'name' => 'Lean',
             'email' => 'lean@gmail.com',
             'password' => Hash::make('lean1234'), // Hashear contraseña
+            // 'is_admin' => 0,
+        ]);
+        User::create([
+            'name' => 'Vanina',
+            'email' => 'vanina@gmail.com',
+            'password' => Hash::make('vanina1234'), // Hashear contraseña
+            'is_admin' => 0,
+        ]);
+        User::create([
+            'name' => 'Fabiola',
+            'email' => 'fabiola@gmail.com',
+            'password' => Hash::make('fabiola1234'), // Hashear contraseña
+            'is_admin' => 0,
+        ]);
+        User::create([
+            'name' => 'Mara',
+            'email' => 'mara@gmail.com',
+            'password' => Hash::make('mara1234'), // Hashear contraseña
+            'is_admin' => 0,
+        ]);
+        User::create([
+            'name' => 'Ricardo',
+            'email' => 'ricardo@gmail.com',
+            'password' => Hash::make('ricardo1234'), // Hashear contraseña
             'is_admin' => 0,
         ]);
     }

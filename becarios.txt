@@ -1,0 +1,29 @@
+Administrador
+    - Crea nueva Convocatoria
+    - Fecha de inicio de actividad
+    - .PDF con la disposición de la convocatoria
+    - .PDF con la resolución de la convocatoria
+    - .DOCX con el formulario para que completen y suban
+
+Investigador
+    - Le Aparece la convocatoria vigente (en una lista de convocatorias)
+    - Click, una pagina con el formulario .DOCX y la descripción y la parte para subir
+    - Solo acepta subir .PDF y no se puede modificar
+    - Documentación probatoria
+    - En la tabla le aparece el estado
+
+Administrador
+    - Entro a esa convocatoria y me aparece lista con los presentados
+    - Se puede descargar los formularios o leer en vivo
+    - Cambiar el estado en vivo
+    - Justificación / Devolución
+    - Tab con los estados para clasificar
+    - Subir en la plataforma los datos de los nuevos becarios
+    - Ademas subirle Documentación:
+        - la resolución de aprobación de los Becarios
+        - Alguna otra que se necesite..
+    - Ademas se actualicen en la tabla de documentación con el tipo de DOC que subimos
+
+Investigador
+    - Ver su estado actualizado
+    - Boton de reconsideración y cambia el estado con justificación
