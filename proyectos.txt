@@ -1,3 +1,30 @@
+# PROCESO DESDE LA CONVOCATORIA HASTA SU ACTIVIDAD
+SECRETARIA:
+	- Crear nueva convocatoria con Tipo, Año, Fechas y Estado
+	- Dejar formulario para que puedan descargar y completar
+	- Espacio para subir el formulario y documentacion probatoria (Unificado y solo un archivo)
+INVESTIGADOR:
+	- Descarga formulario, lo completa y unifica
+	- Subir formulario al espacio propuesto
+	- Unificar doc probatoria y subir al espacio propuesto
+	- No permitir subir mas archivos
+	- Estado pendiente
+SECRETARIA:
+	- Recibe el la documentación por cada registro agregado en la lista con estado "pendiente"
+	- Se descarga todo, se da el ok o el rechazo de la documentacion
+	- Se le carga luego la resolución de aprobación, etc..
+	- Se le cambia el estado en vivo del registro
+INVESTIGADOR:
+	- Les aparece como aprobado, en revision, rechazado, etc..
+	- Y desde ahi, deberia aparecerle todo en el dashboard
+		-- Con gastos, compras, resoluciones, integrantes y eso.
+		-- Propongo poner Proyectos con sus datos, etc..
+		-- Y otro que sea Becarios y sus datos, etc..
+		-- Asi como adsciptos
+
+
+
+#### FORMULARIO EN WORD ####
 1. IDENTIFICACIÓN Y CARACTERÍSTICAS DEL PROYECTO 
 1.1 Código de Identificación del Proyecto (A completar por la Secretaría de Investigación, Ciencia y Técnica)
 1.2 Título del Proyecto. En lo posible no superar 140 caracteres.

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ConvocatoriaBecaResource\Pages;
-use App\Filament\Resources\ConvocatoriaResource\RelationManagers\BecariosRelationManager;
-use App\Models\ConvocatoriaBeca;
+use App\Filament\Resources\ConvocatoriaProyectoResource\Pages;
+use App\Filament\Resources\ConvocatoriaProyectoResource\RelationManagers;
+use App\Models\ConvocatoriaProyecto;
+use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -19,24 +19,24 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
+use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\Tabs\Tab;
-use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
-class ConvocatoriaBecaResource extends Resource
+class ConvocatoriaProyectoResource extends Resource
 {
-    protected static ?string $model = ConvocatoriaBeca::class;
+    protected static ?string $model = ConvocatoriaProyecto::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
-    protected static ?string $navigationLabel = 'Convocatorias de Becas';
-    protected static ?string $modelLabel = 'Convocatorias de Becas';
-    protected static ?string $navigationGroup = 'Configuración Becas';
-    protected static ?string $slug = 'convocatoria-beca';
+    protected static ?string $navigationLabel = 'Convocatorias de Proyectos';
+    protected static ?string $modelLabel = 'Convocatorias de Proyectos';
+    protected static ?string $navigationGroup = 'Configuración Proyectos';
+    protected static ?string $slug = 'convocatoria-proyecto';
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'anio';
@@ -56,7 +56,7 @@ class ConvocatoriaBecaResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Tipo de Beca' => $record->tipoBeca->nombre ?? '—',
+            'Tipo de Proyecto' => $record->tipoProyecto->nombre ?? '—',
             'Año' => $record->anio,
             'Estado' => $record->estado ? 'Vigente' : 'No Vigente',
         ];
@@ -65,7 +65,7 @@ class ConvocatoriaBecaResource extends Resource
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()
-            ->with('tipoBeca');
+            ->with('tipoProyecto');
     }
 
     public static function getNavigationBadge(): ?string
@@ -82,8 +82,8 @@ class ConvocatoriaBecaResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('tipo_beca_id')
-                    ->relationship('tipoBeca', 'nombre')  // Cambiar aquí 'tipo_beca' por 'tipoBeca'
+                Select::make('tipo_proyecto_id')
+                    ->relationship('tipoProyecto', 'nombre')  // Cambiar aquí 'tipo_proyecto' por 'tipoProyecto'
                     ->required()
                     ->columnSpanFull(),
                 Select::make('anio')
@@ -113,7 +113,7 @@ class ConvocatoriaBecaResource extends Resource
                     ->multiple()
                     ->required()
                     ->disk('public')
-                    ->directory('resoluciones_becas')
+                    ->directory('resoluciones_proyectos')
                     ->preserveFilenames()
                     ->reorderable()
                     ->openable(),
@@ -122,7 +122,7 @@ class ConvocatoriaBecaResource extends Resource
                     ->multiple()
                     ->required()
                     ->disk('public')
-                    ->directory('disposiciones_becas')
+                    ->directory('disposiciones_proyectos')
                     ->preserveFilenames()
                     ->reorderable()
                     ->openable(),
@@ -133,7 +133,7 @@ class ConvocatoriaBecaResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('tipoBeca.nombre')->label('Tipo')->searchable(),
+                TextColumn::make('tipoProyecto.nombre')->label('Tipo')->searchable(),
                 TextColumn::make('anio')->label('Año')->sortable(),
                 TextColumn::make('inicio')->label('Inicio')->date()->sortable()->searchable(),
                 TextColumn::make('fin')->label('Fin')->date()->sortable()->searchable(),
@@ -143,7 +143,7 @@ class ConvocatoriaBecaResource extends Resource
                 ViewAction::make('view')
                     ->label('')
                     ->color('primary')
-                    ->modalHeading(fn (ConvocatoriaBeca $record) => 'Detalles de Convocatoria ' . $record->anio)
+                    ->modalHeading(fn (ConvocatoriaProyecto $record) => 'Detalles de Convocatoria ' . $record->anio)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn () => null)
                     ->modalCancelActionLabel('Cerrar')
@@ -154,8 +154,8 @@ class ConvocatoriaBecaResource extends Resource
                                     ->schema([
                                         Section::make('Información básica')
                                             ->schema([
-                                                TextEntry::make('tipoBeca.nombre')
-                                                    ->label('Tipo de Beca')
+                                                TextEntry::make('tipoProyecto.nombre')
+                                                    ->label('Tipo de Proyecto')
                                                     ->color('customgray'),
                                                 TextEntry::make('anio')
                                                     ->label('Año')
@@ -183,10 +183,10 @@ class ConvocatoriaBecaResource extends Resource
                                                     ->color('customgray'),
                                                 Entry::make('pdf_resolucion')
                                                     ->label('Resoluciones en PDF')
-                                                    ->view('filament.infolists.convocatoria-beca-reso'),
+                                                    ->view('filament.infolists.convocatoria-proyecto-reso'),
                                                 Entry::make('pdf_disposicion')
                                                     ->label('Disposiciones en PDF')
-                                                    ->view('filament.infolists.convocatoria-beca-dispo'),
+                                                    ->view('filament.infolists.convocatoria-proyecto-dispo'),
                                             ])->columns(2),
                                         ]),
                             ])
@@ -213,16 +213,16 @@ class ConvocatoriaBecaResource extends Resource
     public static function getRelations(): array
     {
         return [
-            BecariosRelationManager::class
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListConvocatoriaBecas::route('/'),
-            'create' => Pages\CreateConvocatoriaBeca::route('/create'),
-            'edit' => Pages\EditConvocatoriaBeca::route('/{record}/edit'),
+            'index' => Pages\ListConvocatoriaProyectos::route('/'),
+            'create' => Pages\CreateConvocatoriaProyecto::route('/create'),
+            'edit' => Pages\EditConvocatoriaProyecto::route('/{record}/edit'),
         ];
     }
 }
