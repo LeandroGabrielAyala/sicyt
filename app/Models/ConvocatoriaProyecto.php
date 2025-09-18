@@ -24,4 +24,10 @@ class ConvocatoriaProyecto extends Model
     {
         return 'Convocatoria ' . $this->anio . ' (' . ($this->tipoProyecto->nombre ?? '-') . ')';
     }
+
+    public function getNombreCompletoAttribute()
+    {
+        return ($this->tipoProyecto->nombre ?? 'Sin tipo') . ' - ' . $this->anio;
+    }
+
 }
