@@ -1,5 +1,3 @@
-!!!! Va queriendo, ahora solo debemos ver como poner rol investigador y probar cargar una postulacion
-
 # PROCESO DESDE LA CONVOCATORIA HASTA SU ACTIVIDAD
 SECRETARIA:
 	- Crear nueva convocatoria con Tipo, Año, Fechas y Estado
