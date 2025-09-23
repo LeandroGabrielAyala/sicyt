@@ -7,6 +7,8 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use App\Http\Middleware\VerifyIsAdmin;
+use App\Http\Middleware\CheckInvestigador;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -85,9 +87,20 @@ class AppPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                CheckInvestigador::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
             ]);
     }
+
+    public function canAccess(): bool
+    {
+        $user = auth()->user();
+        // Solo permitir acceso si TIENE investigador
+        return $user && $user->investigador !== null;
+    }
+
+
+
 }

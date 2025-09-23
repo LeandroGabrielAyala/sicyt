@@ -16,8 +16,21 @@ use Filament\Tables\Table;
 class PostulacionResource extends Resource
 {
     protected static ?string $model = Postulacion::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    // protected static ?string $navigationGroup = 'Convocatorias';
+    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationLabel = 'Postulaciones';
+    protected static ?string $navigationGroup = 'Proyectos';
+    protected static ?string $modelLabel = 'Postulaciones';
+    protected static ?string $slug = 'postulaciones-a-proyectos';
+    protected static ?int $navigationSort = 2;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary'; //return static::getModel()::count() > 5 ? 'primary' : 'warning';
+    }
 
     public static function form(Form $form): Form
     {

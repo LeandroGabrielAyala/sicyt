@@ -40,7 +40,7 @@ class AdscriptoResource extends Resource
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $modelLabel = 'Adscriptos';
     protected static ?string $slug = 'adscriptos';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('investigadors', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('nombre');
             $table->string('apellido');
             $table->string('dni', 10)->unique();

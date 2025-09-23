@@ -8,12 +8,48 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\User;
 
 class Investigador extends Model
 {
+    protected $fillable = [
+        'user_id',
+        'nombre',
+        'apellido',
+        'dni',
+        'cuil',
+        'fecha_nac',
+        'lugar_nac',
+        'domicilio',
+        'provincia',
+        'email',
+        'telefono',
+        'nivel_academico_id',
+        'disciplina_id',
+        'campo_id',
+        'objetivo_id',
+        'titulo',
+        'titulo_posgrado',
+        'cargo_id',
+        'categoria_interna_id',
+        'incentivo_id',
+        'carrera_id',
+    ];
 
-    protected $fillable = ['nombre', 'apellido', 'dni', 'cuil', 'fecha_nac', 'lugar_nac', 'domicilio', 'provincia', 'email', 'telefono', 'nivel_academico_id', 'disciplina_id', 'campo_id', 'objetivo_id', 'titulo', 'titulo_posgrado', 'cargo_id', 'categoria_interna_id', 'incentivo_id'];
-    
+    // Crear usuario automáticamente antes de guardar investigador
+    protected static function booted()
+    {
+        static::creating(function ($investigador) {
+            if (!$investigador->user_id) {
+                $user = User::create([
+                    'name' => $investigador->nombre . ' ' . $investigador->apellido,
+                    'email' => $investigador->email,
+                    'password' => bcrypt($investigador->dni), // contraseña inicial = DNI
+                ]);
+                $investigador->user_id = $user->id;
+            }
+        });
+    }
 
     // Accessor dinámico para calcular la edad
     public function getEdadAttribute()
@@ -25,11 +61,13 @@ class Investigador extends Model
     {
         return "{$this->apellido}, {$this->nombre}";
     }
+
     public function getApellidoNombreAttribute()
     {
         return "{$this->apellido}, {$this->nombre}";
     }
 
+    // Relaciones
     public function proyectos(): BelongsToMany
     {
         return $this->belongsToMany(Proyecto::class)
@@ -80,32 +118,33 @@ class Investigador extends Model
         return $this->belongsTo(NivelAcademico::class);
     }
 
-    // Becarios donde es director
-    public function becariosComoDirector()
+    public function becariosComoDirector(): HasMany
     {
         return $this->hasMany(\App\Models\BecarioProyecto::class, 'director_id');
     }
 
-    // Becarios donde es codirector
-    public function becariosComoCodirector()
+    public function becariosComoCodirector(): HasMany
     {
         return $this->hasMany(\App\Models\BecarioProyecto::class, 'codirector_id');
     }
 
-    public function becarios()
+    public function becarios(): HasMany
     {
         return $this->hasMany(Becario::class);
     }
 
-    public function adscriptosComoDirector()
+    public function adscriptosComoDirector(): HasMany
     {
         return $this->hasMany(\App\Models\AdscriptoProyecto::class, 'director_id');
     }
 
-    public function adscriptosComoCodirector()
+    public function adscriptosComoCodirector(): HasMany
     {
         return $this->hasMany(\App\Models\AdscriptoProyecto::class, 'codirector_id');
     }
 
-
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

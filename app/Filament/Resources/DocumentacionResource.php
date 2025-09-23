@@ -17,7 +17,20 @@ class DocumentacionResource extends Resource
 {
     protected static ?string $model = Documentacion::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationLabel = 'Documentación';
+    protected static ?string $navigationGroup = 'Documentación';
+    protected static ?string $modelLabel = 'Documentación';
+    protected static ?string $slug = 'documentacion';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary'; //return static::getModel()::count() > 5 ? 'primary' : 'warning';
+    }
 
     public static function form(Form $form): Form
     {

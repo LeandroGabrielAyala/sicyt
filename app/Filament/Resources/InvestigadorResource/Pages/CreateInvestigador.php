@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\InvestigadorResource\Pages;
 
 use App\Filament\Resources\InvestigadorResource;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Notifications\Notification;
@@ -49,5 +50,19 @@ class CreateInvestigador extends CreateRecord
                 ->url($this->getResource()::getUrl())
                 ->color('gray'),
         ];
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        // Crear usuario automáticamente
+        $user = User::create([
+            'name' => $data['nombre'] . ' ' . $data['apellido'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['dni']), // contraseña inicial = DNI
+        ]);
+
+        $data['user_id'] = $user->id;
+
+        return $data;
     }
 }

@@ -74,4 +74,10 @@ class User extends Authenticatable implements HasTenants
             // your conditional logic here
             return true;
         }
+
+    public function investigador()
+    {
+        return $this->hasOne(Investigador::class);
+    }
+
 }

@@ -17,7 +17,21 @@ class CompraResource extends Resource
 {
     protected static ?string $model = Compra::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationLabel = 'Compras';
+    protected static ?string $navigationGroup = 'Compras y Reintegros';
+    protected static ?string $modelLabel = 'Compras';
+    protected static ?string $slug = 'compras-proyectos';
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'primary'; //return static::getModel()::count() > 5 ? 'primary' : 'warning';
+    }
 
     public static function form(Form $form): Form
     {

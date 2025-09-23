@@ -7,6 +7,7 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Firefly\FilamentBlog\Blog;
 use App\Filament\Pages\Tenancy\RegisterTeam;
 use App\Http\Middleware\VerifyIsAdmin;
+use App\Http\Middleware\CheckInvestigador;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -61,8 +62,9 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Proyectos',
                 'Becas',
-                'Reintegros/Compras',
+                'Compras y Reintegros',
                 'Documentación',
+                'Blog',
                 'Configuración Proyectos',
                 'Configuración Becas',
                 'Configuración CyR',
@@ -99,4 +101,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->databaseNotifications();
     }
+
+    public function canAccess(): bool
+    {
+        $user = auth()->user();
+        // Solo permitir acceso si NO es investigador
+        return $user && $user->investigador === null;
+    }
+
 }
