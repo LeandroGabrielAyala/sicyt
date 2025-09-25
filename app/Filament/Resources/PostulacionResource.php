@@ -64,8 +64,11 @@ class PostulacionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('convocatoria.titulo')->label('Convocatoria'),
-            TextColumn::make('investigador.nombre')->label('Investigador'),
+            TextColumn::make('convocatoria.tipoProyecto.nombre')->label('Tipo de Proyecto'),
+            TextColumn::make('convocatoria.anio')->label('Año de Convocatoria'),
+            TextColumn::make('investigador')
+                ->label('Investigador')
+                ->getStateUsing(fn ($record) => $record->investigador?->apellido . ', ' . $record->investigador?->nombre),
             TextColumn::make('estado')->badge(),
             TextColumn::make('created_at')->date('d/m/Y'),
         ]);

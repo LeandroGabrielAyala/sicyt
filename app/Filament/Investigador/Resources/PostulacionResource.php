@@ -27,15 +27,15 @@ class PostulacionResource extends Resource
     protected static ?string $slug = 'postulaciones-a-proyectos';
     protected static ?int $navigationSort = 1;
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
+    // public static function getNavigationBadge(): ?string
+    // {
+    //     return static::getModel()::count();
+    // }
 
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return 'primary';
-    }
+    // public static function getNavigationBadgeColor(): string|array|null
+    // {
+    //     return 'primary';
+    // }
 
     public static function form(Form $form): Form
     {
@@ -64,7 +64,8 @@ class PostulacionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('convocatoria.titulo')->label('Convocatoria'),
+            TextColumn::make('convocatoria.tipoProyecto.nombre')->label('Tipo de Proyecto'),
+            TextColumn::make('convocatoria.anio')->label('Año de Convocatoria'),
             TextColumn::make('estado')->badge(),
             TextColumn::make('created_at')->date('d/m/Y'),
         ]);
