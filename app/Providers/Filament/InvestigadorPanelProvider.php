@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -11,8 +10,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
-use App\Http\Middleware\VerifyIsAdmin;
-use App\Http\Middleware\CheckInvestigador;
+use App\Http\Middleware\RedirectToCorrectPanel;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -31,19 +29,29 @@ class InvestigadorPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            // Descubrir recursos de App\Filament\App\Resources
             ->discoverResources(
-                in: app_path('Filament/App/Resources'),
-                for: 'App\\Filament\\App\\Resources'
+                in: app_path('Filament/Investigador/Resources'),
+                for: 'App\\Filament\\Investigador\\Resources'
             )
-            ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
+            // Descubrir páginas
+            ->discoverPages(
+                in: app_path('Filament/Investigador/Pages'),
+                for: 'App\\Filament\\Investigador\\Pages'
+            )
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
+            // Widgets
+            ->discoverWidgets(
+                in: app_path('Filament/Investigador/Widgets'),
+                for: 'App\\Filament\\Investigador\\Widgets'
+            )
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+            // Middleware de sesión y redirección
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -54,10 +62,7 @@ class InvestigadorPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                
-            ])
-            ->authMiddleware([
-                Authenticate::class,
+                RedirectToCorrectPanel::class, // tu middleware para redirigir según rol
             ]);
     }
 }

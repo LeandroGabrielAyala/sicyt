@@ -2,13 +2,10 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Tenancy\EditTeamProfile;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Firefly\FilamentBlog\Blog;
-use App\Filament\Pages\Tenancy\RegisterTeam;
 use App\Http\Middleware\VerifyIsAdmin;
-use App\Http\Middleware\CheckInvestigador;
-use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\RedirectToCorrectPanel;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -93,7 +90,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                VerifyIsAdmin::class,
+                RedirectToCorrectPanel::class
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),
@@ -101,12 +98,4 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->databaseNotifications();
     }
-
-    public function canAccess(): bool
-    {
-        $user = auth()->user();
-        // Solo permitir acceso si NO es investigador
-        return $user && $user->investigador === null;
-    }
-
 }

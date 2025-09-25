@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\App\Resources\PostulacionResource\Pages;
+namespace App\Filament\Investigador\Resources\PostulacionResource\Pages;
 
-use App\Filament\App\Resources\PostulacionResource;
+use App\Filament\Investigador\Resources\PostulacionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Filament\App\Resources;
+namespace App\Filament\Investigador\Resources;
 
-use App\Filament\App\Resources\PostulacionResource\Pages;
+use App\Filament\Investigador\Resources\PostulacionResource\Pages\CreatePostulacion;
+use App\Filament\Investigador\Resources\PostulacionResource\Pages\EditPostulacion;
+use App\Filament\Investigador\Resources\PostulacionResource\Pages\ListPostulacions;
 use App\Models\Postulacion;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
@@ -25,19 +26,6 @@ class PostulacionResource extends Resource
     protected static ?string $modelLabel = 'Postulaciones';
     protected static ?string $slug = 'postulaciones-a-proyectos';
     protected static ?int $navigationSort = 1;
-
-    // Mostrar navegación solo si el usuario tiene un investigador asociado
-    public static function canViewForNavigation(): bool
-    {
-        $user = auth()->user();
-        return $user && $user->investigador?->id !== null;
-    }
-
-    public static function authorizeResource(): void
-    {
-        static::authorizeUsing(fn ($user) => $user && $user->investigador?->id !== null);
-    }
-
 
     public static function getNavigationBadge(): ?string
     {
@@ -113,9 +101,9 @@ class PostulacionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPostulacions::route('/'),
-            'create' => Pages\CreatePostulacion::route('/create'),
-            'edit' => Pages\EditPostulacion::route('/{record}/edit'),
+            'index' => ListPostulacions::route('/'),
+            'create' => CreatePostulacion::route('/create'),
+            'edit' => EditPostulacion::route('/{record}/edit'),
         ];
     }
 }
