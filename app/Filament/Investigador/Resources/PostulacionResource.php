@@ -44,14 +44,16 @@ class PostulacionResource extends Resource
                 ->label('Convocatoria')
                 ->relationship('convocatoria', 'id')
                 ->getOptionLabelFromRecordUsing(fn ($record) => ($record->tipoProyecto->nombre ?? 'Sin tipo') . ' - ' . $record->anio)
-                ->required(),
+                ->required()
+                ->columnSpanFull(),
 
             FileUpload::make('archivo_pdf')
                 ->label('Subir PDF unificado')
                 ->acceptedFileTypes(['application/pdf'])
                 ->directory('postulaciones')
                 ->maxSize(5120)
-                ->required(),
+                ->required()
+                ->columnSpanFull(),
 
             Hidden::make('investigador_id')
                 ->default(fn () => auth()->user()->investigador?->id),

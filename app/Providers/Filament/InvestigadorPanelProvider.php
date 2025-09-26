@@ -26,6 +26,8 @@ class InvestigadorPanelProvider extends PanelProvider
             ->id('investigadorpanel')
             ->path('investigadorpanel')
             ->login()
+            ->brandLogo(asset('images/logo-sicyt.png'))
+            ->favicon(asset('images/logo-sicyt.png'))
             ->colors([
                 'primary' => Color::Amber,
             ])
