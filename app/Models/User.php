@@ -54,26 +54,39 @@ class User extends Authenticatable implements HasTenants
         ];
     }
 
-        public function getTenants(Panel $panel): Collection
-        {
-            return $this->team;
-        }
 
-        public function canAccessTenant(Model $tenant): bool
-        {
-            return $this->hasRole('Admin');
-        }
 
-        // public function isAdmin(): bool
-        // {
-        //     return $this->email == 'admin@gmail.com';
-        // }
+    // public function canAccessPanel(Panel $panel): bool
+    // {
+    //     return match ($panel->getId()) {
+    //         'admin' => $this->hasRole('Admin'),
+    //         'app' => $this->hasRole('Admin'),
+    //         'investigadorpanel' => $this->hasRole('Investigador'),
+    //         default => false,
+    //     };
+    // }
 
-        public function canComment(): bool
-        {
-            // your conditional logic here
-            return true;
-        }
+
+    public function getTenants(Panel $panel): Collection
+    {
+        return $this->team;
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->hasRole('Admin');
+    }
+
+    // public function isAdmin(): bool
+    // {
+    //     return $this->email == 'admin@gmail.com';
+    // }
+
+    public function canComment(): bool
+    {
+        // your conditional logic here
+        return true;
+    }
 
     public function investigador()
     {
