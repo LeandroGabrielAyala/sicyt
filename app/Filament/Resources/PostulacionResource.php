@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PostulacionResource\Pages;
 use App\Models\Postulacion;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -12,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostulacionResource extends Resource
 {
@@ -35,13 +37,22 @@ class PostulacionResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make('convocatoria.titulo')
+            Placeholder::make('convocatoria')
                 ->label('Convocatoria')
-                ->disabled(),
+                ->content(fn ($record) =>
+                    $record->convocatoria
+                        ? ($record->convocatoria->tipoProyecto->nombre . ' - ' . $record->convocatoria->anio)
+                        : '—'
+                ),
 
-            TextInput::make('investigador.nombre')
+            Placeholder::make('investigador')
                 ->label('Investigador')
-                ->disabled(),
+                ->content(fn ($record) =>
+                    $record->investigador
+                        ? $record->investigador->apellido . ', ' . $record->investigador->nombre
+                        : '—'
+                ),
+
 
             FileUpload::make('archivo_pdf')
                 ->label('Formulario PDF')
@@ -57,7 +68,8 @@ class PostulacionResource extends Resource
                 ->required(),
 
             Textarea::make('observaciones')
-                ->label('Observaciones del Admin'),
+                ->label('Observaciones del Admin')
+                ->columnSpanFull(),
         ]);
     }
 
@@ -73,6 +85,15 @@ class PostulacionResource extends Resource
             TextColumn::make('created_at')->date('d/m/Y'),
         ]);
     }
+
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('estado', '!=', 'cargando');
+    }
+
+
 
     public static function getRelations(): array
     {

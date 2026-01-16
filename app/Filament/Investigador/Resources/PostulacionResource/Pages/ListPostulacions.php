@@ -16,4 +16,5 @@ class ListPostulacions extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
 }

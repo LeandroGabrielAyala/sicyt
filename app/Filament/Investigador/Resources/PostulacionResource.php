@@ -12,9 +12,16 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Placeholder;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ConvocatoriaProyecto;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\DeleteAction;
+use Illuminate\Database\Eloquent\Model;
+
+
 
 class PostulacionResource extends Resource
 {
@@ -42,18 +49,39 @@ class PostulacionResource extends Resource
         return $form->schema([
             Select::make('convocatoria_id')
                 ->label('Convocatoria')
-                ->relationship('convocatoria', 'id')
-                ->getOptionLabelFromRecordUsing(fn ($record) => ($record->tipoProyecto->nombre ?? 'Sin tipo') . ' - ' . $record->anio)
-                ->required()
+                ->relationship(
+                    'convocatoria',
+                    'id',
+                    modifyQueryUsing: fn (Builder $query) =>
+                        $query->where('estado', true)
+                )
+                ->getOptionLabelFromRecordUsing(
+                    fn ($record) =>
+                        ($record->tipoProyecto->nombre ?? 'Sin tipo') . ' - ' . $record->anio
+                )
+                ->required(fn ($record) => $record?->estado !== 'cargando')
                 ->columnSpanFull(),
 
+
             FileUpload::make('archivo_pdf')
-                ->label('Subir PDF unificado')
+                ->label('Subir documentación probatoria')
+                ->multiple()
+                ->required(fn ($record) => $record?->estado !== 'cargando')
+                ->disk('public')
                 ->acceptedFileTypes(['application/pdf'])
                 ->directory('postulaciones')
+                ->preserveFilenames()
+                ->reorderable()
+                ->openable()
                 ->maxSize(5120)
-                ->required()
                 ->columnSpanFull(),
+
+            
+            Placeholder::make('estado_info')
+                ->content('⚠️ Esta postulación aún NO fue enviada. Podés salir y continuar más tarde. 
+                Recordá presionar "Guardar" para enviarla definitivamente.')
+                ->visible(fn ($record) => $record?->estado === 'cargando'),
+
 
             Hidden::make('investigador_id')
                 ->default(fn () => auth()->user()->investigador?->id),
@@ -70,14 +98,19 @@ class PostulacionResource extends Resource
             TextColumn::make('convocatoria.anio')->label('Año de Convocatoria'),
             TextColumn::make('estado')->badge(),
             TextColumn::make('created_at')->date('d/m/Y'),
+        ])
+        ->actions([
+            ViewAction::make()->label('Ver'),
+            DeleteAction::make()
+                ->label('Eliminar')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->modalHeading('Eliminar postulación')
+                ->modalDescription('¿Estás seguro de que querés eliminar esta postulación? Esta acción no se puede deshacer.')
+                ->modalSubmitActionLabel('Sí, eliminar')
+                ->after(fn () => redirect(request()->header('Referer'))),
         ]);
-    }
 
-    public static function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['investigador_id'] = auth()->user()->investigador?->id;
-        $data['estado'] = 'pendiente';
-        return $data;
     }
 
     public static function getEloquentQuery(): Builder
@@ -100,6 +133,44 @@ class PostulacionResource extends Resource
             //
         ];
     }
+
+
+    public static function canEdit(Model $record): bool
+    {
+        return $record->estado === 'cargando';
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return true;
+    }
+
+    public static function canCreate(): bool
+    {
+        $user = Auth::user();
+
+        // ❌ Sin investigador
+        if (! $user || ! $user->investigador) {
+            return false;
+        }
+
+        // ❌ Si NO hay convocatorias vigentes
+        $hayConvocatoriaVigente = ConvocatoriaProyecto::where('estado', true)->exists();
+
+        if (! $hayConvocatoriaVigente) {
+            return false;
+        }
+
+        // ❌ Si YA tiene alguna postulación (en cualquier estado)
+        $yaTienePostulacion = Postulacion::where(
+            'investigador_id',
+            $user->investigador->id
+        )->exists();
+
+        return ! $yaTienePostulacion;
+    }
+
+
 
     public static function getPages(): array
     {

@@ -23,8 +23,9 @@ return new class extends Migration
                 ->constrained('investigadors')
                 ->cascadeOnDelete();
 
-            $table->string('archivo_pdf');
-            $table->enum('estado', ['pendiente', 'aprobado', 'rechazado'])->default('pendiente');
+            $table->json('archivo_pdf')->nullable();
+            $table->enum('estado', ['cargando', 'pendiente', 'aprobado', 'rechazado'])
+                ->default('cargando');
             $table->text('observaciones')->nullable();
             $table->timestamps();
         });

@@ -11,9 +11,12 @@ class Postulacion extends Model
     protected $fillable = [
         'convocatoria_id',
         'investigador_id',
-        'archivo_pdf',
         'estado',
+        'archivo_pdf',
         'observaciones',
+    ];
+    protected $casts = [
+        'archivo_pdf' => 'array'
     ];
 
     public function convocatoria()
