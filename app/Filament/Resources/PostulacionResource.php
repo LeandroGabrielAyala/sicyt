@@ -7,10 +7,13 @@ use App\Models\Postulacion;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,6 +37,7 @@ class PostulacionResource extends Resource
         return 'primary'; //return static::getModel()::count() > 5 ? 'primary' : 'warning';
     }
 
+    // FORMULARIO
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -55,24 +59,32 @@ class PostulacionResource extends Resource
 
 
             FileUpload::make('archivo_pdf')
-                ->label('Formulario PDF')
+                ->label('Formularios PDF')
+                ->multiple()                // 👈 CLAVE ABSOLUTA
                 ->downloadable()
-                ->disabled(),
+                ->openable()
+                ->disabled()
+                ->columnSpanFull(),
 
             Select::make('estado')
                 ->options([
-                    'pendiente' => 'Pendiente',
                     'aprobado' => 'Aprobado',
                     'rechazado' => 'Rechazado',
                 ])
-                ->required(),
+                ->required()
+                ->disabled(fn ($record) => $record?->estado !== 'pendiente'),
 
-            Textarea::make('observaciones')
-                ->label('Observaciones del Admin')
-                ->columnSpanFull(),
+
+            RichEditor::make('observaciones')
+                ->label('Observaciones del CEPPBI')
+                ->columnSpanFull()
+                ->required(fn ($get) => $get('estado') === 'rechazado')
+                ->disabled(fn ($record) => $record?->estado !== 'pendiente'),
+
         ]);
     }
 
+    // TABLE
     public static function table(Table $table): Table
     {
         return $table->columns([
@@ -83,9 +95,73 @@ class PostulacionResource extends Resource
                 ->getStateUsing(fn ($record) => $record->investigador?->apellido . ', ' . $record->investigador?->nombre),
             TextColumn::make('estado')->badge(),
             TextColumn::make('created_at')->date('d/m/Y'),
-        ]);
-    }
+        ])
+        ->actions([
+            ViewAction::make()->label('Ver'),
 
+            // ✅ APROBAR
+            Action::make('aprobar')
+                ->label('Aprobar')
+                ->color('success')
+                ->icon('heroicon-o-check-circle')
+                ->visible(fn ($record) => $record->estado === 'pendiente')
+                ->form([
+                    FileUpload::make('resolucion_pdf')
+                        ->label('Resolución de aprobación (PDF)')
+                        ->required()
+                        ->disk('public')
+                        ->directory('resoluciones')
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->maxSize(5120),
+                ])
+                ->action(function ($record, array $data) {
+
+                    // 1️⃣ Guardar documento en tabla documentaciones
+                    $path = $data['resolucion_pdf'];
+
+                    $record->documentaciones()->create([
+                        'nombre' => 'Resolución de aprobación',
+                        'archivo' => $path,
+                        'tipo' => 'resolucion',
+                        'fecha' => now(),
+                    ]);
+
+                    // 2️⃣ Cambiar estado
+                    $record->update([
+                        'estado' => 'aprobado',
+                    ]);
+                })
+                ->requiresConfirmation()
+                ->modalHeading('Aprobar postulación')
+                ->modalDescription('Debés cargar obligatoriamente la resolución de aprobación.'),
+
+            // ❌ RECHAZAR
+            Action::make('rechazar')
+                ->label('Rechazar')
+                ->color('danger')
+                ->icon('heroicon-o-x-circle')
+                ->visible(fn ($record) => $record->estado === 'pendiente')
+                ->form([
+                    RichEditor::make('observaciones')
+                        ->label('Justificación del rechazo')
+                        ->required()
+                        ->columnSpanFull(),
+                ])
+                ->action(function ($record, array $data) {
+
+                    // 1️⃣ Guardar observaciones
+                    $record->update([
+                        'estado' => 'rechazado',
+                        'observaciones' => $data['observaciones'],
+                    ]);
+
+                })
+                ->requiresConfirmation()
+                ->modalHeading('Rechazar postulación')
+                ->modalDescription('Debés indicar el motivo del rechazo.'),
+        ]);
+
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -93,8 +169,13 @@ class PostulacionResource extends Resource
             ->where('estado', '!=', 'cargando');
     }
 
+    // CAN EDIT
+    public static function canEdit(Model $record): bool
+    {
+        return $record->estado === 'pendiente';
+    }
 
-
+    // RELATION RESOURCE
     public static function getRelations(): array
     {
         return [
@@ -102,6 +183,7 @@ class PostulacionResource extends Resource
         ];
     }
 
+    // PAGES
     public static function getPages(): array
     {
         return [

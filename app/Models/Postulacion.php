@@ -30,5 +30,12 @@ class Postulacion extends Model
         // Modelo Investigador
         return $this->belongsTo(Investigador::class, 'investigador_id');
     }
+
+    public function documentaciones()
+    {
+        // Modeilo Documentación
+        return $this->hasMany(Documentacion::class);
+    }
+
 }
 

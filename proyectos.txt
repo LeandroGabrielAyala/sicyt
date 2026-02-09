@@ -16,9 +16,10 @@ SECRETARIA:
 	- Se puede descarga todo (excel o PDF)
 	- Se da el ok o el rechazo de la documentacion
 		-- Cuando se apruebe un proyecto, pase directamente a la parte de proyectos
-		-- Permitir mediante un modal o al final agregar observaciones en caso de "observados" o "rechazados"
-	- Se le carga luego la resolución de aprobación, etc..
-	- Se le cambia el estado en vivo del registro
+			-- Se pone como "obligatorio" la carga de la resolución de aprobación (que viene de DOCUMENTACION CARGADA)
+		-- Se pone como "obligatorio" cargar observaciones si se "rechaza" la postulación
+	- Se le cambia el estado en vivo del registro (probar !!!)
+		-- Si es asi, que me obligue a escribir las observaciones con un modal
 INVESTIGADOR:
 	- Les aparece como aprobado, en revision, rechazado, etc..
 	- Puede ver la Resolución del CEPBBI así como el PDF para descargarlo

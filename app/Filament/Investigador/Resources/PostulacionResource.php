@@ -20,7 +20,7 @@ use App\Models\ConvocatoriaProyecto;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\HtmlString;
 
 
 class PostulacionResource extends Resource
@@ -44,6 +44,7 @@ class PostulacionResource extends Resource
     //     return 'primary';
     // }
 
+    // FORMULARIO
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -52,8 +53,22 @@ class PostulacionResource extends Resource
                 ->relationship(
                     'convocatoria',
                     'id',
-                    modifyQueryUsing: fn (Builder $query) =>
+                    modifyQueryUsing: function (Builder $query, $record) {
+                        $investigadorId = auth()->user()->investigador?->id;
+
+                        $yaPostuladas = Postulacion::where('investigador_id', $investigadorId)
+                            ->pluck('convocatoria_id');
+
+                        // Siempre permitir la convocatoria del registro actual
+                        if ($record) {
+                            $yaPostuladas = $yaPostuladas->reject(
+                                fn ($id) => $id == $record->convocatoria_id
+                            );
+                        }
+
                         $query->where('estado', true)
+                            ->whereNotIn('id', $yaPostuladas);
+                    }
                 )
                 ->getOptionLabelFromRecordUsing(
                     fn ($record) =>
@@ -82,6 +97,33 @@ class PostulacionResource extends Resource
                 Recordá presionar "Guardar" para enviarla definitivamente.')
                 ->visible(fn ($record) => $record?->estado === 'cargando'),
 
+            Placeholder::make('observaciones_admin')
+                ->label('Observaciones del CEPBBI')
+                ->content(fn ($record) => $record?->observaciones ?: '—')
+                ->visible(fn ($record) => $record?->estado === 'rechazado')
+                ->content(fn ($record) => new HtmlString($record->observaciones))
+                ->columnSpanFull(),
+
+            Placeholder::make('resolucion_info')
+                ->label('Resolución de aprobación')
+                ->visible(fn ($record) => $record?->estado === 'aprobado')
+                ->content(function ($record) {
+
+                    $doc = $record->documentaciones()
+                        ->where('tipo', 'resolucion')
+                        ->first();
+
+                    if (! $doc) {
+                        return '—';
+                    }
+
+                    return new HtmlString(
+                        '<a href="' . asset('storage/' . $doc->archivo) . '" target="_blank" class="text-primary underline">
+                            Ver resolución de aprobación
+                        </a>'
+                    );
+                })
+                ->columnSpanFull(),
 
             Hidden::make('investigador_id')
                 ->default(fn () => auth()->user()->investigador?->id),
@@ -91,6 +133,7 @@ class PostulacionResource extends Resource
         ]);
     }
 
+    // TABLE
     public static function table(Table $table): Table
     {
         return $table->columns([
@@ -127,6 +170,7 @@ class PostulacionResource extends Resource
         return $query;
     }
 
+    // RELATION RESOURCE
     public static function getRelations(): array
     {
         return [
@@ -134,44 +178,51 @@ class PostulacionResource extends Resource
         ];
     }
 
-
+    // CAN EDIT
     public static function canEdit(Model $record): bool
     {
-        return $record->estado === 'cargando';
+        // Bloqueamos solo cuando ya fue evaluada por el admin
+        return ! in_array($record->estado, ['aprobado', 'rechazado']);
     }
 
+    // CAN VIEW
     public static function canView(Model $record): bool
     {
         return true;
     }
 
+    // CAN CREATE
     public static function canCreate(): bool
     {
         $user = Auth::user();
 
-        // ❌ Sin investigador
         if (! $user || ! $user->investigador) {
             return false;
         }
 
-        // ❌ Si NO hay convocatorias vigentes
-        $hayConvocatoriaVigente = ConvocatoriaProyecto::where('estado', true)->exists();
+        $investigadorId = $user->investigador->id;
 
-        if (! $hayConvocatoriaVigente) {
+        // IDs de convocatorias vigentes
+        $convocatoriasVigentes = ConvocatoriaProyecto::where('estado', true)
+            ->pluck('id');
+
+        if ($convocatoriasVigentes->isEmpty()) {
             return false;
         }
 
-        // ❌ Si YA tiene alguna postulación (en cualquier estado)
-        $yaTienePostulacion = Postulacion::where(
-            'investigador_id',
-            $user->investigador->id
-        )->exists();
+        // Convocatorias a las que YA postuló este investigador
+        $convocatoriasYaPostuladas = Postulacion::where('investigador_id', $investigadorId)
+            ->pluck('convocatoria_id');
 
-        return ! $yaTienePostulacion;
+        // Convocatorias disponibles = vigentes - ya postuladas
+        $convocatoriasDisponibles = $convocatoriasVigentes
+            ->diff($convocatoriasYaPostuladas);
+
+        // Si queda al menos una disponible → puede crear
+        return $convocatoriasDisponibles->isNotEmpty();
     }
 
-
-
+    // PAGES
     public static function getPages(): array
     {
         return [

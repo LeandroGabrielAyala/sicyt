@@ -13,9 +13,22 @@ return new class extends Migration
     {
         Schema::create('documentacions', function (Blueprint $table) {
             $table->id();
+
+            $table->unsignedBigInteger('postulacion_id');
+
             $table->string('nombre');
+            $table->string('archivo');
+            $table->string('tipo');
+            $table->date('fecha');
+
             $table->timestamps();
+
+            $table->foreign('postulacion_id')
+                ->references('id')
+                ->on('postulaciones')
+                ->cascadeOnDelete();
         });
+
     }
 
     /**
