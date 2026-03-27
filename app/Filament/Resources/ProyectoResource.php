@@ -43,7 +43,7 @@ class ProyectoResource extends Resource
     protected static ?string $model = Proyecto::class;
 
     // Datos para el menu (icono, carpeta, orden, slug, etc..)
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationIcon = 'heroicon-o-rocket-launch';
     protected static ?string $navigationLabel = 'Proyectos';
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $modelLabel = 'Proyectos';

@@ -14,70 +14,100 @@ class InvestigadorImporter extends Importer
     public static function getColumns(): array
     {
         return [
+
             ImportColumn::make('nombre')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
+
             ImportColumn::make('apellido')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
+
             ImportColumn::make('dni')
                 ->requiredMapping()
                 ->rules(['required', 'max:10']),
+
             ImportColumn::make('cuil')
                 ->requiredMapping()
                 ->rules(['required', 'max:15']),
+
             ImportColumn::make('fecha_nac')
                 ->requiredMapping()
                 ->rules(['required', 'date']),
+
             ImportColumn::make('lugar_nac')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
+
             ImportColumn::make('domicilio')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
+
             ImportColumn::make('provincia')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
+
             ImportColumn::make('email')
                 ->requiredMapping()
                 ->rules(['required', 'email', 'max:255']),
+
             ImportColumn::make('telefono')
                 ->requiredMapping()
                 ->rules(['required', 'max:20']),
-            // Relaciones foráneas: pasamos el id, o podés ajustar para buscar por nombre si querés
+
+            // 🔹 ESTE ERA EL ERROR
+            // antes estaba "titulo"
+            // ahora debe ser carrera_id
+
+            ImportColumn::make('carrera_id')
+                ->requiredMapping()
+                ->numeric()
+                ->rules(['required', 'integer']),
+
             ImportColumn::make('nivel_academico_id')
                 ->requiredMapping()
+                ->numeric()
                 ->rules(['required', 'integer']),
+
             ImportColumn::make('disciplina_id')
                 ->requiredMapping()
+                ->numeric()
                 ->rules(['required', 'integer']),
+
             ImportColumn::make('campo_id')
                 ->requiredMapping()
+                ->numeric()
                 ->rules(['required', 'integer']),
+
             ImportColumn::make('objetivo_id')
                 ->requiredMapping()
+                ->numeric()
                 ->rules(['required', 'integer']),
-            ImportColumn::make('titulo')
-                ->requiredMapping()
-                ->rules(['required', 'max:255']),
+
             ImportColumn::make('titulo_posgrado')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
+
             ImportColumn::make('cargo_id')
                 ->requiredMapping()
+                ->numeric()
                 ->rules(['required', 'integer']),
+
             ImportColumn::make('categoria_interna_id')
                 ->requiredMapping()
+                ->numeric()
                 ->rules(['required', 'integer']),
+
             ImportColumn::make('incentivo_id')
                 ->requiredMapping()
+                ->numeric()
                 ->rules(['required', 'integer']),
+
         ];
     }
 
     public function resolveRecord(): ?Investigador
     {
-        // Evitar duplicados buscando por dni o cuil
         return Investigador::firstOrNew([
             'dni' => $this->data['dni'],
         ]);

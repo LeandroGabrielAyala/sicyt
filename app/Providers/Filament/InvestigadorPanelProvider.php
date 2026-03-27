@@ -50,8 +50,8 @@ class InvestigadorPanelProvider extends PanelProvider
                 for: 'App\\Filament\\Investigador\\Widgets'
             )
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             // Middleware de sesión y redirección
             ->middleware([

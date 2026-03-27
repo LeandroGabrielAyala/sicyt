@@ -26,7 +26,7 @@ class PagoBecaResource extends Resource
 {
     protected static ?string $model = PagoBeca::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationLabel = 'Pago Becas';
     protected static ?string $navigationGroup = 'Becas';
     protected static ?string $modelLabel = 'Pago Becas';

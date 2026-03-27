@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\DeleteAction;
 
 class EditInvestigador extends EditRecord
 {
@@ -30,14 +31,31 @@ class EditInvestigador extends EditRecord
         return [
             Actions\ViewAction::make()
                 ->label('Ver'),
-            Actions\DeleteAction::make()
-                ->label('Eliminar')
-                ->successNotification(
-                    Notification::make()
-                        ->success()
-                        ->title('Investigador Eliminado')
-                        ->body('El investigador fue eliminado correctamente')
-                ),
+                    DeleteAction::make()
+
+                        ->label('Eliminar')
+
+                        ->requiresConfirmation()
+
+                        ->modalHeading(fn ($record) => '¿Eliminar investigador/a: ' . $record->apellido_nombre . '?')
+
+                        ->modalSubheading(
+                            'Esta acción no se puede deshacer.'
+                        )
+
+                        ->modalButton('Sí, eliminar')
+
+                        ->successNotification(
+
+                            Notification::make()
+
+                                ->success()
+
+                                ->title('Investigador eliminado')
+
+                                ->body('El registro fue eliminado correctamente.')
+
+                        ),
         ];
     }
 

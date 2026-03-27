@@ -62,7 +62,13 @@ class Investigador extends Model
         return "{$this->apellido}, {$this->nombre}";
     }
 
-    public function getApellidoNombreAttribute()
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSOR: Apellido, Nombre
+    |--------------------------------------------------------------------------
+    */
+
+    public function getApellidoNombreAttribute(): string
     {
         return "{$this->apellido}, {$this->nombre}";
     }

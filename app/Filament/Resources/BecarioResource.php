@@ -38,7 +38,7 @@ class BecarioResource extends Resource
     protected static ?string $model = Becario::class;
 
     // Datos para el menu (icono, carpeta, orden, slug, etc..)
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationIcon = 'heroicon-o-beaker';
     protected static ?string $navigationLabel = 'Becarios';
     protected static ?string $navigationGroup = 'Becas';
     protected static ?string $modelLabel = 'Becarios';

@@ -17,7 +17,7 @@ class CompraResource extends Resource
 {
     protected static ?string $model = Compra::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationLabel = 'Compras';
     protected static ?string $navigationGroup = 'Compras y Reintegros';
     protected static ?string $modelLabel = 'Compras';

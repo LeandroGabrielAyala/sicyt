@@ -17,7 +17,7 @@ class ReintegroResource extends Resource
 {
     protected static ?string $model = Reintegro::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
     protected static ?string $navigationLabel = 'Reintegros';
     protected static ?string $navigationGroup = 'Compras y Reintegros';
     protected static ?string $modelLabel = 'Reintegros';

@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
 class PostulacionResource extends Resource
 {
     protected static ?string $model = Postulacion::class;
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationIcon = 'heroicon-o-bookmark';
     protected static ?string $navigationLabel = 'Postulaciones';
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $modelLabel = 'Postulaciones';

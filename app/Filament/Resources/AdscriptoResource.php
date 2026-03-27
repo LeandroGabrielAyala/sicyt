@@ -35,7 +35,7 @@ class AdscriptoResource extends Resource
     protected static ?string $model = Adscripto::class;
 
     // Datos para el menu (icono, carpeta, orden, slug, etc..)
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static ?string $navigationLabel = 'Adscriptos';
     protected static ?string $navigationGroup = 'Proyectos';
     protected static ?string $modelLabel = 'Adscriptos';

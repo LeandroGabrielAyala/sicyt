@@ -19,7 +19,7 @@ class CargoResource extends Resource
 {
     protected static ?string $model = Cargo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static ?string $navigationLabel = 'Cargo Docente';
     protected static ?string $modelLabel = 'Cargo Docente';
     protected static ?string $navigationGroup = 'Configuración Proyectos';
